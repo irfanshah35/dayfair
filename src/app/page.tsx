@@ -1,6 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import MHeader from "./components/m-view/m-header";
+import MFooter from "./components/m-view/m-footer";
+import MCasino from "./components/m-view/m-live-casino";
+import MMenuTabs from "./components/m-view/m-menu-tabs";
+import MSingleMarket from "./components/m-view/m-single-market";
+import MSportsTab from "./components/m-view/m-sports-tab";
 
 
 export default function Home() {
@@ -17,11 +22,16 @@ export default function Home() {
     <div>
       {isMobile ? (
         <>
-        <MHeader/>
+          <MHeader />
+          <MMenuTabs />
+          <MSportsTab />
+          <MSingleMarket />
+          <MCasino />
+          <MFooter />
         </>
       ) : (
         <>
-        
+
         </>
       )}
     </div>
