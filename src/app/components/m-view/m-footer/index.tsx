@@ -1,10 +1,11 @@
 "use client";
-import React from "react";
-
 const MFooter = () => {
      return (
-          <h1>footer</h1>
+          <footer className="w-full bg-transparent">
+               <div className="w-full bg-black text-white px-2.5 py-1.5">
+                    <p className="text-[12px] text-center">© Copyright 2024. All Rights Reserved. Powered by EXCHANGE</p>
+               </div>
+          </footer>
      );
 };
-
 export default MFooter;
