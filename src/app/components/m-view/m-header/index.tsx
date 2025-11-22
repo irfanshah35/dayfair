@@ -5,6 +5,16 @@ import { FaHome, FaSearch, FaTimes } from "react-icons/fa";
 
 const MHeader = () => {
   const [searchActive, setSearchActive] = useState(false);
+    const inputRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (searchActive && inputRef.current) {
+      // Small delay to ensure the input is fully visible before focusing
+      setTimeout(() => {
+        inputRef.current?.focus();
+      }, 100);
+    }
+  }, [searchActive]);
 
   return (
     <header className="relative overflow-x-clip bg-[#000] text-white px-[5px]">
@@ -44,18 +54,18 @@ const MHeader = () => {
       </div>
 
       {/* Search Bar Row */}
-      <div className="relative min-h-[35px] px-[5px] ml-1 pb-2">
+        <div className="relative min-h-[35px] px-[5px] ml-1 pb-2">
         <div className="absolute left-0 top-[5px] z-10 max-[322px]:w-[77%]">
           <div 
             className={`bg-white rounded-full flex items-center transition-all duration-700 ease-in-out ${
-              searchActive ? 'w-[160px]' : 'w-[25px]'
+              searchActive ? 'w-[185px]' : 'w-[25px]'
             }`}
           >
             <input
+              ref={inputRef}
               id="searchEventmobile"
               type="text"
               autoComplete="off"
-              placeholder="Search..."
               className={`bg-transparent text-black border-0 outline-0 h-[25px] transition-all duration-700 ease-in-out placeholder:text-gray-400 ${
                 searchActive ? 'w-full pl-3 pr-1 opacity-100' : 'w-0 opacity-0 pl-0 pr-0'
               }`}
