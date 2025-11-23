@@ -13,26 +13,28 @@ const MMenuTabs = () => {
 
   return (
     <>
-      <ul className="flex overflow-x-auto overflow-y-hidden relative shadow-[0_-5px_5px_-5px_rgba(0,0,0,0.5)] scrollbar-none border-0 rounded-none m-0 p-0 flex-nowrap" style={{ background: 'linear-gradient(180deg, #030a12, #444647 42%, #58595a)' }}>
+      <ul className="flex overflow-x-auto overflow-y-hidden relative  shadow-[0_-5px_5px_-5px_rgba(0,0,0,0.5)] scrollbar-none border-0 rounded-none m-0 p-0 flex-nowrap" style={{ background: 'linear-gradient(180deg, #030a12, #444647 42%, #58595a)' }}>
         {tabs.map((tab, index) => (
           <li
             key={tab.id}
-            className={`flex-[1_1_auto] ps-1 text-center mb-0 pt-[11px] pb-[11px] relative ${
-              activeTab === tab.id ? "border-t-2 border-white" : "border-t-2 border-transparent"
-            }`}
+            className={`flex-[1_1_auto] text-center mb-0 py-2.5 relative ${activeTab === tab.id ? "border-t-2 border-white" : "border-t-2 border-transparent"
+              }`}
             style={{ display: 'table-cell' }}
           >
             <a
-              className={`relative block text-white font-bold whitespace-nowrap no-underline cursor-pointer text-[12px]  pt-0 pb-0 ${
-                index < tabs.length - 1 ? "border-r border-white" : ""
-              }`}
-              style={{ 
+              className={`mb-[3px] ml-[2px] relative block text-white font-bold whitespace-nowrap no-underline cursor-pointer text-[12px]  pt-0 pb-0 ${index < tabs.length - 1 ? "border-r border-white" : ""
+                }`}
+              style={{
                 textDecoration: 'none',
                 borderRadius: 0,
               }}
               onClick={() => setActiveTab(tab.id)}
             >
-              <div className={tab.hasHeartbeat ? "heartbeat-anim" : ""}>
+              <div
+                className={`
+    ${tab.hasHeartbeat ? "heartbeat-anim" : ""}
+       ${tab.label === "EXCHANGE" ? "relative top-[2px]" : ""}
+  `} >
                 {tab.label}
               </div>
             </a>
