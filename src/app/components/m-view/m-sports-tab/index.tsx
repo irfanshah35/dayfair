@@ -19,15 +19,13 @@ const MSportsTab = () => {
                         <a
                             id={`${item.id}`}
                             className="no-underline cursor-pointer"
-                            onClick={() => setActiveTab(item.id)}
-                        >
+                            onClick={() => setActiveTab(item.id)}>
                             <div
                                 className={`flex flex-col text-center text-[12px] p-2 pb-[3px] min-w-max relative text-white
                                     ${activeTab === item.id
                                         ? "bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]"
                                         : "bg-transparent"}
-                                `}
-                            >
+                                `}>
                                 <div>
                                     <div className="flex justify-center mb-[5px]">
                                         <img
