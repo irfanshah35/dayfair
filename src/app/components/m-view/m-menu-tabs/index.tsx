@@ -17,13 +17,13 @@ const MMenuTabs = () => {
         {tabs.map((tab, index) => (
           <li
             key={tab.id}
-            className={`flex-[1_1_auto] text-center mb-0 pt-[11px] pb-[11px] relative ${
+            className={`flex-[1_1_auto] ps-1 text-center mb-0 pt-[11px] pb-[11px] relative ${
               activeTab === tab.id ? "border-t-2 border-white" : "border-t-2 border-transparent"
             }`}
             style={{ display: 'table-cell' }}
           >
             <a
-              className={`relative block text-white font-bold whitespace-nowrap no-underline cursor-pointer text-[13px] pt-0 pb-0 ${
+              className={`relative block text-white font-bold whitespace-nowrap no-underline cursor-pointer text-[12px]  pt-0 pb-0 ${
                 index < tabs.length - 1 ? "border-r border-white" : ""
               }`}
               style={{ 
