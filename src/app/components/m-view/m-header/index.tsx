@@ -5,11 +5,10 @@ import { FaHome, FaSearch, FaTimes } from "react-icons/fa";
 
 const MHeader = () => {
   const [searchActive, setSearchActive] = useState(false);
-  const inputRef = React.useRef(null);
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
     if (searchActive && inputRef.current) {
-      // Small delay to ensure the input is fully visible before focusing
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
@@ -17,14 +16,14 @@ const MHeader = () => {
   }, [searchActive]);
 
   return (
-    <header className="relative overflow-x-clip bg-[#000] text-white px-[5px]">
+    <header className="relative overflow-x-clip bg-black text-white px-[5px]">
       {/* Top Row */}
       <div className="flex items-center min-h-[65px]">
         {/* Logo Section */}
-        <div className="flex items-center flex-1 pl-[6px]">
-          <a className="flex items-center gap-[6px]">
+        <div className="flex items-center flex-1 pl-1.5">
+          <a className="flex items-center gap-1.5">
             <FaHome
-              className="text-white relative bottom-[1px] cursor-pointer"
+              className="text-white relative bottom-px cursor-pointer"
               size={26}
               tabIndex={0}
             />
@@ -45,7 +44,7 @@ const MHeader = () => {
             <div className="flex-1"></div>
             <div className="flex-1 flex justify-end">
               <button
-                className="h-[30px] w-[100%] border border-[#000] rounded-[3.875px] text-sm font-bold text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px]"
+                className="h-[30px] w-full border border-black rounded-[3.875px] text-sm font-bold text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px]"
                 style={{
                   background:
                     "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
@@ -60,56 +59,50 @@ const MHeader = () => {
       </div>
 
       {/* Search Bar Row */}
- <div className="relative flex min-h-[35px]  ml-1 pb-2">
-
-  {/* LEFT SIDE (50%) */}
-  <div className="relative flex-[0_0_50%] max-w-[50%]">
-    <div className="absolute left-0 top-[5px] z-10 w-[94%] max-[322px]:w-[77%]">
-
-      <div
-        className={`
+      <div className="relative flex min-h-[35px]  ml-1 pb-2">
+        {/* LEFT SIDE (50%) */}
+        <div className="relative flex-[0_0_50%] max-w-[50%]">
+          <div className="absolute left-0 top-[5px] z-10 w-[94%] max-[322px]:w-[77%]">
+            <div
+              className={`
           bg-white rounded-full flex items-center 
           transition-all duration-500 ease-linear
           ${searchActive ? "w-full" : "w-[25px]"}
         `}
-      >
-
-        {/* SEARCH INPUT */}
-        <input
-          ref={inputRef}
-          id="searchEventmobile"
-          type="text"
-          autoComplete="off"
-          className={`
+            >
+              {/* SEARCH INPUT */}
+              <input
+                ref={inputRef}
+                id="searchEventmobile"
+                type="text"
+                autoComplete="off"
+                className={`
             bg-transparent text-black border-0 outline-0 h-[25px]
             transition-all duration-500 ease-linear
-            ${searchActive ? "w-[calc(100%-25px)] pl-3 pr-2 opacity-100" : "w-0 opacity-0 pl-0 pr-0"}
+            ${
+              searchActive
+                ? "w-[calc(100%-25px)] pl-3 pr-2 opacity-100"
+                : "w-0 opacity-0 pl-0 pr-0"
+            }
           `}
-        />
+              />
 
-        {/* SEARCH / CROSS ICON (INSIDE!) */}
-        <button
-          onClick={() => setSearchActive(!searchActive)}
-          className="flex items-center justify-center h-[25px] w-[25px] shrink-0"
-        >
-          {searchActive ? (
-            <FaTimes className="text-black" size={13} />
-          ) : (
-            <FaSearch className="text-black" size={13} />
-          )}
-        </button>
-
+              {/* SEARCH / CROSS ICON (INSIDE!) */}
+              <button
+                onClick={() => setSearchActive(!searchActive)}
+                className="flex items-center justify-center h-[25px] w-[25px] shrink-0"
+              >
+                {searchActive ? (
+                  <FaTimes className="text-black" size={13} />
+                ) : (
+                  <FaSearch className="text-black" size={13} />
+                )}
+              </button>
+            </div>
+          </div>
+          <div className="flex-[0_0_50%] max-w-[50%] text-right"></div>
+        </div>
       </div>
-
-    </div>
-      <div className="flex-[0_0_50%] max-w-[50%] text-right"></div>
-</div>
-  </div>
-
-  {/* RIGHT EMPTY 50% */}
-
-
-
       <style jsx>{`
         @keyframes fadeIn {
           from {
