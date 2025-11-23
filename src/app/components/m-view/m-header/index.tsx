@@ -23,7 +23,7 @@ const MHeader = () => {
         <div className="flex items-center flex-1 pl-1.5">
           <a className="flex items-center gap-1.5">
             <FaHome
-              className="text-white relative bottom-px cursor-pointer"
+              className="text-white relative bottom-px cursor-pointer mt-0.5"
               size={26}
               tabIndex={0}
             />
@@ -44,7 +44,7 @@ const MHeader = () => {
             <div className="flex-1"></div>
             <div className="flex-1 flex justify-end">
               <button
-                className="h-[30px] w-full border border-black rounded-[3.875px] text-sm font-bold text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px]"
+                className="h-[30px] w-full border border-black rounded-[3.875px] text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px]"
                 style={{
                   background:
                     "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
@@ -61,8 +61,8 @@ const MHeader = () => {
       {/* Search Bar Row */}
       <div className="relative flex min-h-[35px]  ml-1 pb-2">
         {/* LEFT SIDE (50%) */}
-        <div className="relative flex-[0_0_50%] max-w-[50%]">
-          <div className="absolute left-0 top-[5px] z-10 w-[94%] max-[322px]:w-[77%]">
+        <div className="relative ">
+          <div className="absolute left-0 top-[5px] z-10 w-[184px]">
             <div
               className={`
           bg-white rounded-full flex items-center 
@@ -78,12 +78,11 @@ const MHeader = () => {
                 autoComplete="off"
                 className={`
             bg-transparent text-black border-0 outline-0 h-[25px]
-            transition-all duration-500 ease-linear
-            ${
-              searchActive
-                ? "w-[calc(100%-25px)] pl-3 pr-2 opacity-100"
-                : "w-0 opacity-0 pl-0 pr-0"
-            }
+            transition-all duration-500 ease-linear text-[12px]  
+            ${searchActive
+                    ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
+                    : "w-0 opacity-0 pl-0 pr-0"
+                  }
           `}
               />
 
@@ -93,9 +92,9 @@ const MHeader = () => {
                 className="flex items-center justify-center h-[25px] w-[25px] shrink-0"
               >
                 {searchActive ? (
-                  <FaTimes className="text-black" size={13} />
+                  <FaTimes className="text-black ml-0.5" size={13} />
                 ) : (
-                  <FaSearch className="text-black" size={13} />
+                  <FaSearch className="text-black ml-0.5" size={13} />
                 )}
               </button>
             </div>
