@@ -22,33 +22,22 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-roboto-condensed), Helvetica, sans-serif;
+  font-family: Roboto Condensed, sans-serif !important; /* ✅ Override font */
 }
 
-
- .inplay-animation {
+/* 🔥 Inplay animation */
+.inplay-animation {
   animation: inplayBlink 1s ease-in-out infinite;
   font-weight: 700;
 }
 
 @keyframes inplayBlink {
-  0% {
-    opacity: 1;
-    color: red;
-  }
-
-  50% {
-    opacity: 1;
-    color: green;
-  }
-
-  100% {
-    opacity: 1;
-    color: red;
-  }
+  0% { opacity: 1; color: red; }
+  50% { opacity: 1; color: green; }
+  100% { opacity: 1; color: red; }
 }
 
-
+/* Buttons */
 .btn-back {
   background-color: #72bbef;
   height: 24px;
@@ -62,7 +51,7 @@ body {
   color: black;
 }
 
-.btn-lay{
+.btn-lay {
   background-color: #faa9ba;
   height: 24px;
   line-height: 24px;
@@ -73,4 +62,14 @@ body {
   cursor: pointer;
   display: inline-block;
   color: black;
+}
+
+/* Circular icon */
+.circle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 25px;
+  width: 25px;
+  border-radius: 50%;
 }

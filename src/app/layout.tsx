@@ -12,7 +12,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// ⭐ Add Roboto Condensed
 const robotoCondensed = Roboto_Condensed({
   variable: "--font-roboto-condensed",
   subsets: ["latin"],
@@ -33,8 +32,8 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`
-          ${geistSans.variable} 
-          ${geistMono.variable} 
+          ${geistSans.variable}
+          ${geistMono.variable}
           ${robotoCondensed.variable} 
           antialiased
         `}
