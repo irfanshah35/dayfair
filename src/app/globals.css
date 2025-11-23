@@ -24,3 +24,53 @@ body {
   color: var(--foreground);
   font-family: var(--font-roboto-condensed), Helvetica, sans-serif;
 }
+
+
+ .inplay-animation {
+  animation: inplayBlink 1s ease-in-out infinite;
+  font-weight: 700;
+}
+
+@keyframes inplayBlink {
+  0% {
+    opacity: 1;
+    color: red;
+  }
+
+  50% {
+    opacity: 1;
+    color: green;
+  }
+
+  100% {
+    opacity: 1;
+    color: red;
+  }
+}
+
+
+.btn-back {
+  background-color: #72bbef;
+  height: 24px;
+  line-height: 24px;
+  font-size: 14px;
+  font-weight: 700;
+  width: 50%;
+  text-align: center;
+  cursor: pointer;
+  display: inline-block;
+  color: black;
+}
+
+.btn-lay{
+  background-color: #faa9ba;
+  height: 24px;
+  line-height: 24px;
+  font-size: 14px;
+  font-weight: 700;
+  width: 50%;
+  text-align: center;
+  cursor: pointer;
+  display: inline-block;
+  color: black;
+}
