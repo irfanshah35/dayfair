@@ -24,7 +24,7 @@ const MHeader = () => {
         <div className="flex items-center flex-1 pl-[6px]">
           <a className="flex items-center gap-[6px]">
             <FaHome
-              className="text-white cursor-pointer"
+              className="text-white relative bottom-[1px] cursor-pointer"
               size={26}
               tabIndex={0}
             />
@@ -40,12 +40,12 @@ const MHeader = () => {
         </div>
 
         {/* Login Button */}
-        <div className="flex justify-end w-full flex-1">
-          <div className="w-[110%] flex">
+        <div className="flex justify-end w-full  flex-1">
+          <div className="w-[110%] gap-1 flex">
             <div className="flex-1"></div>
             <div className="flex-1 flex justify-end">
               <button
-                className="h-[30px] w-[100%] rounded-[3.875px] text-sm font-bold text-black border-0 cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px]"
+                className="h-[30px] w-[100%] border border-[#000] rounded-[3.875px] text-sm font-bold text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px]"
                 style={{
                   background:
                     "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
@@ -60,46 +60,55 @@ const MHeader = () => {
       </div>
 
       {/* Search Bar Row */}
-      <div className="relative min-h-[35px] px-[5px] ml-1 pb-2">
-        <div className="absolute left-0 top-[5px] z-10 max-[322px]:w-[77%]">
-          <div
-            className={`bg-white rounded-full flex items-center transition-all duration-700 ease-in-out ${
-              searchActive ? "w-[185px]" : "w-[25px]"
-            }`}
-          >
-            <input
-              ref={inputRef}
-              id="searchEventmobile"
-              type="text"
-              autoComplete="off"
-              className={`bg-transparent text-black border-0 outline-0 h-[25px] transition-all duration-700 ease-in-out placeholder:text-gray-400 ${
-                searchActive
-                  ? "w-full pl-3 pr-1 opacity-100"
-                  : "w-0 opacity-0 pl-0 pr-0"
-              }`}
-            />
-            <button
-              className="flex items-center justify-center h-[22px] w-[25px] rounded-full cursor-pointer shrink-0 bg-white hover:bg-gray-100 transition-colors"
-              onClick={() => setSearchActive(!searchActive)}
-              aria-label={searchActive ? "Close search" : "Open search"}
-            >
-              <div className="transition-transform duration-500 ease-in-out">
-                {searchActive ? (
-                  <FaTimes
-                    className="text-black animate-[fadeIn_0.3s_ease-in-out]"
-                    size={14}
-                  />
-                ) : (
-                  <FaSearch
-                    className="text-black animate-[fadeIn_0.3s_ease-in-out]"
-                    size={14}
-                  />
-                )}
-              </div>
-            </button>
-          </div>
-        </div>
+ <div className="relative flex min-h-[35px]  ml-1 pb-2">
+
+  {/* LEFT SIDE (50%) */}
+  <div className="relative flex-[0_0_50%] max-w-[50%]">
+    <div className="absolute left-0 top-[5px] z-10 w-[94%] max-[322px]:w-[77%]">
+
+      <div
+        className={`
+          bg-white rounded-full flex items-center 
+          transition-all duration-500 ease-linear
+          ${searchActive ? "w-full" : "w-[25px]"}
+        `}
+      >
+
+        {/* SEARCH INPUT */}
+        <input
+          ref={inputRef}
+          id="searchEventmobile"
+          type="text"
+          autoComplete="off"
+          className={`
+            bg-transparent text-black border-0 outline-0 h-[25px]
+            transition-all duration-500 ease-linear
+            ${searchActive ? "w-[calc(100%-25px)] pl-3 pr-2 opacity-100" : "w-0 opacity-0 pl-0 pr-0"}
+          `}
+        />
+
+        {/* SEARCH / CROSS ICON (INSIDE!) */}
+        <button
+          onClick={() => setSearchActive(!searchActive)}
+          className="flex items-center justify-center h-[25px] w-[25px] shrink-0"
+        >
+          {searchActive ? (
+            <FaTimes className="text-black" size={13} />
+          ) : (
+            <FaSearch className="text-black" size={13} />
+          )}
+        </button>
+
       </div>
+
+    </div>
+      <div className="flex-[0_0_50%] max-w-[50%] text-right"></div>
+</div>
+  </div>
+
+  {/* RIGHT EMPTY 50% */}
+
+
 
       <style jsx>{`
         @keyframes fadeIn {
