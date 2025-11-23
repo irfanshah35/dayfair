@@ -2,10 +2,16 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { FaHome, FaSearch, FaTimes } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 const MHeader = () => {
   const [searchActive, setSearchActive] = useState(false);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  const goToLogin = () => {
+    router.push("/mlogin");
+  };
 
   React.useEffect(() => {
     if (searchActive && inputRef.current) {
@@ -44,6 +50,7 @@ const MHeader = () => {
             <div className="flex-1"></div>
             <div className="flex-1 flex justify-end">
               <button
+                onClick={goToLogin}
                 className="h-[30px] w-full border border-black rounded-[3.875px] text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px]"
                 style={{
                   background:

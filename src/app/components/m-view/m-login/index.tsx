@@ -1,0 +1,103 @@
+'use client'
+import React, { useState } from 'react';
+
+export default function MLogin() {
+
+    const [formData, setFormData] = useState({
+        username: "",
+        password: "",
+    });
+
+    const handleChange = (e:any) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleSubmit = (e:any) => {
+        e.preventDefault();
+        console.log("Form Values =", formData);
+    };
+
+    return (
+        <div id="app" className="min-h-screen bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]">
+            <div className="login flex items-center pt-[53px]">
+                <div className="wrapper w-full ">
+                    <div className="container-fluid px-4">
+
+                        <div className="w-full flex justify-center">
+                            <div className="flex flex-col gap-1.5 max-[321]:w-[199.69px] w-[300px]">
+
+                                {/* Login Form */}
+                                <div className="bg-white rounded-lg px-4 pt-[26px] shadow-lg pb-[19px]">
+                                    <form
+                                        onSubmit={handleSubmit}
+                                        role="form"
+                                        className="space-y-5"
+                                    >
+                                        {/* Username */}
+                                        <div className="form-group">
+                                            <input
+                                                name="username"
+                                                placeholder="User Name"
+                                                type="text"
+                                                value={formData.username}
+                                                onChange={handleChange}
+                                                className="w-full px-[9px] py-[9.5px] border-b border-black outline-0"
+                                            />
+                                        </div>
+
+                                        {/* Password Field */}
+                                        <div className="form-group">
+                                            <input
+                                                name="password"
+                                                placeholder="Password"
+                                                type="password"
+                                                value={formData.password}
+                                                onChange={handleChange}
+                                                className="w-full px-[9px] py-[9.5px] border-b border-black outline-0"
+                                            />
+                                        </div>
+
+                                        {/* Submit Button */}
+                                        <div className="form-group text-center">
+                                            <button
+                                                type="submit"
+                                                className="w-full bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)] py-[4.5px] border border-black text-black px-4 flex items-center justify-center gap-3"
+                                            >
+                                                Login
+                                                <span>
+                                                    <svg className='-rotate-90' xmlns="http://www.w3.org/2000/svg" width='16px' height='16px' viewBox="0 0 24 24" fill="currentColor"><path d="M4 19H20V12H22V20C22 20.5523 21.5523 21 21 21H3C2.44772 21 2 20.5523 2 20V12H4V19ZM14 9H19L12 16L5 9H10V3H14V9Z"></path></svg>
+                                                </span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+
+                                {/* Android App Box */}
+                                <div className="bg-white rounded-lg px-4 pt-1 pb-1">
+                                    <div className="logoApplication flex items-center">
+                                        <img
+                                            src="/login/androidblack.png"
+                                            className="w-[50px] h-[55px] relative top-[-3px]"
+                                            alt="Android App"
+                                        />
+                                        <div className="flex flex-col ml-4">
+                                            <span className="text-lg text-gray-700">Download Our</span>
+                                            <span className="text-[23px] font-black text-gray-900">
+                                                Android App
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
