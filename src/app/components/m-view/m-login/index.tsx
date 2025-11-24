@@ -41,9 +41,9 @@ export default function MLogin() {
 
     return (
         <div id="app" className="min-h-screen bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] md:hidden">
-            <div className="login flex items-center pt-[53px]">
+            <div className="login w-full h-screen bg-cover flex justify-center items-center flex-col flex-wrap">
                 <div className="wrapper w-full ">
-                    <div className="container-fluid px-4">
+                    <div className="container-fluid mt-0 mx-auto mb-[32.5%]">
 
                         <div className="w-full flex justify-center">
                             <div className="flex flex-col gap-1.5 max-[321]:w-[199.69px] w-[300px]">
@@ -76,7 +76,7 @@ export default function MLogin() {
                                                 type="text"
                                                 value={formData.username}
                                                 onChange={handleChange}
-                                                className="w-full px-[9px] py-[9.5px] border-b border-black outline-0"
+                                                className="w-full px-[9px] py-[9.5px] border-b border-black outline-0 placeholder-black tracking-[0.4px] opacity-80"
                                             />
                                         </div>
 
@@ -88,7 +88,7 @@ export default function MLogin() {
                                                 type="password"
                                                 value={formData.password}
                                                 onChange={handleChange}
-                                                className="w-full px-[9px] py-[9.5px] border-b border-black outline-0"
+                                                className="w-full px-[9px] py-[9.5px] border-b border-black outline-0 placeholder-black tracking-[0.4px] opacity-80"
                                             />
                                         </div>
 
@@ -116,8 +116,8 @@ export default function MLogin() {
                                             alt="Android App"
                                         />
                                         <div className="flex flex-col ml-4">
-                                            <span className="text-lg text-gray-700">Download Our</span>
-                                            <span className="text-[23px] font-black text-gray-900">
+                                            <span className="text-lg text-black tracking-[-0.2px]">Download Our</span>
+                                            <span className="text-[23px] text-black font-extrabold tracking-[0.2px]">
                                                 Android App
                                             </span>
                                         </div>
