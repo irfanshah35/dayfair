@@ -1,7 +1,11 @@
 "use client";
 import React from "react";
+import { useRouter } from "next/navigation";
+
 
 const MSingleMarket = () => {
+     const router = useRouter();
+
      const markets = [
           {
                match: "India v South Africa",
@@ -68,10 +72,12 @@ const MSingleMarket = () => {
      return (
           <div className="overflow-y-auto max-h-[265px]">
                {markets.map((item, idx) => (
-                    <div
-                         key={idx}
-                         className="text-black block no-underline cursor-pointer"
-                    >
+                   <div
+  key={idx}
+  onClick={() => router.push("/market-details")}
+  className="text-black block no-underline cursor-pointer hover:bg-[#e5eef3]"
+>
+
                          <div className="bg-[#f1f5f8] border-b border-[#d6d8d7] px-3 py-1">
 
                               {/* Header */}
