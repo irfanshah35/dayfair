@@ -136,3 +136,7 @@ body {
   -ms-overflow-style: none; 
   scrollbar-width: none; 
 }
+
+.btn-clr {
+    background: linear-gradient(180deg, #030a12, #444647 42%, #58595a);
+}
