@@ -137,12 +137,11 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
                 {/* Outer track */}
                 <span
                   className={`
-                    slidernew absolute inset-0 rounded-[30px] overflow-hidden border-[4px] border-transparent
+                    slidernew absolute inset-0 rounded-[30px] overflow-hidden border-4 border-transparent
                     transition-all duration-300
-                    ${
-                      matchMe
-                        ? "shadow-[0_0_0_2px_#32cd32,0_0_2px_#32cd32]"
-                        : "shadow-[0_0_0_2px_#777,0_0_4px_#777]"
+                    ${matchMe
+                      ? "shadow-[0_0_0_2px_#32cd32,0_0_2px_#32cd32]"
+                      : "shadow-[0_0_0_2px_#777,0_0_4px_#777]"
                     }
                   `}
                 ></span>
@@ -151,10 +150,9 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
                 <span
                   className={`
                     absolute top-1  left-1 w-[17px] h-[17px] rounded-full transition-all duration-300
-                    ${
-                      matchMe
-                        ? "bg-[#32cd32] translate-x-[30px]"
-                        : "bg-[#777] translate-x-0"
+                    ${matchMe
+                      ? "bg-[#32cd32] translate-x-[30px]"
+                      : "bg-[#777] translate-x-0"
                     }
                   `}
                 ></span>

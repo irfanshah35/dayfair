@@ -394,18 +394,18 @@ export default function MMarketDetailsPage() {
 
     return () => clearInterval(timer);
   }, []);
-useEffect(() => {
-  if (isSlipOpen && betslipRef.current) {
-    // Wait for DOM to update
-    setTimeout(() => {
-      betslipRef.current?.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-        inline: 'nearest'
-      });
-    }, 100);
-  }
-}, [isSlipOpen, openSlip]);
+  useEffect(() => {
+    if (isSlipOpen && betslipRef.current) {
+      // Wait for DOM to update
+      setTimeout(() => {
+        betslipRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+          inline: 'nearest'
+        });
+      }, 100);
+    }
+  }, [isSlipOpen, openSlip]);
 
   // Handle price click
   const onPriceClick = ({
@@ -476,11 +476,10 @@ useEffect(() => {
           <div className="flex pt-[13px] pb-3">
             <a
               onClick={() => setActiveTab("odds")}
-              className={`relative block text-[12px] text-center border-r px-4 ${
-                activeTab === "odds"
+              className={`relative block text-[12px] text-center border-r px-4 ${activeTab === "odds"
                   ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
                   : ""
-              }`}
+                }`}
             >
               ODDS
             </a>
@@ -489,11 +488,10 @@ useEffect(() => {
           <div className="flex">
             <a
               onClick={() => setActiveTab("betList")}
-              className={`relative block text-[12px] text-center px-4 ${
-                activeTab === "betList"
+              className={`relative block text-[12px] text-center px-4 ${activeTab === "betList"
                   ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
                   : ""
-              }`}
+                }`}
             >
               BET LIST (0)
             </a>
@@ -580,10 +578,9 @@ useEffect(() => {
                   <div className="flex justify-center items-center flex-col [text-shadow:#fc0_1px_0_10px]">
                     <span
                       className={`relative -top-0.5 font-bold text-[12px]
-                        ${
-                          active
-                            ? "text-[#ffff55] scale-125"
-                            : "text-white scale-100"
+                        ${active
+                          ? "text-[#ffff55] scale-125"
+                          : "text-white scale-100"
                         }`}
                     >
                       Bet Started
@@ -599,11 +596,10 @@ useEffect(() => {
                 {categories.map((category) => (
                   <li
                     key={category}
-                    className={`px-2.5 py-[5px] whitespace-nowrap rounded-full ml-[5px] text-[12px] font-medium border border-white cursor-pointer ${
-                      activeCategory === category
+                    className={`px-2.5 py-[5px] whitespace-nowrap rounded-full ml-[5px] text-[12px] font-medium border border-white cursor-pointer ${activeCategory === category
                         ? "bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)] text-black"
                         : "hover:bg-gray-100 bg-transparent text-white"
-                    }`}
+                      }`}
                   >
                     <button onClick={() => setActiveCategory(category)}>
                       {category.toUpperCase()}
@@ -692,18 +688,16 @@ useEffect(() => {
                           </div>
                           <div
                             className={`relative w-[40%] flex 
-                              ${
-                                isSuspended
-                                  ? "after:content-['SUSPENDED'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed"
-                                  : ""
+                              ${isSuspended
+                                ? "after:content-['SUSPENDED'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed"
+                                : ""
                               }`}
                           >
                             <div
-                              className={`text-center w-[50%] bg-[#72bbef] ${
-                                !isSuspended
+                              className={`text-center w-[50%] bg-[#72bbef] ${!isSuspended
                                   ? "cursor-pointer"
                                   : "cursor-not-allowed"
-                              }`}
+                                }`}
                               onClick={() =>
                                 !isSuspended &&
                                 onPriceClick({
@@ -727,11 +721,10 @@ useEffect(() => {
 
                             {/* Lay Odds */}
                             <div
-                              className={`text-center w-[50%] bg-[#faa9ba] ${
-                                !isSuspended
+                              className={`text-center w-[50%] bg-[#faa9ba] ${!isSuspended
                                   ? "cursor-pointer"
                                   : "cursor-not-allowed"
-                              }`}
+                                }`}
                               onClick={() =>
                                 !isSuspended &&
                                 onPriceClick({
@@ -757,25 +750,25 @@ useEffect(() => {
 
                         {/* Betslip for each runner */}
                         {/* Betslip for each runner */}
-{isRowSlipOpen(market.marketId, runner.selectionId) && (
-  <div ref={betslipRef}>
-    <MBetSlip
-      visible={isSlipOpen}
-      backLayClsModal={slipCls}
-      extraBgClass={slipBgClass}
-      odds={slipOdds}
-      marketId={slipMarketId}
-      selectionId={slipSelectionId}
-      eventId="event123"
-      marketType={market.marketType}
-      runnerName={slipRunnerName}
-      minStake={slipMin}
-      maxStake={slipMax}
-      onClose={closeInlineSlip}
-      onPlaced={closeInlineSlip}
-    />
-  </div>
-)}
+                        {isRowSlipOpen(market.marketId, runner.selectionId) && (
+                          <div ref={betslipRef}>
+                            <MBetSlip
+                              visible={isSlipOpen}
+                              backLayClsModal={slipCls}
+                              extraBgClass={slipBgClass}
+                              odds={slipOdds}
+                              marketId={slipMarketId}
+                              selectionId={slipSelectionId}
+                              eventId="event123"
+                              marketType={market.marketType}
+                              runnerName={slipRunnerName}
+                              minStake={slipMin}
+                              maxStake={slipMax}
+                              onClose={closeInlineSlip}
+                              onPlaced={closeInlineSlip}
+                            />
+                          </div>
+                        )}
                       </React.Fragment>
                     );
                   })}
