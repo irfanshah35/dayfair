@@ -6,6 +6,7 @@ import MCasino from "./components/m-view/m-live-casino";
 import MMenuTabs from "./components/m-view/m-menu-tabs";
 import MSingleMarket from "./components/m-view/m-single-market";
 import MSportsTab from "./components/m-view/m-sports-tab";
+import MBetSlip from "./components/m-view/m-betslip";
 
 
 export default function Home() {
@@ -25,6 +26,7 @@ export default function Home() {
           <MHeader />
           <MMenuTabs />
           <MSportsTab />
+          <MBetSlip/>
           <MSingleMarket />
           <MCasino />
           <MFooter />
