@@ -115,9 +115,9 @@ export default function MLogin() {
                                             className="w-[50px] h-[55px] relative top-[-3px]"
                                             alt="Android App"
                                         />
-                                        <div className="flex flex-col ml-4">
-                                            <span className="text-lg text-black tracking-[-0.2px]">Download Our</span>
-                                            <span className="text-[23px] text-black font-extrabold tracking-[0.2px]">
+                                        <div className="flex flex-col ml-4.5">
+                                            <span className="text-lg text-black   font-medium">Download Our</span>
+                                            <span className="text-[23px] text-black font-medium">
                                                 Android App
                                             </span>
                                         </div>
