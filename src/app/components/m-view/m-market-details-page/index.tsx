@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React from "react";
+import { useEffect, useState, useRef } from "react";
 import MBetSlip from "../m-betslip";
 
 // JSON Data for Markets
@@ -353,6 +355,7 @@ export default function MMarketDetailsPage() {
   const [activeTab, setActiveTab] = useState("odds");
   const [activeCategory, setActiveCategory] = useState("Popular");
   const [active, setActive] = useState(false);
+  const betslipRef = useRef<HTMLDivElement>(null);
 
   // Betslip state
   const [isSlipOpen, setIsSlipOpen] = useState(false);
@@ -366,6 +369,7 @@ export default function MMarketDetailsPage() {
   const [slipRunnerName, setSlipRunnerName] = useState<string>("");
   const [slipMin, setSlipMin] = useState<number>(1);
   const [slipMax, setSlipMax] = useState<number>(99999999);
+
 
   // Track which row is open
   const [openSlip, setOpenSlip] = useState<{
@@ -390,6 +394,18 @@ export default function MMarketDetailsPage() {
 
     return () => clearInterval(timer);
   }, []);
+useEffect(() => {
+  if (isSlipOpen && betslipRef.current) {
+    // Wait for DOM to update
+    setTimeout(() => {
+      betslipRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+        inline: 'nearest'
+      });
+    }, 100);
+  }
+}, [isSlipOpen, openSlip]);
 
   // Handle price click
   const onPriceClick = ({
@@ -611,8 +627,8 @@ export default function MMarketDetailsPage() {
                     <div className="ml-3">
                       <div className="flex items-center">
                         <span className="flex items-center text-white text-[13px] font-bold">
-                          <span className="relative w-[18px] h-[18px] mr-1 bg-yellow-500 rounded-[2px]">
-                            <span className="w-[13px] h-[14px] bg-black rounded-full mr-1 absolute z-20 top-0.5 left-0.5"></span>
+                          <span className="relative w-[18px] h-[18px] mr-1 bg-yellow-500 rounded-xs">
+                            <span className="w-[13px] h-3.5 bg-black rounded-full mr-1 absolute z-20 top-0.5 left-0.5"></span>
                           </span>
                           Cash Out
                         </span>
@@ -621,7 +637,7 @@ export default function MMarketDetailsPage() {
                   </div>
                   <button className="text-white">
                     <svg
-                      className="w-[16px] h-[16px]"
+                      className="w-4 h-4"
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
                       fill="currentColor"
@@ -632,9 +648,9 @@ export default function MMarketDetailsPage() {
                 </div>
 
                 {/* Mobile Header */}
-                <div className="text-[12px] border-b-1 border-[#aaa]">
+                <div className="text-[12px] border-b border-[#aaa]">
                   <div className="flex bg-gray-100">
-                    <div className="py-0.5 px-[5px] flex justify-between items-center border-b-1 border-[#aaa] w-[60%] font-semibold">
+                    <div className="py-0.5 px-[5px] flex justify-between items-center border-b border-[#aaa] w-[60%] font-semibold">
                       <span>
                         Min: {market.min} Max: {market.max}
                       </span>
@@ -662,7 +678,7 @@ export default function MMarketDetailsPage() {
 
                     return (
                       <React.Fragment key={runner.selectionId}>
-                        <div className="flex border-b-1 border-[#aaa] bg-gray-50">
+                        <div className="flex border-b border-[#aaa] bg-gray-50">
                           <div className="col-span-3 py-0.5 px-[5px] md:col-span-1 w-[60%]">
                             <div className="flex">
                               <div className="w-full">
@@ -678,7 +694,7 @@ export default function MMarketDetailsPage() {
                             className={`relative w-[40%] flex 
                               ${
                                 isSuspended
-                                  ? "after:content-['SUSPENDED'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-[200] after:text-[15px] after:cursor-not-allowed"
+                                  ? "after:content-['SUSPENDED'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed"
                                   : ""
                               }`}
                           >
@@ -740,23 +756,26 @@ export default function MMarketDetailsPage() {
                         </div>
 
                         {/* Betslip for each runner */}
-                        {isRowSlipOpen(market.marketId, runner.selectionId) && (
-                          <MBetSlip
-                            visible={isSlipOpen}
-                            backLayClsModal={slipCls}
-                            extraBgClass={slipBgClass}
-                            odds={slipOdds}
-                            marketId={slipMarketId}
-                            selectionId={slipSelectionId}
-                            eventId="event123"
-                            marketType={market.marketType}
-                            runnerName={slipRunnerName}
-                            minStake={slipMin}
-                            maxStake={slipMax}
-                            onClose={closeInlineSlip}
-                            onPlaced={closeInlineSlip}
-                          />
-                        )}
+                        {/* Betslip for each runner */}
+{isRowSlipOpen(market.marketId, runner.selectionId) && (
+  <div ref={betslipRef}>
+    <MBetSlip
+      visible={isSlipOpen}
+      backLayClsModal={slipCls}
+      extraBgClass={slipBgClass}
+      odds={slipOdds}
+      marketId={slipMarketId}
+      selectionId={slipSelectionId}
+      eventId="event123"
+      marketType={market.marketType}
+      runnerName={slipRunnerName}
+      minStake={slipMin}
+      maxStake={slipMax}
+      onClose={closeInlineSlip}
+      onPlaced={closeInlineSlip}
+    />
+  </div>
+)}
                       </React.Fragment>
                     );
                   })}
