@@ -122,7 +122,9 @@ const MSingleMarket = () => {
                          </div>
                     </div>
                ))}
+               <div className="text-center bg-[#ccc] pt-2 pb-[9px] px-[15px] mb-[25px] text-[12px] text-[#21252a]"> No Real time record is available </div>
           </div>
+          
      );
 };
 
