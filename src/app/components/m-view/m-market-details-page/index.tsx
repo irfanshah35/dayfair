@@ -29,7 +29,7 @@ export default function MMarketDetailsPage() {
             <a
               onClick={() => setActiveTab('odds')}
               className={`relative block text-[12px] text-center border-r px-4 ${activeTab === 'odds'
-                ? "after:content-[''] after:absolute after:top-[-12px] after:left-0 after:w-full after:h-[2px] after:bg-black"
+                ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
                 : ''
                 }`}
             >
@@ -41,7 +41,7 @@ export default function MMarketDetailsPage() {
             <a
               onClick={() => setActiveTab('betList')}
               className={`relative block text-[12px] text-center px-4 ${activeTab === 'betList'
-                ? "after:content-[''] after:absolute after:top-[-12px] after:left-0 after:w-full after:h-[2px] after:bg-black"
+                ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
                 : ''
                 }`}
             >
@@ -104,7 +104,7 @@ export default function MMarketDetailsPage() {
                   backgroundSize: "408px 90px",
                 }}>
                 <div className="">
-                  <div className="flex flex-col justify-between items-center px-3 pt-[6px] h-[90px]">
+                  <div className="flex flex-col justify-between items-center px-3 pt-1.5 h-[90px]">
                     <div className="flex justify-between w-full">
                       <div className=" text-white text-[12px] font-bold [text-shadow:#fc0_1px_0_10px]">
                         SUSPENDED
@@ -150,8 +150,8 @@ export default function MMarketDetailsPage() {
                     <div className="ml-3">
                       <div className="flex items-center">
                         <span className="flex items-center text-white text-[13px] font-bold">
-                          <span className='relative w-[18px] h-[18px] mr-1 bg-yellow-500 rounded-[2px]'>
-                            <span className="w-[13px] h-[14px] bg-black rounded-full mr-1 absolute z-20 top-0.5 left-0.5"></span>
+                          <span className='relative w-[18px] h-[18px] mr-1 bg-yellow-500 rounded-xs'>
+                            <span className="w-[13px] h-3.5 bg-black rounded-full mr-1 absolute z-20 top-0.5 left-0.5"></span>
                           </span>
                           Cash Out
                         </span>
@@ -159,14 +159,14 @@ export default function MMarketDetailsPage() {
                     </div>
                   </div>
                   <button className="text-white">
-                    <svg className='w-[16px] h-[16px]' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 9.5C12.8284 9.5 13.5 8.82843 13.5 8C13.5 7.17157 12.8284 6.5 12 6.5C11.1716 6.5 10.5 7.17157 10.5 8C10.5 8.82843 11.1716 9.5 12 9.5ZM14 15H13V10.5H10V12.5H11V15H10V17H14V15Z"></path></svg>
+                    <svg className='w-4 h-4' xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 9.5C12.8284 9.5 13.5 8.82843 13.5 8C13.5 7.17157 12.8284 6.5 12 6.5C11.1716 6.5 10.5 7.17157 10.5 8C10.5 8.82843 11.1716 9.5 12 9.5ZM14 15H13V10.5H10V12.5H11V15H10V17H14V15Z"></path></svg>
                   </button>
                 </div>
 
                 {/* Mobile Header */}
-                <div className="text-[12px] border-b-1 border-[#aaa]">
+                <div className="text-[12px] border-b border-[#aaa]">
                   <div className="flex bg-gray-100">
-                    <div className="py-0.5 px-[5px] flex justify-between items-center border-b-1 border-[#aaa] w-[60%] font-semibold">
+                    <div className="py-0.5 px-[5px] flex justify-between items-center border-b border-[#aaa] w-[60%] font-semibold">
                       <span>Min: 5 Max: 10000</span>
                       <span className=" ml-2">M:2.70K</span>
                     </div>
@@ -178,7 +178,7 @@ export default function MMarketDetailsPage() {
                 </div>
 
                 <div className="">
-                  <div className=" flex border-b-1 border-[#aaa] bg-gray-50">
+                  <div className=" flex border-b border-[#aaa] bg-gray-50">
                     <div className="col-span-3 py-0.5 px-[5px] md:col-span-1 w-[60%]">
                       <div className="flex">
                         <div className="w-full">
@@ -203,7 +203,7 @@ export default function MMarketDetailsPage() {
                   </div>
 
 
-                  <div className="odd-row flex border-b-1 border-[#aaa] bg-gray-50">
+                  <div className="odd-row flex border-b border-[#aaa] bg-gray-50">
                     <div className="col-span-3 py-0.5 px-[5px] md:col-span-1 w-[60%]">
                       <div className="flex">
                         <div className="w-full">
@@ -215,7 +215,7 @@ export default function MMarketDetailsPage() {
                     </div>
                     <div className={`relative w-[40%] flex 
                       ${isSuspended
-                        ? "after:content-['SUSPENDED'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-[200] after:text-[15px] after:cursor-not-allowed"
+                        ? "after:content-['SUSPENDED'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed"
                         : ""
                       }`}>
                       <div className="text-center w-[50%] bg-[#72bbef]">
