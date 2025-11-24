@@ -3,6 +3,7 @@
 import React from "react";
 import { useEffect, useState, useRef } from "react";
 import MBetSlip from "../m-betslip";
+import RulesModal from "@/app/modals/rules-modal";
 
 // JSON Data for Markets
 const MARKETS_DATA = [
@@ -369,6 +370,7 @@ export default function MMarketDetailsPage() {
   const [slipRunnerName, setSlipRunnerName] = useState<string>("");
   const [slipMin, setSlipMin] = useState<number>(1);
   const [slipMax, setSlipMax] = useState<number>(99999999);
+  const [isrulesopen, setRulesOpen] = useState(false);
 
 
   // Track which row is open
@@ -631,8 +633,8 @@ export default function MMarketDetailsPage() {
                       </div>
                     </div>
                   </div>
-                  <button className="text-white">
-                    <svg
+                  <button onClick={()=> setRulesOpen(true)} className="text-white">
+                    <svg 
                       className="w-4 h-4"
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
@@ -778,6 +780,8 @@ export default function MMarketDetailsPage() {
           </div>
         </div>
       )}
+
+      <RulesModal open={isrulesopen} onClose={() => setRulesOpen(false)} />
     </div>
   );
 }
