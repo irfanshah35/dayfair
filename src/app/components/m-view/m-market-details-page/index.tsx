@@ -479,8 +479,8 @@ export default function MMarketDetailsPage() {
             <a
               onClick={() => setActiveTab("odds")}
               className={`relative block text-[12px] text-center border-r px-4 ${activeTab === "odds"
-                  ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
-                  : ""
+                ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
+                : ""
                 }`}
             >
               ODDS
@@ -491,8 +491,8 @@ export default function MMarketDetailsPage() {
             <a
               onClick={() => setActiveTab("betList")}
               className={`relative block text-[12px] text-center px-4 ${activeTab === "betList"
-                  ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
-                  : ""
+                ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
+                : ""
                 }`}
             >
               BET LIST (0)
@@ -502,7 +502,7 @@ export default function MMarketDetailsPage() {
 
         <div>
           {/* Speaker Icon */}
-          <div className="absolute top-3 right-10">
+          <div className="absolute top-3 right-11">
             <button className="flex items-center gap-1 text-black">
               <svg
                 className="w-5 h-5"
@@ -516,10 +516,10 @@ export default function MMarketDetailsPage() {
           </div>
 
           {/* TV Icon */}
-          <div className="absolute top-2 right-2">
+          <div className="absolute top-[10px] right-2">
             <p className="mb-0 text-black">
               <svg
-                className="w-6 h-6"
+                className="w-6 h-[22px]"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
                 fill="currentColor"
@@ -541,7 +541,7 @@ export default function MMarketDetailsPage() {
         <div className="flex">
           <div className="left-part overflow-y-auto w-full">
             {/* Game Header */}
-            <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-1 px-2 text-white">
+            <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[3.5px] pl-2 pr-[8px] text-white">
               <span className="text-sm font-medium">
                 Titans W v South Western Districts W
               </span>
@@ -549,7 +549,7 @@ export default function MMarketDetailsPage() {
                 <span
                   className={`
         text-xs py-1 rounded-full font-bold inline-block transition-all duration-300
-        ${active ? "text-red-500 scale-125" : "text-yellow-500 scale-100"}
+        heartbeat-anim
       `}
                 >
                   INPLAY
@@ -572,18 +572,15 @@ export default function MMarketDetailsPage() {
                     <div className=" text-white text-[12px] font-bold [text-shadow:#fc0_1px_0_10px]">
                       SUSPENDED
                     </div>
-                    <div className=" text-white text-[12px] font-bold [text-shadow:#fc0_1px_0_10px]">
+                    <div className=" text-white text-[12px] tracking-[-0.2px] font-bold [text-shadow:#fc0_1px_0_10px]">
                       <span className=" text-[#ffff55]">Game time</span>{" "}
                       23-11-2025 01:00:00 PM
                     </div>
                   </div>
                   <div className="flex justify-center items-center flex-col [text-shadow:#fc0_1px_0_10px]">
                     <span
-                      className={`relative -top-0.5 font-bold text-[12px]
-                        ${active
-                          ? "text-[#ffff55] scale-125"
-                          : "text-white scale-100"
-                        }`}
+                      className={`relative -top-0.5 left-[5px] font-bold text-[12px]
+                        heartbeat-anim2`}
                     >
                       Bet Started
                     </span>
@@ -599,8 +596,8 @@ export default function MMarketDetailsPage() {
                   <li
                     key={category}
                     className={`px-2.5 py-[5px] whitespace-nowrap rounded-full ml-[5px] text-[12px] font-medium border border-white cursor-pointer ${activeCategory === category
-                        ? "bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)] text-black"
-                        : "hover:bg-gray-100 bg-transparent text-white"
+                      ? "bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)] text-black"
+                      : "hover:bg-gray-100 bg-transparent text-white"
                       }`}
                   >
                     <button onClick={() => setActiveCategory(category)}>
@@ -615,27 +612,27 @@ export default function MMarketDetailsPage() {
             {MARKETS_DATA.map((market) => (
               <div
                 key={market.marketId}
-                className="bg-[linear-gradient(180deg,#000000,#000000_42%,#000000b3)] mb-[3px]"
+                className="bg-[linear-gradient(180deg,#000000,#ccc1c1)]"
               >
-                <div className=" mt-0 py-1 px-2 flex justify-between items-center">
+                <div className=" mt-0 py-1 pl-2 pr-[6px] flex justify-between items-center">
                   <div className="flex gap-2 items-center">
                     <span className="font-bold text-white text-[13px]">
                       {market.marketName}
                     </span>
                     <div className="ml-3">
                       <div className="flex items-center">
-                        <span className="flex items-center text-white text-[13px] font-bold">
-                          <span className="relative w-[18px] h-[18px] mr-1 bg-yellow-500 rounded-xs">
-                            <span className="w-[13px] h-3.5 bg-black rounded-full mr-1 absolute z-20 top-0.5 left-0.5"></span>
+                        <span className="flex items-center relative top-[1px] text-white text-[13px] font-bold">
+                          <span className="relative w-[18px] h-[18px] mr-[5px] bg-yellow-500 rounded-xs">
+                            <span className="w-[12px] h-[12px] bg-black rounded-full mr-[6px] absolute z-20 top-0.5 left-[3px]"></span>
                           </span>
                           Cash Out
                         </span>
                       </div>
                     </div>
                   </div>
-                  <button onClick={()=> setRulesOpen(true)} className="text-white">
-                    <svg 
-                      className="w-4 h-4"
+                  <button onClick={() => setRulesOpen(true)} className="text-white">
+                    <svg
+                      className="w-[16px] h-[15px] relative "
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
                       fill="currentColor"
@@ -657,10 +654,10 @@ export default function MMarketDetailsPage() {
                       </span>
                     </div>
                     <div className="w-[40%] flex">
-                      <div className="back text-center w-[50%] text-[12px] font-semibold bg-[#72bbef]">
+                      <div className="back flex justify-center items-center text-center w-[50%] text-[12px] font-semibold bg-[#72bbef]">
                         BACK
                       </div>
-                      <div className="lay text-center w-[50%] text-[12px] font-semibold bg-[#faa9ba]">
+                      <div className="lay flex justify-center items-center text-center w-[50%] text-[12px] font-semibold bg-[#faa9ba]">
                         LAY
                       </div>
                     </div>
@@ -676,7 +673,7 @@ export default function MMarketDetailsPage() {
 
                     return (
                       <React.Fragment key={runner.selectionId}>
-                        <div className="flex border-b border-[#aaa] bg-gray-50">
+                        <div className="flex border-b border-[#aaa] bg-gray-50 h-[41px]">
                           <div className="col-span-3 py-0.5 px-[5px] md:col-span-1 w-[60%]">
                             <div className="flex">
                               <div className="w-full">
@@ -696,9 +693,9 @@ export default function MMarketDetailsPage() {
                               }`}
                           >
                             <div
-                              className={`text-center w-[50%] bg-[#72bbef] ${!isSuspended
-                                  ? "cursor-pointer"
-                                  : "cursor-not-allowed"
+                              className={`text-center flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!isSuspended
+                                ? "cursor-pointer"
+                                : "cursor-not-allowed"
                                 }`}
                               onClick={() =>
                                 !isSuspended &&
@@ -713,7 +710,7 @@ export default function MMarketDetailsPage() {
                                 })
                               }
                             >
-                              <span className="odd block font-bold">
+                              <span className="odd block font-bold leading-[1.1]">
                                 {runner.backOdds[0].price}
                               </span>
                               <span className="block text-xs">
@@ -723,9 +720,9 @@ export default function MMarketDetailsPage() {
 
                             {/* Lay Odds */}
                             <div
-                              className={`text-center w-[50%] bg-[#faa9ba] ${!isSuspended
-                                  ? "cursor-pointer"
-                                  : "cursor-not-allowed"
+                              className={`text-center flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!isSuspended
+                                ? "cursor-pointer"
+                                : "cursor-not-allowed"
                                 }`}
                               onClick={() =>
                                 !isSuspended &&
@@ -740,7 +737,7 @@ export default function MMarketDetailsPage() {
                                 })
                               }
                             >
-                              <span className="odd block font-bold">
+                              <span className="odd block font-bold leading-[1.1]">
                                 {runner.layOdds[0].price}
                               </span>
                               <span className="block text-xs">
@@ -782,6 +779,49 @@ export default function MMarketDetailsPage() {
       )}
 
       <RulesModal open={isrulesopen} onClose={() => setRulesOpen(false)} />
+
+
+      <style jsx>{`
+        @keyframes zoomInZoomOut {
+          0% {
+            transform: scale(0.865);
+            color: rgb(255, 56, 0);
+          }
+          50% {
+            transform: scale(1.097);
+            color: rgb(255, 252, 0);
+          }
+          100% {
+            transform: scale(0.865);
+            color: rgb(255, 56, 0);
+          }
+        }
+        @keyframes sec {
+          0% {
+            transform: scale(0.865);
+            color: rgb(255, 255, 255);
+          }
+          50% {
+            transform: scale(1.097);
+            color: rgb(255, 252, 0);
+          }
+          100% {
+            transform: scale(0.865);
+            color: rgb(255, 255, 255);
+          }
+        }
+
+        .heartbeat-anim2 {
+          transition: 0.3s ease-in;
+          animation: sec 1s ease infinite;
+          display: inline-block;
+        }
+        .heartbeat-anim {
+          transition: 0.3s ease-in;
+          animation: zoomInZoomOut 1s ease infinite;
+          display: inline-block;
+        }
+      `}</style>
     </div>
   );
 }
