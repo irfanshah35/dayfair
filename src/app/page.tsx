@@ -23,13 +23,11 @@ export default function Home() {
     <div>
       {isMobile ? (
         <>
-          <MHeader />
           <MMenuTabs />
           <MSportsTab />
           {/* <MBetSlip/> */}
           <MSingleMarket />
           <MCasino />
-          <MFooter />
         </>
       ) : (
         <>
