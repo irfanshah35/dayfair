@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import Image from "next/image";
 import { FaHome, FaSearch, FaTimes } from "react-icons/fa";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const MHeader = () => {
   const [searchActive, setSearchActive] = useState(false);
@@ -27,7 +28,7 @@ const MHeader = () => {
       <div className="flex items-center min-h-[65px]">
         {/* Logo Section */}
         <div className="flex items-center flex-1 pl-1.5">
-          <a className="flex items-center gap-1.5">
+          <Link href={'/'} className="flex items-center gap-1.5">
             <FaHome
               className="text-white relative bottom-px cursor-pointer mt-0.5"
               size={26}
@@ -41,7 +42,7 @@ const MHeader = () => {
               className="h-[65px] w-[100px]"
               tabIndex={0}
             />
-          </a>
+          </Link>
         </div>
 
         {/* Login Button */}
