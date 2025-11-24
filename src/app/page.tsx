@@ -26,7 +26,7 @@ export default function Home() {
           <MHeader />
           <MMenuTabs />
           <MSportsTab />
-          <MBetSlip/>
+          {/* <MBetSlip/> */}
           <MSingleMarket />
           <MCasino />
           <MFooter />

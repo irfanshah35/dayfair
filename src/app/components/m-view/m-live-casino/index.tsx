@@ -76,7 +76,7 @@ const MLiveCasino = () => {
             >
               <div
                 className={`p-2 uppercase text-xs font-bold tracking-wide ${activeTab === tab
-                  ? "bg-gradient-to-b from-[#f4b501] to-[#f68700] text-black"
+                  ? "bg-linear-to-b from-[#f4b501] to-[#f68700] text-black"
                   : "bg-[#58595a] text-white"
                   }`}
                 style={{
