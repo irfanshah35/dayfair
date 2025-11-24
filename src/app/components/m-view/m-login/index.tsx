@@ -7,21 +7,40 @@ export default function MLogin() {
         username: "",
         password: "",
     });
+    const [error, setError] = useState("");
 
-    const handleChange = (e:any) => {
+    const handleChange = (e: any) => {
         setFormData({
             ...formData,
             [e.target.name]: e.target.value
         });
     };
 
-    const handleSubmit = (e:any) => {
+    const handleSubmit = (e: any) => {
         e.preventDefault();
+
+        // Username empty?
+        if (!formData.username) {
+            setError("Please enter username");
+            return;
+        }
+
+        // Password empty?
+        if (!formData.password) {
+            setError("Please enter password");
+            return;
+        }
+
+        // Dono filled → clear error
+        setError("");
+
         console.log("Form Values =", formData);
     };
 
+
+
     return (
-        <div id="app" className="min-h-screen bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]">
+        <div id="app" className="min-h-screen bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] md:hidden">
             <div className="login flex items-center pt-[53px]">
                 <div className="wrapper w-full ">
                     <div className="container-fluid px-4">
@@ -31,9 +50,22 @@ export default function MLogin() {
 
                                 {/* Login Form */}
                                 <div className="bg-white rounded-lg px-4 pt-[26px] shadow-lg pb-[19px]">
+
+                                    {error && (
+                                        <div
+                                            role="alert"
+                                            className="bg-[#f8d7da] border border-[#f1aeb5] px-3 py-3 rounded relative mb-3"
+                                        >
+                                            <ul className="list-none list-inside text-[12px]">
+                                                <li className='pl-6'>{error}</li>
+                                            </ul>
+                                        </div>
+                                    )}
                                     <form
                                         onSubmit={handleSubmit}
                                         role="form"
+                                        autoComplete="off"
+                                        method="post"
                                         className="space-y-5"
                                     >
                                         {/* Username */}

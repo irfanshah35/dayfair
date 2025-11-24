@@ -1,15 +1,31 @@
 "use client";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
 const MMenuTabs = () => {
   const [activeTab, setActiveTab] = useState(10);
+  const router = useRouter();
 
   const tabs = [
-    { id: 10, label: "INPLAY", hasHeartbeat: true },
-    { id: 11, label: "EXCHANGE", hasHeartbeat: false },
-    { id: 16, label: "LIVE CASINO", hasHeartbeat: true },
-    { id: 98, label: "TIPS & PREVIEWS", hasHeartbeat: false },
+    { id: 10, label: "INPLAY", hasHeartbeat: true, },
+    { id: 11, label: "EXCHANGE", hasHeartbeat: false, },
+    { id: 16, label: "LIVE CASINO", hasHeartbeat: true, },
+    { id: 98, label: "TIPS & PREVIEWS", hasHeartbeat: false, },
   ];
+
+
+  const goToLogin = (tab: any) => {
+    setActiveTab(tab.id)
+    if (tab.id === 10) {
+      router.push("");
+    } else if (tab.id === 11) {
+      router.push("");
+    } else if (tab.id === 16) {
+      router.push("");
+    } else if (tab.id === 98) {
+      router.push("/m-tipsreview");
+    }
+  };
 
   return (
     <>
@@ -28,7 +44,7 @@ const MMenuTabs = () => {
                 textDecoration: 'none',
                 borderRadius: 0,
               }}
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => goToLogin(tab)}
             >
               <div
                 className={`
