@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
+
 const MMenuTabs = () => {
   const [activeTab, setActiveTab] = useState(10);
   const router = useRouter();
@@ -18,7 +19,7 @@ const MMenuTabs = () => {
   const goToLogin = (tab: any) => {
     setActiveTab(tab.id)
     if (tab.id === 10) {
-      router.push("");
+      router.push("/inplay");
     } else if (tab.id === 11) {
       router.push("");
     } else if (tab.id === 16) {
