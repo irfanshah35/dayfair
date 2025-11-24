@@ -1,7 +1,99 @@
 import React from 'react'
 
 export default function MTipsPreview() {
+
+
+  const newsData = [
+    {
+      id: 1,
+      title:
+        "PAK vs SL, Tri-Series 2025: Sahibzada Farhan smashes career-best score as Pakistan trumps Sri Lanka",
+      desc: `Sahibzada  
+Sahibzada Farhan bludgeoned a career-best unbeaten 80 off 45 balls as Pakistan routed struggling Sri Lanka by seven wickets in the T20 Tri-series on Saturday.
+
+Sri Lanka, which lost its opening game against Zimbabwe by 67 runs after getting bowled out for 95, was limited to 128 for seven after captain Dasun Shanaka won the toss and elected to bat.
+
+Farhan’s blistering knock that featured five sixes and six boundaries sealed a second successive win for Pakistan in just 15.3 overs as the home team cruised to 131-3.
+
+Sri Lanka’s white-ball tour to Pakistan saw it losing the ODI series 3-0 against the hosts, and its batters continued to struggle in the T20 format in the first two games of the tri-series.
+
+“It was a complete game, we were very good with both bat and ball,” Pakistan captain Salman Ali Agha said. “We always wanted to start well, and he’s (Farhan) someone who if he bats for three to four overs, he can take the game away from any opposition.”
+
+Kamil Mishara (22) got Sri Lanka going in the first three overs against the pace of Mohammad Wasim after Shaheen Shah Afridi was ruled out from Saturday’s game due to a foot injury.
+
+But, Sri Lanka lost its way inside the power play when Mishara was deceived by a slower ball from Faheem Ashraf and holed out at mid-on and Kusal Mendis was run-out while going for a needless second run.
+
+Left-arm spinner Mohammad Nawaz (3-16) and leg-spinner Abrar Ahmed (1-28) then squeezed Sri Lanka in the middle overs and picked up wickets with regular intervals as they slipped to 80-5 in 12 overs.
+
+Nawaz struck off successive deliveries when he clean bowled Kusal Perera with a sharp turning delivery that spun back into the left-hander and then Shanaka couldn’t read another turning ball as his leg stump was knocked back by the left-armer.
+
+Wasim picked up a smart juggling catch of Kamindu Mendis on the edge of the boundary at mid-wicket in Nawaz’s final over and Sri Lanka tailenders struggled to accelerate in the death overs against the pace.
+
+Wasim and Mirza bowled to tight lengths and allowed Sri Lanka to score only 37 runs off the final five overs with Janith Liyanage showing some resistance by scoring unbeaten 41 off 38 balls.
+
+RELATED | PAK vs SL Tri-series Match 3 Highlights
+
+Farhan showed aggressive intent from the onset in the run chase and provided Pakistan a brisk start of 47 runs in five overs before Shanaka had Saim Ayub (20) stumped.
+
+But Farhan didn’t hold back and dominated a 69-run stand off 52 balls with Babar Azam (16) by playing attractive shots on both sides of the wickets and raised his half century off 33 balls.
+
+Fast bowler Dushmantha Chameera (2-29) got two late wickets when he uprooted the off stump of Babar and then had captain Salman Ali Agha trapped leg before wicket of a ball that caught the batter on the backfoot.
+
+Farhan then finished off the game with a straight six of Malinga and also surpassed his previous best T20 score of 74.
+
+“We aren’t a team that should perform like this, we’re better than this,” Shanaka said. “We feel very bad today ... since we arrived here we have struggled to find rhythm batting in these pitches. We need to work on that a bit, but I’m sure we’re a better team than this.”
+
+Pakistan, which has won both its league games, next plays against Zimbabwe on Sunday. `,
+      img: "http://market.mgmopr.com/api/trader/tips/images/82e77d3a-5468-474e-a667-6553151d6f6d.jpg",
+    },
+    {
+      id: 2,
+      title:
+        "Premier League 2025-26: Barnes strikes twice as Newcastle edges Man City 2-1",
+      desc: `Harvey Barnes scored two goals in seven minutes as his side snatched a thrilling 2-1 win over Manchester City.`,
+      img: "http://market.mgmopr.com/api/trader/tips/images/82e77d3a-5468-474e-a667-6553151d6f6d.jpg",
+    },
+    {
+      id: 3,
+      title:
+        "Davis Cup 2025: Spain beats Germany to set up final against Italy",
+      desc: `Spain defeated Germany to qualify for the Davis Cup finals in an exciting match.`,
+      img: "http://market.mgmopr.com/api/trader/tips/images/82e77d3a-5468-474e-a667-6553151d6f6d.jpg",
+    },
+  ];
   return (
-    <div>index</div>
+    <div className='px-3 py-2 md:hidden'>
+      <div className="border border-[#0000002d] rounded-lg bg-white shadow-sm w-full max-w-[600px] mx-auto">
+        <h2 className="text-xl font-bold py-2 px-4">NEWS</h2>
+
+        <div className="flex flex-col overflow-y-auto">
+          {newsData.map((item) => (
+            <div
+              key={item.id}
+              className="flex border-b border-[#edeef0] p-2 last:border-none"
+            >
+              {/* IMAGE */}
+              <div className='w-1/3 max-w-1/3 min-w-1/3'>
+                <img
+                  src={item.img}
+                  alt="news"
+                  className="w-full h-[90px] max-w-[285px] rounded-md object-cover"
+                />
+              </div>
+
+              {/* TEXT */}
+              <div className="flex flex-col w-2/3 max-w-2/3 min-w-2/3 ml-[1%]">
+                <h3 className="font-semibold text-[15px] leading-tight line-clamp-2">
+                  {item.title}
+                </h3>
+                <p className="text-sm text-gray-600 leading-tight mt-1 line-clamp-5">
+                  {item.desc}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
