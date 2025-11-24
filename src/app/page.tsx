@@ -23,8 +23,7 @@ export default function Home() {
     <div>
       {isMobile ? (
         <>
-          <MMenuTabs />
-          <MSportsTab />
+         
           {/* <MBetSlip/> */}
           <MSingleMarket />
           <MCasino />
