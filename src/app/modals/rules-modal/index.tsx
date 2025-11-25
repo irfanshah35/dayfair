@@ -26,11 +26,11 @@ export default function RulesModal({ open, onClose }: RulesModalProps) {
     // if (!open) return null;
     return (
         <div>
-            <div className="fixed inset-0 pt-[14px] bg-black/50 flex items-center justify-center z-50">
+            <div className="fixed inset-0 pt-3.5 bg-black/50 flex items-center justify-center z-50">
                 <div className={`
-          bg-white mx-[7px] w-full max-w-[500px] max-h-[100vh] shadow-lg overflow-y-auto no-scrollbar
+          bg-white mx-[7px] w-full max-w-[500px] max-h-screen shadow-lg overflow-y-auto no-scrollbar
           transform transition-all duration-300 ease-out
-          ${open ? "translate-y-0 opacity-100" : "-translate-y-[100%] opacity-0"}
+          ${open ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"}
         `}>
 
                     {/* Header */}

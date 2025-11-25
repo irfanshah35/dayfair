@@ -5,7 +5,7 @@ import React, { useState } from "react";
 
 
 const MMenuTabs = () => {
-  const [activeTab, setActiveTab] = useState(10);
+  const [activeTab, setActiveTab] = useState(11);
   const router = useRouter();
 
   const tabs = [
@@ -16,18 +16,20 @@ const MMenuTabs = () => {
   ];
 
 
-  const goToLogin = (tab: any) => {
-    setActiveTab(tab.id)
-    if (tab.id === 10) {
-      router.push("/inplay");
-    } else if (tab.id === 11) {
-      router.push("");
-    } else if (tab.id === 16) {
-      router.push("live-casino");
-    } else if (tab.id === 98) {
-      router.push("/m-tipsreview");
-    }
-  };
+ const goToLogin = (tab: any) => {
+  setActiveTab(tab.id);
+
+  if (tab.id === 10) {
+    router.push("/inplay");
+  } else if (tab.id === 11) {
+    router.push("/");
+  } else if (tab.id === 16) {
+    router.push("/live-casino");
+  } else if (tab.id === 98) {
+    router.push("/m-tipsreview");
+  }
+};
+
 
   return (
     <>
