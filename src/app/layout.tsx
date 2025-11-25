@@ -5,6 +5,7 @@ import "./globals.css";
 import MFooter from "./components/m-view/m-footer";
 import MMenuTabs from "./components/m-view/m-menu-tabs";
 import MSportsTab from "./components/m-view/m-sports-tab";
+import { useEffect } from "react";
 import Header from "./components/shared/Header";
 
 const geistSans = Geist({
@@ -29,6 +30,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  
+  useEffect(() => {
+    console.log("Current route:", pathname);
+  }, [pathname]);
   
   // Routes where header and footer should be hidden
   const hideHeaderFooter = pathname === "/mlogin";
