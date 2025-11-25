@@ -5,7 +5,7 @@ import "./globals.css";
 import MFooter from "./components/m-view/m-footer";
 import MMenuTabs from "./components/m-view/m-menu-tabs";
 import MSportsTab from "./components/m-view/m-sports-tab";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Header from "./components/shared/Header";
 
 const geistSans = Geist({
@@ -30,6 +30,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 992);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
   
   useEffect(() => {
     console.log("Current route:", pathname);
@@ -54,18 +62,48 @@ export default function RootLayout({
           antialiased
         `}
       >
-        {!hideHeaderFooter && <Header />}
-        
-        {!hideMenuAndSports && (
+        {isMobile ? (
+          // Mobile View Layout
           <>
-            <MMenuTabs />
-            {!hideSportsTab && <MSportsTab />}
+            {!hideHeaderFooter && <Header />}
+            
+            {!hideMenuAndSports && (
+              <>
+                <MMenuTabs />
+                {!hideSportsTab && <MSportsTab />}
+              </>
+            )}
+            
+            {children}
+            
+            {!hideHeaderFooter && <MFooter />}
+          </>
+        ) : (
+          // Desktop View Layout
+          <>
+            {!hideHeaderFooter && <Header />}
+            
+            {!hideMenuAndSports && (
+              <>
+                <MMenuTabs />
+                {!hideSportsTab && <MSportsTab />}
+              </>
+            )}
+            
+            <div className="flex">
+              {/* Left Sidebar  */}
+              <aside className="w-64 min-h-screen bg-gray-100">
+              </aside>
+              
+              {/* Main Content */}
+              <main className="flex-1">
+                {children}
+              </main>
+            </div>
+            
+            {!hideHeaderFooter && <MFooter />}
           </>
         )}
-        
-        {children}
-        
-        {!hideHeaderFooter && <MFooter />}
       </body>
     </html>
   );
