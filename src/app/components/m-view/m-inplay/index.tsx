@@ -70,7 +70,7 @@ const MInplay = () => {
      ];
 
      return (
-          <div className="h-full">
+          <div className="overflow-y-auto max-h-[265px]">
                {markets.map((item, idx) => (
                    <div
   key={idx}
