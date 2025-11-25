@@ -2,11 +2,11 @@
 import { usePathname } from "next/navigation";
 import { Geist, Geist_Mono, Roboto_Condensed } from "next/font/google";
 import "./globals.css";
-import MHeader from "./components/m-view/m-header";
 import MFooter from "./components/m-view/m-footer";
 import MMenuTabs from "./components/m-view/m-menu-tabs";
 import MSportsTab from "./components/m-view/m-sports-tab";
 import { useEffect } from "react";
+import Header from "./components/shared/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -54,7 +54,7 @@ export default function RootLayout({
           antialiased
         `}
       >
-        {!hideHeaderFooter && <MHeader />}
+        {!hideHeaderFooter && <Header />}
         
         {showMenuAndSports && (
           <>

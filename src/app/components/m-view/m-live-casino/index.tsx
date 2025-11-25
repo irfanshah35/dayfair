@@ -1,8 +1,12 @@
 "use client";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
+import { FaSearch, FaTimes } from "react-icons/fa";
 
 const MLiveCasino = () => {
   const [activeTab, setActiveTab] = useState("Popular");
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [searchActive, setSearchActive] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const tabs = [
     "Popular",
@@ -65,8 +69,80 @@ const MLiveCasino = () => {
     { img: "https://t20exchange.com/api/users/images/Balloon-01.png", class: "casino_sprite casino-kbc", name: "KBC" },
   ];
 
+  const menuItems = [
+    { label: "ALL", gradient: true },
+    { label: "OUR CASINO" },
+    { label: "INTERNATIONAL CASINO" },
+    { label: "VIRTUAL CASINO" },
+  ];
+
   return (
     <div>
+
+      <div className="relative flex items-center md:mt-[3px] justify-between bg-gradient-to-b from-[#030a12] via-[#444647] to-[#58595a] overflow-hidden">
+        {/* Menu Items */}
+        <ul className="flex text-[12px] md:text-[14px] overflow-x-auto scrollbar-none">
+          {menuItems.map((item: any, index: number) => (
+            <li key={index}>
+              <a href="#" className="block">
+                <div
+                  onClick={() => setActiveIndex(index)}
+                  className={`text-center px-[8px] whitespace-nowrap py-[7px] tracking-[-0.10px] border-r border-white font-semibold transition cursor-pointer ${activeIndex === index
+                      ? "bg-gradient-to-b from-[#f4b501] to-[#f68700] text-black"
+                      : item.gradient
+                        ? "bg-none text-white"
+                        : "text-white"
+                    }`}
+                >
+                  {item.label.includes("CASINO") ? (
+                    <span
+                      className={
+                        item.label.includes("OUR") || item.label.includes("VIRTUAL")
+                          ? "heartbeat-anim"
+                          : ""
+                      }
+                    >
+                      {item.label}
+                    </span>
+                  ) : (
+                    item.label
+                  )}
+                </div>
+              </a>
+            </li>
+          ))}
+        </ul>
+
+        {/* Search Button & Input */}
+        <div className=" absolute right-1 top-[1px]">
+          <div
+            className="w-[30px] absolute right-0 h-[30px] flex justify-center items-center bg-gradient-to-b from-[#f4b501] to-[#f68700] text-black cursor-pointer z-30 rounded-full border border-black"
+            onClick={() => setSearchActive(!searchActive)}
+          >
+            {searchActive ? (
+              <FaTimes className="text-black relative top-[-2px]" size={17} />
+            ) : (
+              <FaSearch className="text-black relative top-[-2px]" size={17} />
+            )}
+          </div>
+
+          {/* Dropdown Input */}
+          <div
+            className={`absolute right-1 top-0  h-[30px] z-10 transition-all duration-300 ease-linear overflow-hidden ${searchActive ? "w-[200px] opacity-100" : "w-0 opacity-0"
+              }`}
+          >
+            <input
+              ref={inputRef}
+              type="text"
+              placeholder="Search..."
+              className="w-full h-[30px] px-2 pb-[2px] outline-none rounded-full border border-gray-300 bg-white"
+              autoComplete="off"
+            />
+          </div>
+        </div>
+      </div>
+
+
       <ul className="flex overflow-x-auto overflow-y-hidden scrollbar-none m-0 p-0 list-none whitespace-nowrap">
         {tabs.map((tab) => (
           <li key={tab} className="inline-block">
@@ -106,6 +182,36 @@ const MLiveCasino = () => {
       </div>
 
       <style jsx>{`
+        .scrollbar-none::-webkit-scrollbar {
+          display: none;
+        }
+
+        .scrollbar-none {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+
+        @keyframes zoomInZoomOut {
+          0% {
+            transform: scale(0.865);
+            color: rgb(255, 56, 0);
+          }
+          50% {
+            transform: scale(1.097);
+            color: rgb(255, 252, 0);
+          }
+          100% {
+            transform: scale(0.865);
+            color: rgb(255, 56, 0);
+          }
+        }
+
+        .heartbeat-anim {
+          transition: 0.3s ease-in;
+          animation: zoomInZoomOut 1s ease infinite;
+          display: inline-block;
+        }
+
         .scrollbar-none::-webkit-scrollbar {
           display: none;
         }
