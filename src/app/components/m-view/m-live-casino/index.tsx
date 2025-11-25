@@ -150,7 +150,7 @@ const MLiveCasino = () => {
       {pathname !== "/live-casino" && (
         <ul className="flex overflow-x-auto overflow-y-hidden scrollbar-none m-0 p-0 list-none whitespace-nowrap">
           {tabs.map((tab) => (
-            <li key={tab} className="inline-block">
+            <li key={tab} className="inline-block border-r border-white">
               <a
                 onClick={() => setActiveTab(tab)}
                 className="cursor-pointer"
@@ -165,7 +165,8 @@ const MLiveCasino = () => {
                     fontFamily: '"Roboto Condensed", sans-serif'
                   }}
                 >
-                  <div className="text-center">{tab}</div>
+                  <div className="text-center  tracking-[-0.1px]">{tab}</div>
+
                 </div>
               </a>
             </li>
