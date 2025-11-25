@@ -38,11 +38,11 @@ export default function RootLayout({
   // Routes where header and footer should be hidden
   const hideHeaderFooter = pathname === "/mlogin";
   
-  // Routes where MMenuTabs and MSportsTab should show
-  const showMenuAndSports = pathname === "/" || pathname === "/inplay";
+  // Routes where MMenuTabs and MSportsTab should be hidden
+  const hideMenuAndSports = pathname === "/market-details" || pathname === "/mlogin";
   
-  // Routes where only MMenuTabs should show
-  const showMenuOnly = pathname === "/live-casino" || pathname === "/m-tipsreview";
+  // Routes where only MSportsTab should be hidden
+  const hideSportsTab = pathname === "/live-casino" || pathname === "/m-tipsreview";
 
   return (
     <html lang="en">
@@ -56,14 +56,12 @@ export default function RootLayout({
       >
         {!hideHeaderFooter && <Header />}
         
-        {showMenuAndSports && (
+        {!hideMenuAndSports && (
           <>
             <MMenuTabs />
-            <MSportsTab />
+            {!hideSportsTab && <MSportsTab />}
           </>
         )}
-        
-        {showMenuOnly && <MMenuTabs />}
         
         {children}
         
