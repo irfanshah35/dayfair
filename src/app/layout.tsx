@@ -93,7 +93,7 @@ export default function RootLayout({
             
             <div className="flex">
               {/* Left Sidebar  */}
-              <div className="w-52 min-h-screen bg-gray-100">
+              <div className="">
                 <Sidebar/>
               </div>
               
