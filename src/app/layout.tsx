@@ -6,7 +6,9 @@ import MFooter from "./components/m-view/m-footer";
 import MMenuTabs from "./components/m-view/m-menu-tabs";
 import MSportsTab from "./components/m-view/m-sports-tab";
 import { useEffect, useState } from "react";
-import Header from "./components/shared/Header";
+import Header from "./components/common/Header";
+import Sidebar from "./components/common/Sidebar";
+import DTopnav from "./components/d-view/d-topnav";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -85,15 +87,15 @@ export default function RootLayout({
             
             {!hideMenuAndSports && (
               <>
-                <MMenuTabs />
-                {!hideSportsTab && <MSportsTab />}
+                <DTopnav />
               </>
             )}
             
             <div className="flex">
               {/* Left Sidebar  */}
-              <aside className="w-64 min-h-screen bg-gray-100">
-              </aside>
+              <div className="w-52 min-h-screen bg-gray-100">
+                <Sidebar/>
+              </div>
               
               {/* Main Content */}
               <main className="flex-1">
