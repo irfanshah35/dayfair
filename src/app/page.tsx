@@ -5,8 +5,8 @@ import MCasino from "./components/m-view/m-live-casino";
 import MSingleMarket from "./components/m-view/m-single-market";
 import Loader from "./components/common/loader";
 import DSingleMarket from "./components/d-view/d-single-market";
-import DLiveCasino from "./components/d-view/d-live-casino";
 import DSportNav from "./components/d-view/d-sports-nav";
+import MFooter from "./components/m-view/m-footer";
 
 export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
@@ -36,15 +36,15 @@ export default function Home() {
     <div>
       {isMobile ? (
         <>
-          {/* <MBetSlip/> */}
           <MSingleMarket />
           <MCasino />
         </>
       ) : (
         <>
-        <DSportNav/>
-         <DSingleMarket />
-          <DLiveCasino />
+          <DSportNav />
+          <DSingleMarket />
+          <MCasino />
+          <MFooter />
         </>
       )}
     </div>

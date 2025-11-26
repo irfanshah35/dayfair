@@ -40,17 +40,17 @@ export default function RootLayout({
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  
+
   useEffect(() => {
     console.log("Current route:", pathname);
   }, [pathname]);
-  
+
   // Routes where header and footer should be hidden
   const hideHeaderFooter = pathname === "/mlogin";
-  
+
   // Routes where MMenuTabs and MSportsTab should be hidden
   const hideMenuAndSports = pathname === "/market-details" || pathname === "/mlogin";
-  
+
   // Routes where only MSportsTab should be hidden
   const hideSportsTab = pathname === "/live-casino" || pathname === "/m-tipsreview";
 
@@ -68,41 +68,41 @@ export default function RootLayout({
           // Mobile View Layout
           <>
             {!hideHeaderFooter && <Header />}
-            
+
             {!hideMenuAndSports && (
               <>
                 <MMenuTabs />
                 {!hideSportsTab && <MSportsTab />}
               </>
             )}
-            
+
             {children}
-            
+
             {!hideHeaderFooter && <MFooter />}
           </>
         ) : (
           // Desktop View Layout
           <>
             {!hideHeaderFooter && <Header />}
-            
+
             {!hideMenuAndSports && (
               <>
                 <DTopnav />
               </>
             )}
-            
+
             <div className="flex">
               {/* Left Sidebar  */}
               <div className="">
-                <Sidebar/>
+                <Sidebar />
               </div>
-              
+
               {/* Main Content */}
-              <main className="flex-1">
+              <main className="flex-1 px-[9px]">
                 {children}
               </main>
             </div>
-            
+
             {!hideHeaderFooter && <MFooter />}
           </>
         )}
