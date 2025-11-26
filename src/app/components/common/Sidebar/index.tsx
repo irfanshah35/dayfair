@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from 'react';
-import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import { FaChevronDown, FaChevronRight, FaCaretRight } from 'react-icons/fa';
 import { FaRegSquarePlus, FaRegSquareMinus } from 'react-icons/fa6';
 
 const Sidebar = () => {
@@ -22,7 +22,7 @@ const Sidebar = () => {
 
   return (
     <div 
-      className="w-52 p-0 min-h-screen  h-full hidden md:block"
+      className="p-0 min-h-screen  h-full hidden md:block"
       style={{
         background: 'linear-gradient(-180deg, #b8b3b3 0%, #dad6d6 100%)',
         fontFamily: "'Roboto Condensed', sans-serif",
@@ -106,30 +106,35 @@ const Sidebar = () => {
                         <span className="pl-1">Abu Dhabi T10</span>
                       </div>
                       
-                      {isAbuDhabiOpen && (
+                    {isAbuDhabiOpen && (
                         <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-5 pr-0">
+                          <li className="list-none py-1 pl-4 pr-0">
                             <div className="cursor-pointer flex items-start">
+                              <FaCaretRight className="inline-block mt-0.5 " size={17} />
                               <span>UAE Bulls v Northern Warriors</span>
                             </div>
                           </li>
-                          <li className="list-none py-1 pl-5 pr-0">
+                          <li className="list-none py-1 pl-4 pr-0">
                             <div className="cursor-pointer flex items-start">
+                              <FaCaretRight className="inline-block mt-0.5 " size={17} />
                               <span>Deccan Gladiators v Ajman Titans</span>
                             </div>
                           </li>
-                          <li className="list-none py-1 pl-5 pr-0">
+                          <li className="list-none py-1 pl-4 pr-0">
                             <div className="cursor-pointer flex items-start">
+                              <FaCaretRight className="inline-block mt-0.5 " size={17} />
                               <span>Royal Champs v Aspin Stallions</span>
                             </div>
                           </li>
-                          <li className="list-none py-1 pl-5 pr-0">
+                          <li className="list-none py-1 pl-4 pr-0">
                             <div className="cursor-pointer flex items-start">
+                              <FaCaretRight className="inline-block mt-0.5 " size={17} />
                               <span>Vista Riders v Quetta Cavalry</span>
                             </div>
                           </li>
                         </ul>
                       )}
+
                     </li>
 
                     {/* Falcons Champions Trophy */}
