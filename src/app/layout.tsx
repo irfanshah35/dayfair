@@ -93,8 +93,9 @@ export default function RootLayout({
 
             <div className="flex">
               {/* Left Sidebar  */}
-              <div className="">
-                <Sidebar/>
+             
+              <div className="w-[216px] min-h-screen bg-gray-100">
+                <Sidebar />
               </div>
 
               {/* Main Content */}
