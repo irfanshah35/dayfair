@@ -194,7 +194,7 @@ const MSingleMarket = () => {
       </div>
 
       <div className="hidden lg:block w-full">
-        <div className="bg-white">
+        <div className="bg-white px-[9px]">
           <table className="w-full coupon-table">
             <thead>
               <tr className="bg-white border-b-2 border-[#dee2e6]">
