@@ -93,12 +93,13 @@ export default function RootLayout({
 
             <div className="flex">
               {/* Left Sidebar  */}
-              <div className="">
-                <Sidebar/>
+             
+              <div className="w-[216px] min-h-screen bg-gray-100">
+                <Sidebar />
               </div>
 
               {/* Main Content */}
-              <main className="flex-1 px-[9px]">
+              <main className="flex-1 px-[9px] overflow-hidden">
                 {children}
               </main>
             </div>
