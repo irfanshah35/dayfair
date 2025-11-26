@@ -42,7 +42,7 @@ export default function Home() {
       ) : (
         <>
           <DSportNav />
-          <DSingleMarket />
+          <MSingleMarket />
           <MCasino />
           <MFooter />
         </>
