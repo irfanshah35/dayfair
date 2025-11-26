@@ -13,7 +13,7 @@ export default function DMarketDetailsPage() {
                 {/* Left Section */}
                 <div className="flex-1">
                     {/* Heading */}
-                    <div className="flex justify-between items-center mb-[3px] px-[10px] h-[32px] bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]">
+                    <div className="flex justify-between items-center mb-[3px] px-2.5 h-8 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]">
                         <span className="font-semibold text-white">Sri Lanka v Zimbabwe</span>
                         <span className="heartbeat-anim">INPLAY</span>
                     </div>
@@ -54,7 +54,7 @@ export default function DMarketDetailsPage() {
                         <h3 className="text-white text-sm font-semibold">1st Innings Runs Line</h3>
                         <button onClick={() => setRulesOpen(true)} className="text-white">
                             <svg
-                                className="w-[16px] h-[15px] relative "
+                                className="w-4 h-[15px] relative "
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 24 24"
                                 fill="currentColor"
@@ -84,29 +84,29 @@ export default function DMarketDetailsPage() {
                             </div>
 
                             <div className="text-center w-[10%] flex flex-col justify-center items-center border-l border-white">
-                                <span className="block text-[16px] leading-[1]">0</span>
+                                <span className="block text-[16px] leading-none">0</span>
                                 <span className="block text-[10px]">0</span>
                             </div>
                             <div className="text-center w-[10%] flex flex-col justify-center items-center border-l border-white">
-                                <span className="block text-[16px] leading-[1]">133</span>
+                                <span className="block text-[16px] leading-none">133</span>
                                 <span className="block text-[10px]">14.19</span>
                             </div>
 
                             <div className="text-center w-[10%] flex flex-col justify-center items-center text-white bg-[#4baca7] font-bold border-l border-white">
-                                <span className="block text-[16px] leading-[1]">147</span>
+                                <span className="block text-[16px] leading-none">147</span>
                                 <span className="block text-[10px]">223.59</span>
                             </div>
 
                             <div className="text-center w-[10%] flex flex-col justify-center items-center text-white bg-[#50d0a3] font-bold border-l border-white">
-                                <span className="block text-[16px] leading-[1]">155</span>
+                                <span className="block text-[16px] leading-none">155</span>
                                 <span className="block text-[10px]">223.03</span>
                             </div>
                             <div className="text-center w-[10%] flex flex-col justify-center items-center border-l border-white">
-                                <span className="block text-[16px] leading-[1]">173</span>
+                                <span className="block text-[16px] leading-none">173</span>
                                 <span className="block text-[10px]">27.95</span>
                             </div>
                             <div className="text-center w-[10%] flex flex-col justify-center items-center border-l border-white">
-                                <span className="block text-[16px] leading-[1]">0</span>
+                                <span className="block text-[16px] leading-none">0</span>
                                 <span className="block text-[10px]">0</span>
                             </div>
                         </div>
@@ -115,14 +115,14 @@ export default function DMarketDetailsPage() {
 
                 {/* Right Sidebar */}
                 <div className="w-full md:w-80 mt-6 md:mt-0 md:ml-4">
-                    <div className="bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] px-4 py-1 rounded-t mb-[10px] flex justify-between items-center border-b">
+                    <div className="bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] px-4 py-1 rounded-t mb-2.5 flex justify-between items-center border-b">
                         <h3 className="font-medium text-white">Live Match</h3>
                         <p className="text-white font-medium">
                             <i className="fas fa-tv"></i> live stream started
                         </p>
                     </div>
 
-                    <div className='mb-[10px]'>
+                    <div className='mb-2.5'>
                         <div className="bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] px-4 py-1 rounded-t border-b">
                             <h3 className="font-medium text-white">Place Bet</h3>
                         </div>
@@ -138,7 +138,7 @@ export default function DMarketDetailsPage() {
                         <div className="border-x border-[#ebebeb] rounded-b">
                             <div className="flex items-center p-2 gap-2 border-b border-[#ebebeb]">
                                 <span className="bg-[#dc3545] text-white px-2 py-1 rounded-full text-xs">
-                                    <span className='relative top-[1px]'>00</span>
+                                    <span className='relative top-px'>00</span>
                                 </span>
                                 <span className="text-black font-bold">Unmatched</span>
                             </div>
@@ -147,7 +147,7 @@ export default function DMarketDetailsPage() {
 
                             <div className="flex items-center p-2 gap-2 mt-[3px] border-b border-[#ebebeb]">
                                 <span className="bg-[#50d0ae] text-white px-2 py-1 rounded-full text-xs">
-                                    <span className='relative top-[1px]'>00</span>
+                                    <span className='relative top-px'>00</span>
                                 </span>
                                 <span className="text-black font-bold">Matched</span>
                             </div>
