@@ -53,7 +53,7 @@ const MMenuTabs = () => {
             style={{ display: "table-cell" }}
           >
             <a
-              className={`mb-[3px] ml-0.5 relative block text-white font-bold whitespace-nowrap no-underline cursor-pointer text-[12px] pt-0 pb-0 ${
+              className={`mb-[3px] ml-0.5 relative block tracking-[-0.1px] text-white font-bold whitespace-nowrap no-underline cursor-pointer text-[12px] pt-0 pb-0 ${
                 index < tabs.length - 1 ? "border-r border-white" : ""
               }`}
               style={{
@@ -66,7 +66,7 @@ const MMenuTabs = () => {
                 className={`
                   ${tab.hasHeartbeat ? "heartbeat-anim" : ""}
                   ${
-                    tab.label === "EXCHANGE"
+                    activeTab === tab.id
                       ? "relative top-0.5"
                       : ""
                   }

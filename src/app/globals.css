@@ -140,3 +140,18 @@ body {
 .btn-clr {
     background: linear-gradient(180deg, #030a12, #444647 42%, #58595a);
 }
+
+@keyframes pulseColor {
+  0% {
+    color: #16a34a;
+  }
+  50% {
+    color: #dc2626;
+  }
+  100% {
+    color: #16a34a;
+  }
+}
+.animate-pulse {
+  animation: pulseColor 1s ease-in-out infinite;
+}

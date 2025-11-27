@@ -98,7 +98,7 @@ const Header = () => {
             <div className="flex-1 flex justify-end md:pe-4 md:p-[3px] md:flex-[0_0_auto]">
               <button
                 onClick={goToLogin}
-                className="h-[30px] w-full border border-black rounded-[3.875px] text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px] md:w-[108px] md:font-bold"
+                className="h-[30px] border w-[101.5px] border-black rounded-[3.875px] text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px] md:w-[108px] md:font-bold"
                 style={{
                   background:
                     "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",

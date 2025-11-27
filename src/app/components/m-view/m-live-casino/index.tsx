@@ -333,7 +333,7 @@ const MLiveCasino = () => {
       )}
 
       {pathname !== "/live-casino" && (
-        <div className="min-[992px]:bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] lg:mb-3 w-full overflow-x-hidden">
+        <div className="bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] lg:mb-3 w-full overflow-x-hidden">
           <ul className="flex overflow-x-auto overflow-y-hidden scrollbar-none m-0 p-0 list-none whitespace-nowrap">
             {tabs.map((tab) => (
               <li key={tab} className="inline-block border-r border-white">
@@ -342,7 +342,7 @@ const MLiveCasino = () => {
                     className={`p-2 uppercase text-xs min-[992px]:text-[16px] min-[992px]:font-[400] min-[992px]:!py-1 min-[992px]:!px-[15px] font-bold tracking-wide ${
                       activeTab === tab
                         ? "bg-linear-to-b from-[#f4b501] to-[#f68700] text-black"
-                        : "bg-[#58595a] text-white min-[992px]:!bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]"
+                        : "text-white !bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]"
                     }`}
                     style={{
                       padding: "8px",

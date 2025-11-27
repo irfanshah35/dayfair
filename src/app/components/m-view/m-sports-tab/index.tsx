@@ -33,7 +33,7 @@ const MSportsTab = () => {
                                             className={`w-5 h-5 sprite ${item.icon}`}
                                         />
                                     </div>
-                                    <div className="text-[12px] font-semibold uppercase">
+                                    <div className="text-[12px] font-semibold uppercase tracking-[-0.1px]">
                                         {item.text}
                                     </div>
                                 </div>
