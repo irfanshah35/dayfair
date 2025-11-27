@@ -129,7 +129,7 @@ const MSingleMarket = () => {
   ];
 
   return (
-    <div>
+    <div className="lg:px-[9px]">
       <div className="lg:hidden overflow-y-auto max-h-[265px]">
         {markets.length > 0 ? (
           markets.map((item, idx) => (
@@ -242,10 +242,12 @@ const MSingleMarket = () => {
                             )}
                           </a>
                         </div>
-                        <div className="game-icons float-right w-auto flex items-center space-x-1">
+                        <div className="game-icons float-right w-auto flex items-center space-x-1 -mt-px">
                           {item.inplay && (
-                            <span className="game-icon w-[25px] flex justify-center items-center
-">
+                            <span
+                              className="game-icon w-[25px] flex justify-center items-center
+"
+                            >
                               <span className="w-3 h-3 bg-[#28a745] rounded-full inline-block"></span>
                             </span>
                           )}
