@@ -265,15 +265,15 @@ const MLiveCasino = () => {
       }`}
     >
       {pathname === "/live-casino" && (
-        <div className="relative flex items-center md:mt-[3px] justify-between bg-linear-to-b from-[#030a12] via-[#444647] to-[#58595a] overflow-hidden lg:mb-3">
+        <div className="relative flex items-center md:mt-[3px] justify-between bg-linear-to-b from-[#030a12] via-[#444647] to-[#58595a] overflow-hidden lg:mb-3 h-[33px]">
           {/* Menu Items */}
-          <ul className="flex text-[12px] md:text-[14px] overflow-x-auto scrollbar-none">
+          <ul className="flex text-[12px] md:text-[14px] h-[33px] overflow-x-auto scrollbar-none">
             {menuItems.map((item: any, index: number) => (
               <li key={index}>
                 <a href="#" className="block">
                   <div
                     onClick={() => setActiveIndex(index)}
-                    className={`text-center px-2 whitespace-nowrap py-[7px] tracking-[-0.10px] border-r border-white font-semibold transition cursor-pointer ${
+                    className={`text-center px-2 whitespace-nowrap h-[33px] py-[7px] tracking-[-0.10px] border-r border-white font-semibold transition cursor-pointer ${
                       activeIndex === index
                         ? "bg-linear-to-b from-[#f4b501] to-[#f68700] text-black"
                         : item.gradient
@@ -358,8 +358,8 @@ const MLiveCasino = () => {
         </div>
       )}
       {/*  */}
-      <div className="container mx-auto p-1 lg:pt-3">
-        <div className="grid grid-cols-3 md:grid-cols-6 lg:gap-y-[15px] mt-3">
+      <div className="container mx-auto lg:pt-3">
+        <div className="grid grid-cols-3 md:grid-cols-6 lg:gap-y-[15px] mt-1.5">
           {items.map((item, index) => (
             <div key={index} className="text-center px-2">
               <div className="casino-box">

@@ -78,7 +78,7 @@ const MInplay = () => {
   className="text-black block no-underline cursor-pointer hover:bg-[#e5eef3]"
 >
 
-                         <div className="bg-[#f1f5f8] border-b border-[#d6d8d7] px-3 py-1">
+                         <div className="bg-[#f1f5f8] border-b border-[#d6d8d7] px-3 pt-[5px] pb-[3px]">
 
                               {/* Header */}
                               <div className="flex items-center">
@@ -86,7 +86,7 @@ const MInplay = () => {
                                         <p className="mb-0 text-[13px] font-bold leading-tight">
                                              {item.match}
                                         </p>
-                                        <p className="mb-0 text-[12px] leading-tight mt-[3px]">
+                                        <p className="mb-0 text-[12px] leading-tight mt-[2.5px]">
                                              {item.time}
                                         </p>
                                    </div>
@@ -94,7 +94,7 @@ const MInplay = () => {
                                    <div className="w-1/3 text-right">
                                         {item.inplay && (
                                              <span className="inline-block">
-                                                  <span className="inplay-animation font-bold text-[12px] mr-1 align-top relative top-[-5px]">
+                                                  <span className="inplay-animation font-bold text-[12px] mr-1 align-top relative right-[1px] top-[-5px]">
                                                        INPLAY
                                                   </span>
                                              </span>
