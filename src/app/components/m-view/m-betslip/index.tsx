@@ -111,19 +111,19 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
   return (
     <div ref={slipRef} className="relative w-full">
       <div
-        className="px-[5px] pt-3 pb-4"
+        className="lg:px-[5px] pt-3 pb-[13px] md:pb-4"
         style={{ backgroundColor: getBgColor() }}
       >
-        <div className="w-[95%]" style={{ margin: "0 auto" }}>
+        <div className="w-[95.5%]" style={{ margin: "0 auto" }}>
           {/* HEADER */}
           <div className="flex justify-between items-center mb-1.5">
-            <div className="px-[9px] flex-1">
+            <div className="px-[6px] md:px-[9px] flex-1">
               <span className="font-bold text-black text-[14px]">
                 {runnerName}
               </span>
             </div>
 
-            <div className="flex flex-1 items-center px-[9px] gap-2">
+            <div className="flex flex-1 items-center ml-[6px] md:ml-0 md:px-[9px] gap-[7px]">
               <span className="text-[14px] font-bold text-black">MatchMe</span>
 
               <label className="matchMe relative w-[55px] h-[25px] inline-block cursor-pointer">
@@ -204,7 +204,7 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
           </div>
 
           {/* STAKE BUTTONS */}
-          <div className="grid grid-cols-4 gap-2 mb-1.5">
+          <div className="grid grid-cols-4 gap-x-[7px] gap-y-[6px] mb-1.5">
             {stackButtons.map((value) => {
               const isSelected = betAmount === value.toString();
 
@@ -213,7 +213,7 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
                   key={value}
                   onClick={() => handleStackClick(value)}
                   className={`
-                    font-bold text-[14px] h-9 rounded-none transition-colors border
+                    font-bold text-[14px] h-9 !leading-[36px] rounded-none transition-colors border
                     ${isSelected ? "border-black" : "border-white"}
                   `}
                   style={{
@@ -233,7 +233,7 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
             {/* Cancel Button */}
             <button
               onClick={handleCancel}
-              className="text-white font-bold h-9 rounded-none transition-colors border border-white"
+              className="text-white font-bold leading-[36px] h-9 rounded-none transition-colors border border-white"
               style={{
                 fontSize: "14px",
                 background: btnBg,
@@ -252,7 +252,7 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
                 disabled:cursor-not-allowed
               `}
               style={{
-                fontSize: "14px",
+                fontSize: "16px",
                 background: betAmount ? gradient : "#E5AD56",
                 color: betAmount ? "black" : "white",
               }}

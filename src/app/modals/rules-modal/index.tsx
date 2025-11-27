@@ -36,16 +36,16 @@ export default function RulesModal({ open, onClose }: RulesModalProps) {
         `}>
 
                     {/* Header */}
-                    <div className="flex items-center justify-between px-2.5 py-[7px] md:!py-0 bg-[linear-gradient(180deg,#000000,#000000_42%,#000000)] text-white">
+                    <div className="flex items-center justify-between px-2.5 h-[49px] md:!py-0 bg-[linear-gradient(180deg,#000000,#000000_42%,#000000)] text-white">
                         <h1 className="text-xl font-medium">Rules</h1>
                         <button
                             onClick={onClose}
-                            className="bg-transparent border-0 p-0 text-3xl leading-[1.5] md:text-3xl md:text-[32px] max-[992px]:text-[35px]">
+                            className="bg-transparent border-0 p-0 text-[35px]">
                             ×
                         </button>
 
                     </div>
-                    <div className="p-3 pt-9 md:!pt-14 pb-9 text-[12px]">
+                    <div className="p-3 pt-9 md:!pt-14 pb-9 text-[15px]">
                         <span className=''>
                             <b>MARKET INFORMATION</b>
                         </span>
