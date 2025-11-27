@@ -85,11 +85,10 @@ export default function RootLayout({
           <>
             {!hideHeaderFooter && <Header />}
 
-            {!hideMenuAndSports && (
               <>
                 <DTopnav />
               </>
-            )}
+           
 
             <div className="flex">
               {/* Left Sidebar  */}

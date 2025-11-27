@@ -2,11 +2,19 @@
 import React, { useEffect, useState } from 'react'
 import MMarketDetailsPage from '../components/m-view/m-market-details-page'
 import Loader from '../components/common/loader';
+import DMarketDetailsPage from '../components/d-view/d-markets-details';
 
 
 const MarketDetailsPage = () => {
     const [isLoading, setIsLoading] = useState(true);
+ const [isMobile, setIsMobile] = useState(false);
 
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 992);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
  useEffect(() => {
     // Simulate loading time
     const timer = setTimeout(() => {
@@ -21,8 +29,17 @@ const MarketDetailsPage = () => {
   }
   return (
     <div>
-        <MMarketDetailsPage/>
-      
+   {isMobile ? (
+        <>
+          <MMarketDetailsPage />
+          
+        </>
+      ) : (
+        <>
+          <DMarketDetailsPage />
+          
+        </>
+      )}      
     </div>
   )
 }
