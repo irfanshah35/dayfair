@@ -1,13 +1,11 @@
-"use client"
-import React, { useEffect, useState } from 'react'
-import MMarketDetailsPage from '../components/m-view/m-market-details-page'
-import Loader from '../components/common/loader';
-import DMarketDetailsPage from '../components/d-view/d-markets-details';
-
+"use client";
+import React, { useEffect, useState } from "react";
+import MMarketDetailsPage from "../components/m-view/m-market-details-page";
+import Loader from "../components/common/loader";
 
 const MarketDetailsPage = () => {
-    const [isLoading, setIsLoading] = useState(true);
- const [isMobile, setIsMobile] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 992);
@@ -15,7 +13,7 @@ const MarketDetailsPage = () => {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
- useEffect(() => {
+  useEffect(() => {
     // Simulate loading time
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -29,19 +27,17 @@ const MarketDetailsPage = () => {
   }
   return (
     <div>
-   {isMobile ? (
+      {isMobile ? (
         <>
           <MMarketDetailsPage />
-          
         </>
       ) : (
         <>
-          <DMarketDetailsPage />
-          
+          <MMarketDetailsPage />
         </>
-      )}      
+      )}
     </div>
-  )
-}
+  );
+};
 
-export default MarketDetailsPage
+export default MarketDetailsPage;
