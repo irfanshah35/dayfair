@@ -49,10 +49,12 @@ export default function RootLayout({
   const hideHeaderFooter = pathname === "/mlogin";
 
   // Routes where MMenuTabs and MSportsTab should be hidden
-  const hideMenuAndSports = pathname === "/market-details" || pathname === "/mlogin";
+  const hideMenuAndSports =
+    pathname === "/market-details" || pathname === "/mlogin";
 
   // Routes where only MSportsTab should be hidden
-  const hideSportsTab = pathname === "/live-casino" || pathname === "/m-tipsreview";
+  const hideSportsTab =
+    pathname === "/live-casino" || pathname === "/m-tipsreview";
 
   return (
     <html lang="en">
@@ -85,20 +87,19 @@ export default function RootLayout({
           <>
             {!hideHeaderFooter && <Header />}
 
-              <>
-                <DTopnav />
-              </>
-           
+            <>
+              <DTopnav />
+            </>
 
-            <div className="flex">
+            <div className="flex lg:w-full">
               {/* Left Sidebar  */}
-             
-              <div className="w-[216px] min-h-screen bg-[#C3BDBD]">
+
+              <div className="min-w-[15%] min-h-screen bg-[#C3BDBD]">
                 <Sidebar />
               </div>
 
               {/* Main Content */}
-              <main className="flex-1  overflow-hidden">
+              <main className="flex-1 lg:min-w-[85%] overflow-hidden">
                 {children}
               </main>
             </div>
