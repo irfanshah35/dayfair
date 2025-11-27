@@ -65,7 +65,7 @@ const Header = () => {
 
         {/* Login Button */}
         <div className="flex justify-end w-full md:h-[66px] flex-1">
-          <div className="hidden md:flex p-1 items-center justify-end flex-[0_0_auto] w-[83.33333333%] max-w-full">
+          <div className="hidden md:flex md:ml-[17px] p-1 items-center justify-end flex-[0_0_auto] w-[83.33333333%] max-w-full">
             <ul className="hidden md:flex list-none mt-2.5 mb-3 items-center pl-8">
               <li
                 ref={wrapperRef}
@@ -95,7 +95,7 @@ const Header = () => {
           </div>
           <div className="w-[110%] gap-1 flex items-center">
             <div className="flex-1 md:hidden"></div>
-            <div className="flex-1 flex justify-end md:pe-4 md:p-1 md:flex-[0_0_auto]">
+            <div className="flex-1 flex justify-end md:pe-4 md:p-[3px] md:flex-[0_0_auto]">
               <button
                 onClick={goToLogin}
                 className="h-[30px] w-full border border-black rounded-[3.875px] text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px] md:w-[108px] md:font-bold"
