@@ -138,20 +138,20 @@ const MSingleMarket = () => {
               onClick={() => router.push("/market-details")}
               className="text-black block no-underline cursor-pointer hover:bg-[#e5eef3]"
             >
-              <div className="bg-[#f1f5f8] border-b border-[#d6d8d7] px-3 py-1">
+              <div className="bg-[#f1f5f8] border-b border-[#d6d8d7] px-3 pt-[5px] pb-[3px]">
                 <div className="flex items-center">
                   <div className="w-2/3 flex flex-col">
                     <p className="mb-0 text-[13px] font-bold leading-tight">
                       {item.match}
                     </p>
-                    <p className="mb-0 text-[12px] leading-tight mt-[3px]">
+                    <p className="mb-0 text-[12px] leading-tight mt-[2.5px]">
                       {item.time}
                     </p>
                   </div>
                   <div className="w-1/3 text-right">
                     {item.inplay && (
                       <span className="inline-block">
-                        <span className="font-bold text-[12px] mr-1 align-top relative top-[-5px] animate-pulse text-green-600">
+                        <span className="font-bold text-[12px] relative right-[1px] mr-1 align-top relative top-[-5px] animate-pulse">
                           INPLAY
                         </span>
                       </span>
@@ -174,10 +174,10 @@ const MSingleMarket = () => {
                 <div className="flex">
                   {item.odds.map((o, i) => (
                     <div key={i} className="w-1/3 flex justify-center">
-                      <button className="w-1/2 bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer">
+                      <button className="w-1/2 bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[24px] border-0 cursor-pointer">
                         {o.back}
                       </button>
-                      <button className="w-1/2 bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer">
+                      <button className="w-1/2 bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[24px] border-0 cursor-pointer">
                         {o.lay}
                       </button>
                     </div>
