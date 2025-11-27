@@ -4,6 +4,7 @@ import React from "react";
 import { useEffect, useState, useRef } from "react";
 import MBetSlip from "../m-betslip";
 import RulesModal from "@/app/modals/rules-modal";
+import DBetSlip from "../../d-view/d-betslip";
 
 // JSON Data for Markets
 const MARKETS_DATA = [
@@ -470,8 +471,8 @@ export default function MMarketDetailsPage() {
   };
 
   return (
-    <div>
-      <div className="relative flex justify-between items-center bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]">
+    <div className="lg:m-[5px]">
+      <div className="relative flex lg:hidden justify-between items-center bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]">
         {/* Tabs */}
         <div className="flex items-center text-black font-semibold">
           <div className="flex pt-[13px] pb-3">
@@ -539,11 +540,11 @@ export default function MMarketDetailsPage() {
           </div>
         </div>
       ) : (
-        <div className="flex">
-          <div className="left-part overflow-y-auto w-full">
+        <div className="flex w-full">
+          <div className="left-part overflow-y-auto w-full lg:w-[70%]">
             {/* Game Header */}
-            <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[3.5px] pl-2 pr-[8px] text-white">
-              <span className="text-sm font-medium">
+            <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[3.5px] pl-2 pr-2 lg:mb-[3px] text-white">
+              <span className="text-sm lg:text-[15px] lg:font-bold lg:uppercase font-medium lg:leading-normal">
                 Titans W v South Western Districts W
               </span>
               <span className=" game-iconinplay">
@@ -910,6 +911,10 @@ export default function MMarketDetailsPage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          <div className="right-part hidden lg:block lg:w-[30%] ml-[5px]">
+            <DBetSlip />
           </div>
         </div>
       )}
