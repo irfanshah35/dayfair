@@ -261,7 +261,7 @@ const MLiveCasino = () => {
   return (
     <div
       className={`lg:bg-white  ${
-        pathname === "/live-casino" ? "lg:pt-0" : "lg:pt-10"
+        pathname === "/live-casino" ? "lg:pt-0 px-[9px]" : "lg:pt-10"
       }`}
     >
       {pathname === "/live-casino" && (
