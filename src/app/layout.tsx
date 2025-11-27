@@ -98,7 +98,7 @@ export default function RootLayout({
               </div>
 
               {/* Main Content */}
-              <main className="flex-1 px-[9px] overflow-hidden">
+              <main className="flex-1  overflow-hidden">
                 {children}
               </main>
             </div>

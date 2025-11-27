@@ -191,7 +191,7 @@ export default function DMarketDetailsPage() {
   };
 
   return (
-    <div className="grid grid-cols-10 mt-1 bg-gray-100 min-h-screen">
+    <div className="grid grid-cols-10 m-[5px] bg-gray-100 min-h-screen">
       {/* Main Content - 8 columns */}
       <div className="col-span-10 lg:col-span-7">
     
@@ -350,7 +350,7 @@ export default function DMarketDetailsPage() {
       </div>
 
       {/* Sidebar - 4 columns */}
-      <div className="col-span-10 lg:col-span-3 bg-gray-800 text-white">
+      <div className="col-span-10 lg:col-span-3 bg-gray-800 text-white ml-[5px]">
         {/* Live Match Header */}
         <div className="bg-gradient-to-b from-orange-500 to-orange-600 p-3">
           <div className="flex items-center gap-2 mb-2">
