@@ -4,7 +4,7 @@ const DSportNav = () => {
   const sports = ["Cricket", "Tennis", "Soccer", "Horse Racing"];
 
   return (
-    <div className="w-full">
+    <div className="w-full px-[9px]">
       <ul
         className="
         flex 
@@ -15,7 +15,7 @@ const DSportNav = () => {
         ml-0.5 
         pl-0 
         pt-0
-        scrollbar-none
+        [scrollbar-width:none]
         bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]
       "
       >
@@ -28,9 +28,10 @@ const DSportNav = () => {
               border-r border-white
               min-w-max
               text-[16px]
-              ${sport === "Cricket"
-                ? "text-black bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]"
-                : "text-white"
+              ${
+                sport === "Cricket"
+                  ? "text-black bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]"
+                  : "text-white"
               }
             `}
           >
