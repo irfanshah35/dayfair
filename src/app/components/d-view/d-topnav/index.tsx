@@ -32,7 +32,7 @@ const DTopnav = () => {
             <Link 
               key={item.href}
               href={item.href} 
-              className="nav-link px-[15px] py-0 h-text flex items-center text-black font-bold text-[14px] transition-opacity relative group"
+              className="nav-link px-[15px] py-0 h-text flex items-center text-black text-[14px] transition-opacity relative group"
             >
               {item.label}
               {isActive(item.href) && (
