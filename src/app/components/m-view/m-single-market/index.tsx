@@ -7,7 +7,7 @@ const MSingleMarket = () => {
 
   const markets = [
     {
-      match: "India v South Africa",
+      match: "Otago Volts v Canterbury Kings ",
       time: "23/11/2025 04:00 AM",
       inplay: true,
       odds: [
@@ -198,7 +198,7 @@ const MSingleMarket = () => {
           <table className="w-full coupon-table">
             <thead>
               <tr className="bg-white border-b-2 border-[#dee2e6]">
-                <th className="w-[63%] text-left pt-1 pb-[5px] px-[15px] text-[12px] font-bold text-[#303030]">
+                <th className="w-[63%] text-left pt-1 pb-[5px] px-[15px] text-[12px] text-[#303030]">
                   Game
                 </th>
                 <th
@@ -231,7 +231,7 @@ const MSingleMarket = () => {
                   >
                     <td className="px-[15px] align-middle">
                       <div className="flex justify-between items-center">
-                        <div className="game-name float-left text-left">
+                        <div className="game-name float-left text-left relative bottom-[3px]">
                           <a className="text-[#212529] hover:underline cursor-pointer text-[14px]">
                             {item.match}
                             {item.time && (
@@ -244,7 +244,8 @@ const MSingleMarket = () => {
                         </div>
                         <div className="game-icons float-right w-auto flex items-center space-x-1">
                           {item.inplay && (
-                            <span className="game-icon">
+                            <span className="game-icon w-[25px] flex justify-center items-center
+">
                               <span className="w-3 h-3 bg-[#28a745] rounded-full inline-block"></span>
                             </span>
                           )}
