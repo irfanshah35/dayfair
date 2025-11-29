@@ -1,22 +1,13 @@
 "use client";
-import Header from "@/components/common/header";
-import Loader from "@/components/common/loader";
-import Sidebar from "@/components/common/sidebar";
 import DSportNav from "@/components/d-view/d-sports-nav";
-import DTopnav from "@/components/d-view/d-topnav";
-import MFooter from "@/components/m-view/m-footer";
 import MLiveCasino from "@/components/m-view/m-live-casino";
-import MMenuTabs from "@/components/m-view/m-menu-tabs";
 import MSingleMarket from "@/components/m-view/m-single-market";
-import MSportsTab from "@/components/m-view/m-sports-tab";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 // import MHeader from "./components/m-view/m-header";
 
 export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const pathname = usePathname();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 992);
@@ -25,64 +16,24 @@ export default function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    // Simulate loading time
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return <Loader />;
-  }
-
-  const hideMenuAndSports = pathname === "/market-details";
-
-  // Routes where only MSportsTab should be hidden
-  const hideSportsTab =
-    pathname === "/live-casino" || pathname === "/m-tipsreview";
-
   return (
     <>
-      <Header />
-      {isMobile && !hideMenuAndSports && (
-        <>
-          <MMenuTabs />
-          {!hideSportsTab && <MSportsTab />}
-        </>
-      )}
-      {!isMobile && (
-        <>
-          <DTopnav />
-        </>
-      )}
-      {isMobile ? (
+      {/* ================= MOBILE VIEW ================= */}
+      {isMobile && (
         <>
           <MSingleMarket />
           <MLiveCasino />
         </>
-      ) : (
-        <div className="flex lg:w-full">
-          {/* Left Sidebar  */}
+      )}
 
-          <div className="min-w-[15%] min-h-screen bg-[#C3BDBD]">
-            <Sidebar />
-          </div>
-
-          {/* Main Content */}
-          <main className="flex-1 lg:min-w-[85%] overflow-hidden">
-            <div>
-              <DSportNav />
-              <MSingleMarket />
-              <MLiveCasino />
-              <MFooter />
-            </div>
-          </main>
+      {/* ================= DESKTOP VIEW ================= */}
+      {!isMobile && (
+        <div>
+          <DSportNav />
+          <MSingleMarket />
+          <MLiveCasino />
         </div>
       )}
-      <MFooter />
     </>
   );
 }
