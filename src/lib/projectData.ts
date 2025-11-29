@@ -837,3 +837,148 @@ Pakistan, which has won both its league games, next plays against Zimbabwe on Su
     img: "http://market.mgmopr.com/api/trader/tips/images/82e77d3a-5468-474e-a667-6553151d6f6d.jpg",
   },
 ];
+export const sportsData = [
+  {
+    sport: "Cricket",
+    key: "cricket",
+    tournaments: [
+      {
+        title: "Abu Dhabi T10",
+        key: "abuDhabi",
+        matches: [
+          "UAE Bulls v Aspin Stallions",
+          "Deccan Gladiators v Ajman Titans",
+          "Royal Champs v Aspin Stallions",
+          "Vista Riders v Quetta Cavalry",
+        ],
+      },
+      {
+        title: "Falcons Champions Trophy",
+        key: "falcons",
+        matches: ["Kashmir XI v Afghan Tigers"],
+      },
+      {
+        title: "Plunket Shield",
+        key: "plunket",
+        matches: ["Plunket"],
+      },
+      {
+        title: "South Africa T20 Challenge",
+        key: "saT20",
+        matches: ["Lumbini Lions v Sudurpaschim Royals"],
+      },
+    ],
+  },
+
+  {
+    sport: "Soccer",
+    key: "soccer",
+    tournaments: [
+      {
+        title: "Abu Dhabi T10",
+        key: "abuDhabiFootball",
+        matches: [
+          "UAE Bulls v Northern Warriors",
+          "Deccan Gladiators v Ajman Titans",
+          "Royal Champs v Aspin Stallions",
+          "Vista Riders v Quetta Cavalry",
+        ],
+      },
+      {
+        title: "Falcons Champions Trophy",
+        key: "falconsFootball",
+        matches: ["Kashmir XI v Afghan Tigers"],
+      },
+      {
+        title: "International Twenty20 Matches",
+        key: "int20",
+        matches: [
+          "Pakistan v Sri Lanka",
+          "Bangladesh v Ireland",
+          "Bahrain v Thailand",
+        ],
+      },
+      {
+        title: "Nepal Premier League",
+        key: "nepalPL",
+        matches: [
+          "Lumbini Lions v Sudurpaschim Royals",
+          "Janakpur Bolts v Pokhara Avengers",
+          "Chitwan Rhinos v Kathmandu Gurkhas",
+          "Karnali Yaks v Biratnagar Kings",
+        ],
+      },
+      {
+        title: "T10 League Internationals",
+        key: "t10League",
+        matches: ["T10"],
+      },
+      {
+        title: "Plunket Shield",
+        key: "plunketFootball",
+        matches: ["Plunket"],
+      },
+      {
+        title: "South Africa T20 Challenge",
+        key: "saT20Football",
+        matches: ["Lumbini Lions v Sudurpaschim Royals"],
+      },
+    ],
+  },
+
+  {
+    sport: "Tennis",
+    key: "tennis",
+    tournaments: [
+      {
+        title: "Abu Dhabi T10",
+        key: "abuDhabiTennis",
+        matches: [
+          "UAE Bulls v Northern Warriors",
+          "Deccan Gladiators v Ajman Titans",
+          "Royal Champs v Aspin Stallions",
+          "Vista Riders v Quetta Cavalry",
+        ],
+      },
+      {
+        title: "Falcons Champions Trophy",
+        key: "falconsTennis",
+        matches: ["Kashmir XI v Afghan Tigers"],
+      },
+      {
+        title: "International Twenty20 Matches",
+        key: "int20Tennis",
+        matches: [
+          "Pakistan v Sri Lanka",
+          "Bangladesh v Ireland",
+          "Bahrain v Thailand",
+        ],
+      },
+      {
+        title: "Nepal Premier League",
+        key: "nepalPLTennis",
+        matches: [
+          "Lumbini Lions v Sudurpaschim Royals",
+          "Janakpur Bolts v Pokhara Avengers",
+          "Chitwan Rhinos v Kathmandu Gurkhas",
+          "Karnali Yaks v Biratnagar Kings",
+        ],
+      },
+      {
+        title: "T10 League Internationals",
+        key: "t10Tennis",
+        matches: ["T10"],
+      },
+      {
+        title: "Plunket Shield",
+        key: "plunketTennis",
+        matches: ["Plunket"],
+      },
+      {
+        title: "South Africa T20 Challenge",
+        key: "saT20Tennis",
+        matches: ["Lumbini Lions v Sudurpaschim Royals"],
+      },
+    ],
+  },
+];

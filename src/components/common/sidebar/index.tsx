@@ -1,34 +1,24 @@
 "use client";
+import { sportsData } from "@/lib/projectData";
 import React, { useState } from "react";
-import { FaChevronDown, FaChevronRight, FaCaretRight } from "react-icons/fa";
+import { FaChevronDown, FaCaretRight } from "react-icons/fa";
 import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
 
-const Sidebar = () => {
+
+
+export default function Sidebar() {
   const [isOthersOpen, setIsOthersOpen] = useState(true);
   const [isAllSportsOpen, setIsAllSportsOpen] = useState(true);
-  const [isCricketOpen, setIsCricketOpen] = useState(false);
-  const [isSoccerOpen, setIsSoccerOpen] = useState(false);
-  const [isTennisOpen, setIsTennisOpen] = useState(false);
-  const [isVolleyballOpen, setIsVolleyballOpen] = useState(false);
 
-  // Tournament states
-  const [isAbuDhabiOpen, setIsAbuDhabiOpen] = useState(false);
-  const [isFalconsOpen, setIsFalconsOpen] = useState(false);
-  const [isIntTwenty20Open, setIsIntTwenty20Open] = useState(false);
-  const [isNepalPLOpen, setIsNepalPLOpen] = useState(false);
-  const [isT10LeagueOpen, setIsT10LeagueOpen] = useState(false);
-  const [isPlunketOpen, setIsPlunketOpen] = useState(false);
-  const [isSAT20Open, setIsSAT20Open] = useState(false);
+  const [open, setOpen] = useState<Record<string, boolean>>({});
 
-  const [activeSection, setActiveSection] = useState(null);
-
-  const toggleSection = (section: any) => {
-    setActiveSection(activeSection === section ? null : section);
+  const toggle = (key: string) => {
+    setOpen((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   return (
     <div
-      className="p-0 min-h-screen  h-full hidden md:block"
+      className="p-0 min-h-screen h-full hidden md:block"
       style={{
         background: "linear-gradient(-180deg, #b8b3b3 0%, #dad6d6 100%)",
         fontFamily: "'Roboto Condensed', sans-serif",
@@ -36,16 +26,16 @@ const Sidebar = () => {
         lineHeight: "15px",
       }}
     >
-      {/* Others Section */}
+      {/* Others */}
       <div>
         <div
-          className="cursor-pointer ps-1.5 pe-2 py-[7px] min-h-[29.59px] mb-0  btn-clr text-white mt-px"
+          className="cursor-pointer ps-1.5 pe-2 py-[7px] min-h-[29.59px] mb-0 btn-clr text-white mt-px"
           onClick={() => setIsOthersOpen(!isOthersOpen)}
         >
-          <h5 className="inline-block w-full text-[18px] mb-0 relative">
+          <h5 className="inline-block w-full text-[18px] mb-0">
             Others
             <FaChevronDown
-              className={`float-right  transition-transform ${
+              className={`float-right transition-transform ${
                 isOthersOpen ? "" : "-rotate-90"
               }`}
               size={14}
@@ -55,20 +45,18 @@ const Sidebar = () => {
 
         {isOthersOpen && (
           <nav className="bg-[#C3BDBD]">
-            <ul className="mt-0 mb-0 -ml-3.5">
-              {/* Empty for now - Others content goes here */}
-            </ul>
+            <ul className="mt-0 mb-0 -ml-3.5">{/* Empty */}</ul>
           </nav>
         )}
       </div>
 
-      {/* All Sports Section */}
+      {/* All Sports */}
       <div>
         <div
-          className="cursor-pointer pe-2 ps-1.5 py-[7px] mb-0 mt-px  btn-clr text-white"
+          className="cursor-pointer pe-2 ps-1.5 py-[7px] mb-0 mt-px btn-clr text-white"
           onClick={() => setIsAllSportsOpen(!isAllSportsOpen)}
         >
-          <h5 className="inline-block w-full text-[18px] mb-0 relative">
+          <h5 className="inline-block w-full text-[18px] mb-0">
             All Sports
             <FaChevronDown
               className={`float-right transition-transform ${
@@ -81,894 +69,80 @@ const Sidebar = () => {
 
         {isAllSportsOpen && (
           <nav className="bg-[#C3BDBD] py-[3px] text-white">
-            {/* Cricket */}
-            <ul className="mt-1 mb-0 ">
-              <li className="list-none pb-1 pt-0.5 pl-2.5 pr-0 relative">
-                <div
-                  className="cursor-pointer"
-                  onClick={() => setIsCricketOpen(!isCricketOpen)}
-                >
-                  <span className="relative bottom-0.5">
-                    {isCricketOpen ? (
-                      <FaRegSquareMinus className="inline-block align-middle w-3.5 h-[19px]" />
-                    ) : (
-                      <FaRegSquarePlus className="inline-block align-middle w-3.5 h-[19px]" />
-                    )}
-                  </span>
+            {sportsData.map((sportObj) => (
+              <ul key={sportObj.key} className="mt-1 mb-0">
+                <li className="list-none  pt-0.5 pl-2.5 pr-0">
+                  {/* Sport name */}
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => toggle(sportObj.key)}
+                  >
+                    <span className="relative bottom-0.5">
+                      {open[sportObj.key] ? (
+                        <FaRegSquareMinus className="inline-block w-3.5 h-[19px]" />
+                      ) : (
+                        <FaRegSquarePlus className="inline-block w-3.5 h-[19px]" />
+                      )}
+                    </span>
 
-                  <span className="pl-1.5">Cricket</span>
-                </div>
+                    <span className="pl-1.5">{sportObj.sport}</span>
+                  </div>
 
-                {isCricketOpen && (
-                  <ul className=" mb-0 ml-0 pl-0">
-                    {/* Abu Dhabi T10 */}
-                    <li className="list-none pt-px pb-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsAbuDhabiOpen(!isAbuDhabiOpen)}
-                      >
-                        <span className="relative bottom-0.5 right-px">
-                          {isAbuDhabiOpen ? (
-                            <FaRegSquareMinus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          ) : (
-                            <FaRegSquarePlus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
+                  {/* Tournament list */}
+                  {open[sportObj.key] && (
+                    <ul className="mb-0 ml-0 pl-0">
+                      {sportObj.tournaments.map((tour) => (
+                        <li key={tour.key} className="list-none py-1 pl-5 pr-0">
+                          {/* Tournament */}
+                          <div
+                            className="cursor-pointer"
+                            onClick={() => toggle(tour.key)}
+                          >
+                            <span>
+                              {open[tour.key] ? (
+                                <FaRegSquareMinus
+                                  className="inline-block align-middle"
+                                  size={16}
+                                />
+                              ) : (
+                                <FaRegSquarePlus
+                                  className="inline-block align-middle"
+                                  size={16}
+                                />
+                              )}
+                            </span>
+                            <span className="pl-1">{tour.title}</span>
+                          </div>
+
+                          {/* Matches */}
+                          {open[tour.key] && (
+                            <ul className="mb-0 ml-0 pl-0">
+                              {tour.matches.map((match, idx) => (
+                                <li
+                                  key={idx}
+                                  className="list-none py-1 pl-4 pr-0"
+                                >
+                                  <div className="cursor-pointer flex items-start">
+                                    <FaCaretRight
+                                      className="inline-block mt-0.5"
+                                      size={17}
+                                    />
+                                    <span>{match}</span>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
                           )}
-                        </span>
-                        <span className="pl-0.5">Abu Dhabi T10</span>
-                      </div>
-
-                      {isAbuDhabiOpen && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none pt-[3px] pb-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> UAE Bulls v Aspin Stallions </span>
-                            </div>
-                          </li>
-                          <li className="list-none pt-[3px] pb-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Deccan Gladiators v Ajman Titans</span>
-                            </div>
-                          </li>
-                          <li className="list-none pt-[3px] pb-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Royal Champs v Aspin Stallions</span>
-                            </div>
-                          </li>
-                          <li className="list-none pt-[3px] pb-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Vista Riders v Quetta Cavalry</span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-
-                    {/* Falcons Champions Trophy */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsFalconsOpen(!isFalconsOpen)}
-                      >
-                        <span className="relative bottom-0.5 right-px">
-                          {isFalconsOpen ? (
-                            <FaRegSquareMinus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          ) : (
-                            <FaRegSquarePlus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          )}
-                        </span>
-                        <span className="pl-0.5">Falcons Champions Trophy</span>
-                      </div>
-                      {isFalconsOpen && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Kashmir XI v Afghan Tigers </span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-                    {/* Plunket Shield */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsPlunketOpen(!isPlunketOpen)}
-                      >
-                        {isPlunketOpen ? (
-                          <FaRegSquareMinus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        ) : (
-                          <FaRegSquarePlus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        )}
-                        <span className="pl-1">Plunket Shield</span>
-                      </div>
-
-                      {isPlunketOpen && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Plunket </span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-
-                    {/* South Africa T20 Challenge */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsSAT20Open(!isSAT20Open)}
-                      >
-                        {isSAT20Open ? (
-                          <FaRegSquareMinus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        ) : (
-                          <FaRegSquarePlus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        )}
-                        <span className="pl-1">South Africa T20 Challenge</span>
-                      </div>
-                      {isSAT20Open && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Lumbini Lions v Sudurpaschim Royals </span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-                  </ul>
-                )}
-              </li>
-            </ul>
-            {/* soccer */}
-            <ul className="mb-0 ">
-              <li className="list-none pb-1 pt-px pl-2.5 pr-0 relative">
-                <div
-                  className="cursor-pointer"
-                  onClick={() => setIsSoccerOpen(!isSoccerOpen)}
-                >
-                  <span className="relative bottom-0.5">
-                    {isCricketOpen ? (
-                      <FaRegSquareMinus className="inline-block align-middle w-3.5 h-[19px]" />
-                    ) : (
-                      <FaRegSquarePlus className="inline-block align-middle w-3.5 h-[19px]" />
-                    )}
-                  </span>
-
-                  <span className="pl-1.5">Soccer</span>
-                </div>
-
-                {isCricketOpen && (
-                  <ul className=" mb-0 ml-0 pl-0">
-                    {/* Abu Dhabi T10 */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsAbuDhabiOpen(!isAbuDhabiOpen)}
-                      >
-                        <span>
-                          {isAbuDhabiOpen ? (
-                            <FaRegSquareMinus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          ) : (
-                            <FaRegSquarePlus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          )}
-                        </span>
-                        <span className="pl-1">Abu Dhabi T10</span>
-                      </div>
-
-                      {isAbuDhabiOpen && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>UAE Bulls v Northern Warriors</span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Deccan Gladiators v Ajman Titans</span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Royal Champs v Aspin Stallions</span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Vista Riders v Quetta Cavalry</span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-
-                    {/* Falcons Champions Trophy */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsFalconsOpen(!isFalconsOpen)}
-                      >
-                        <span>
-                          {isFalconsOpen ? (
-                            <FaRegSquareMinus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          ) : (
-                            <FaRegSquarePlus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          )}
-                        </span>
-                        <span className="pl-1">Falcons Champions Trophy</span>
-                      </div>
-                      {isFalconsOpen && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Kashmir XI v Afghan Tigers </span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-
-                    {/* International Twenty20 Matches */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsIntTwenty20Open(!isIntTwenty20Open)}
-                      >
-                        <span>
-                          {isIntTwenty20Open ? (
-                            <FaRegSquareMinus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          ) : (
-                            <FaRegSquarePlus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          )}
-                        </span>
-                        <span className="pl-1">
-                          International Twenty20 Matches
-                        </span>
-                      </div>
-                      {isIntTwenty20Open && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Pakistan v Sri Lanka </span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Bangladesh v Ireland </span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Bahrain v Thailand </span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-
-                    {/* Nepal Premier League */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsNepalPLOpen(!isNepalPLOpen)}
-                      >
-                        <span>
-                          {isNepalPLOpen ? (
-                            <FaRegSquareMinus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          ) : (
-                            <FaRegSquarePlus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          )}
-                        </span>
-                        <span className="pl-1">Nepal Premier League</span>
-                      </div>
-                      {isNepalPLOpen && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Lumbini Lions v Sudurpaschim Royals </span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Janakpur Bolts v Pokhara Avengers</span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Chitwan Rhinos v Kathmandu Gurkhas</span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Karnali Yaks v Biratnagar Kings</span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-
-                    {/* T10 League Internationals */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsT10LeagueOpen(!isT10LeagueOpen)}
-                      >
-                        {isT10LeagueOpen ? (
-                          <FaRegSquareMinus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        ) : (
-                          <FaRegSquarePlus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        )}
-                        <span className="pl-1">T10 League Internationals</span>
-                      </div>
-
-                      {isT10LeagueOpen && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> T10 </span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-
-                    {/* Plunket Shield */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsPlunketOpen(!isPlunketOpen)}
-                      >
-                        {isPlunketOpen ? (
-                          <FaRegSquareMinus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        ) : (
-                          <FaRegSquarePlus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        )}
-                        <span className="pl-1">Plunket Shield</span>
-                      </div>
-
-                      {isPlunketOpen && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Plunket </span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-
-                    {/* South Africa T20 Challenge */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsSAT20Open(!isSAT20Open)}
-                      >
-                        {isSAT20Open ? (
-                          <FaRegSquareMinus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        ) : (
-                          <FaRegSquarePlus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        )}
-                        <span className="pl-1">South Africa T20 Challenge</span>
-                      </div>
-                      {isSAT20Open && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Lumbini Lions v Sudurpaschim Royals </span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-                  </ul>
-                )}
-              </li>
-            </ul>
-            {/* tennis */}
-            <ul className="mb-0 ">
-              <li className="list-none pt-px pb-1 pl-2.5 pr-0 relative">
-                <div
-                  className="cursor-pointer"
-                  onClick={() => setIsSoccerOpen(!isSoccerOpen)}
-                >
-                  <span className="relative bottom-0.5">
-                    {isCricketOpen ? (
-                      <FaRegSquareMinus className="inline-block align-middle w-3.5 h-[19px]" />
-                    ) : (
-                      <FaRegSquarePlus className="inline-block align-middle w-3.5 h-[19px]" />
-                    )}
-                  </span>
-
-                  <span className="pl-1.5">Tennis</span>
-                </div>
-
-                {isCricketOpen && (
-                  <ul className=" mb-0 ml-0 pl-0">
-                    {/* Abu Dhabi T10 */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsAbuDhabiOpen(!isAbuDhabiOpen)}
-                      >
-                        <span>
-                          {isAbuDhabiOpen ? (
-                            <FaRegSquareMinus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          ) : (
-                            <FaRegSquarePlus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          )}
-                        </span>
-                        <span className="pl-1">Abu Dhabi T10</span>
-                      </div>
-
-                      {isAbuDhabiOpen && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>UAE Bulls v Northern Warriors</span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Deccan Gladiators v Ajman Titans</span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Royal Champs v Aspin Stallions</span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Vista Riders v Quetta Cavalry</span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-
-                    {/* Falcons Champions Trophy */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsFalconsOpen(!isFalconsOpen)}
-                      >
-                        <span>
-                          {isFalconsOpen ? (
-                            <FaRegSquareMinus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          ) : (
-                            <FaRegSquarePlus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          )}
-                        </span>
-                        <span className="pl-1">Falcons Champions Trophy</span>
-                      </div>
-                      {isFalconsOpen && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Kashmir XI v Afghan Tigers </span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-
-                    {/* International Twenty20 Matches */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsIntTwenty20Open(!isIntTwenty20Open)}
-                      >
-                        <span>
-                          {isIntTwenty20Open ? (
-                            <FaRegSquareMinus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          ) : (
-                            <FaRegSquarePlus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          )}
-                        </span>
-                        <span className="pl-1">
-                          International Twenty20 Matches
-                        </span>
-                      </div>
-                      {isIntTwenty20Open && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Pakistan v Sri Lanka </span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Bangladesh v Ireland </span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Bahrain v Thailand </span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-
-                    {/* Nepal Premier League */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsNepalPLOpen(!isNepalPLOpen)}
-                      >
-                        <span>
-                          {isNepalPLOpen ? (
-                            <FaRegSquareMinus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          ) : (
-                            <FaRegSquarePlus
-                              className="inline-block align-middle"
-                              size={16}
-                            />
-                          )}
-                        </span>
-                        <span className="pl-1">Nepal Premier League</span>
-                      </div>
-                      {isNepalPLOpen && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Lumbini Lions v Sudurpaschim Royals </span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Janakpur Bolts v Pokhara Avengers</span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Chitwan Rhinos v Kathmandu Gurkhas</span>
-                            </div>
-                          </li>
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span>Karnali Yaks v Biratnagar Kings</span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-
-                    {/* T10 League Internationals */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsT10LeagueOpen(!isT10LeagueOpen)}
-                      >
-                        {isT10LeagueOpen ? (
-                          <FaRegSquareMinus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        ) : (
-                          <FaRegSquarePlus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        )}
-                        <span className="pl-1">T10 League Internationals</span>
-                      </div>
-
-                      {isT10LeagueOpen && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> T10 </span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-
-                    {/* Plunket Shield */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsPlunketOpen(!isPlunketOpen)}
-                      >
-                        {isPlunketOpen ? (
-                          <FaRegSquareMinus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        ) : (
-                          <FaRegSquarePlus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        )}
-                        <span className="pl-1">Plunket Shield</span>
-                      </div>
-
-                      {isPlunketOpen && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Plunket </span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-
-                    {/* South Africa T20 Challenge */}
-                    <li className="list-none py-1 pl-5 pr-0">
-                      <div
-                        className="cursor-pointer"
-                        onClick={() => setIsSAT20Open(!isSAT20Open)}
-                      >
-                        {isSAT20Open ? (
-                          <FaRegSquareMinus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        ) : (
-                          <FaRegSquarePlus
-                            className="inline-block align-middle"
-                            size={16}
-                          />
-                        )}
-                        <span className="pl-1">South Africa T20 Challenge</span>
-                      </div>
-                      {isSAT20Open && (
-                        <ul className="mb-0 ml-0 pl-0">
-                          <li className="list-none py-1 pl-4 pr-0">
-                            <div className="cursor-pointer flex items-start">
-                              <FaCaretRight
-                                className="inline-block mt-0.5 "
-                                size={17}
-                              />
-                              <span> Lumbini Lions v Sudurpaschim Royals </span>
-                            </div>
-                          </li>
-                        </ul>
-                      )}
-                    </li>
-                  </ul>
-                )}
-              </li>
-            </ul>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </li>
+              </ul>
+            ))}
           </nav>
         )}
       </div>
     </div>
   );
-};
-
-export default Sidebar;
+}
