@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React from "react";
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import MBetSlip from "../m-betslip";
 import DBetSlip from "@/components/d-view/d-betslip";
 import RulesModal from "@/components/modals/rules-modal";
@@ -13,26 +12,29 @@ export default function MMarketDetailsPage() {
   const [active, setActive] = useState(false);
   const betslipRef = useRef<HTMLDivElement>(null);
 
-  // Betslip state
+  // INLINE (mobile) slip open or not
   const [isSlipOpen, setIsSlipOpen] = useState(false);
-  const [slipCls, setSlipCls] = useState<
-    "slip-back" | "slip-lay" | "slip-Line-Yes" | "slip-Line-No"
-  >("slip-back");
-  const [slipBgClass, setSlipBgClass] = useState<string>("");
-  const [slipOdds, setSlipOdds] = useState<number>(0);
-  const [slipMarketId, setSlipMarketId] = useState<string>("");
-  const [slipSelectionId, setSlipSelectionId] = useState<number>(0);
-  const [slipRunnerName, setSlipRunnerName] = useState<string>("");
-  const [slipMin, setSlipMin] = useState<number>(1);
-  const [slipMax, setSlipMax] = useState<number>(99999999);
-  const [isrulesopen, setRulesOpen] = useState(false);
 
-  // Track which row is open
+  // Track which row is open (mobile)
   const [openSlip, setOpenSlip] = useState<{
     marketId: string;
     selectionId: number;
     side: "BACK" | "LAY";
   } | null>(null);
+
+  // Shared betslip data (used by both mobile + desktop)
+  const [betSlipData, setBetSlipData] = useState<{
+    marketId: string;
+    selectionId: number;
+    runnerName: string;
+    odds: number;
+    slipCls: "slip-back" | "slip-lay";
+    slipBgClass: string;
+    min: number;
+    max: number;
+  } | null>(null);
+
+  const [isrulesopen, setRulesOpen] = useState(false);
 
   const categories = [
     "Popular",
@@ -43,16 +45,16 @@ export default function MMarketDetailsPage() {
   ];
 
   useEffect(() => {
-    // Toggle active after 1s for demo
     const timer = setInterval(() => {
       setActive((prev) => !prev);
     }, 800);
 
     return () => clearInterval(timer);
   }, []);
+
+  // Scroll inline slip into view on mobile
   useEffect(() => {
     if (isSlipOpen && betslipRef.current) {
-      // Wait for DOM to update
       setTimeout(() => {
         betslipRef.current?.scrollIntoView({
           behavior: "smooth",
@@ -63,7 +65,7 @@ export default function MMarketDetailsPage() {
     }
   }, [isSlipOpen, openSlip]);
 
-  // Handle price click
+  // Handle price click (BACK / LAY)
   const onPriceClick = ({
     marketId,
     min,
@@ -91,31 +93,39 @@ export default function MMarketDetailsPage() {
     const finalPrice = Number(raw.toFixed(2));
 
     // slip class
-    const cls = column === "BACK" ? "slip-back" : "slip-lay";
+    const cls: "slip-back" | "slip-lay" =
+      column === "BACK" ? "slip-back" : "slip-lay";
 
-    // bg theme
+    // bg theme (for mobile slip extra class, if needed)
     const bg = cls === "slip-back" ? "betbg--back" : "betbg--lay";
 
-    setSlipCls(cls as any);
-    setSlipOdds(finalPrice);
-    setSlipMarketId(marketId || "");
-    setSlipSelectionId(selectionId || 0);
-    setSlipRunnerName(runnerName || String(selectionId));
-    setSlipBgClass(bg);
-    setSlipMin(Number.isFinite(min as number) ? (min as number) : 1);
-    setSlipMax(Number.isFinite(max as number) ? (max as number) : 99999999);
+    const minStake = Number.isFinite(min as number) ? (min as number) : 1;
+    const maxStake = Number.isFinite(max as number) ? (max as number) : 99999999;
 
+    // Shared betslip data (mobile + desktop)
+    setBetSlipData({
+      marketId: marketId || "",
+      selectionId: selectionId || 0,
+      runnerName: runnerName || String(selectionId),
+      odds: finalPrice,
+      slipCls: cls,
+      slipBgClass: bg,
+      min: minStake,
+      max: maxStake,
+    });
+
+    // For mobile inline betslip
     setIsSlipOpen(true);
     setOpenSlip({ marketId, selectionId, side: column });
   };
 
-  // Close slip
+  // Close inline slip (mobile only)
   const closeInlineSlip = () => {
     setIsSlipOpen(false);
     setOpenSlip(null);
   };
 
-  // Check if this row has slip open
+  // Check if this runner row has an open mobile slip
   const isRowSlipOpen = (marketId: string, selectionId: number) => {
     return (
       !!openSlip &&
@@ -126,6 +136,7 @@ export default function MMarketDetailsPage() {
 
   return (
     <div className="lg:m-[5px]">
+      {/* MOBILE TOP TAB BAR */}
       <div className="relative flex lg:hidden justify-between items-center bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]">
         {/* Tabs */}
         <div className="flex items-center text-black font-semibold">
@@ -156,6 +167,7 @@ export default function MMarketDetailsPage() {
           </div>
         </div>
 
+        {/* Speaker + TV Icons */}
         <div>
           {/* Speaker Icon */}
           <div className="absolute top-3 right-11">
@@ -195,6 +207,7 @@ export default function MMarketDetailsPage() {
         </div>
       ) : (
         <div className="flex w-full">
+          {/* LEFT PART: MARKETS & ODDS */}
           <div className="left-part overflow-y-auto w-full lg:w-[70%]">
             {/* Game Header */}
             <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[3.5px] pl-2 pr-2 lg:mb-[3px] text-white">
@@ -204,9 +217,9 @@ export default function MMarketDetailsPage() {
               <span className=" game-iconinplay">
                 <span
                   className={`
-        text-xs py-1 rounded-full font-bold inline-block transition-all duration-300
-        heartbeat-anim
-      `}
+                    text-xs py-1 rounded-full font-bold inline-block transition-all duration-300
+                    heartbeat-anim
+                  `}
                 >
                   INPLAY
                 </span>
@@ -245,7 +258,7 @@ export default function MMarketDetailsPage() {
               </div>
             </div>
 
-            {/* Market Categories */}
+            {/* Market Categories (MOBILE) */}
             <div className="md:hidden">
               <ul className="flex overflow-x-auto no-scrollbar p-[5px] bg-[linear-gradient(180deg,#000000,#000000_42%,#000000)] text-white">
                 {categories.map((category) => (
@@ -271,6 +284,7 @@ export default function MMarketDetailsPage() {
                 key={market.marketId}
                 className="bg-[linear-gradient(180deg,#000000,#ccc1c1)]"
               >
+                {/* Market Title Row */}
                 <div className=" mt-0 py-1 pl-2 pr-1.5 flex justify-between items-center">
                   <div className="flex gap-2 items-center">
                     <span className="font-bold text-white text-[13px] lg:text-[14px]">
@@ -324,6 +338,7 @@ export default function MMarketDetailsPage() {
                   </div>
                 </div>
 
+                {/* Desktop Header */}
                 <div className="hidden lg:block text-[12px] border-b border-[#aaa] lg:border-none bg-white">
                   <div className="border-b border-white flex">
                     <div className="p-[5px] leading-[15px] w-[40%]">
@@ -348,8 +363,8 @@ export default function MMarketDetailsPage() {
                   </div>
                 </div>
 
-                <div className="">
-                  {/* Dynamic Runners */}
+                {/* RUNNERS */}
+                <div>
                   {market.runners.map((runner) => {
                     const isSuspended =
                       runner.status === "SUSPENDED" ||
@@ -357,6 +372,7 @@ export default function MMarketDetailsPage() {
 
                     return (
                       <React.Fragment key={runner.selectionId}>
+                        {/* Runner Row */}
                         <div className="flex border-b border-[#aaa] lg:border-white bg-gray-50 h-[41px] lg:h-10 lg:bg-[#f2f2f2]">
                           <div className="col-span-3 py-0.5 px-[5px] lg:border-l lg:border-white md:col-span-1 w-[60%] lg:w-[40%]">
                             <div className="flex">
@@ -369,6 +385,8 @@ export default function MMarketDetailsPage() {
                               </div>
                             </div>
                           </div>
+
+                          {/* Odds Cells */}
                           <div
                             className={`relative w-[40%] lg:text-black lg:w-[60%] flex 
                               ${
@@ -377,6 +395,7 @@ export default function MMarketDetailsPage() {
                                   : ""
                               }`}
                           >
+                            {/* BACK (mobile visible, desktop: first cell) */}
                             <div
                               className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${
                                 !isSuspended
@@ -403,6 +422,8 @@ export default function MMarketDetailsPage() {
                                 {(runner.backOdds[0].size / 1000).toFixed(2)}
                               </span>
                             </div>
+
+                            {/* Extra BACK cells for desktop layout (hidden on mobile) */}
                             <div
                               className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
                                 !isSuspended
@@ -456,7 +477,7 @@ export default function MMarketDetailsPage() {
                               </span>
                             </div>
 
-                            {/* Lay Odds */}
+                            {/* LAY */}
                             <div
                               className={`text-center lg:border-l lg:border-white flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
                                 !isSuspended
@@ -538,25 +559,26 @@ export default function MMarketDetailsPage() {
                           </div>
                         </div>
 
-                        {/* Betslip for each runner */}
-                        {/* Betslip for each runner */}
+                        {/* INLINE MOBILE BETSLIP UNDER ROW */}
                         {isRowSlipOpen(market.marketId, runner.selectionId) && (
-                          <div ref={betslipRef}>
-                            <MBetSlip
-                              visible={isSlipOpen}
-                              backLayClsModal={slipCls}
-                              extraBgClass={slipBgClass}
-                              odds={slipOdds}
-                              marketId={slipMarketId}
-                              selectionId={slipSelectionId}
-                              eventId="event123"
-                              marketType={market.marketType}
-                              runnerName={slipRunnerName}
-                              minStake={slipMin}
-                              maxStake={slipMax}
-                              onClose={closeInlineSlip}
-                              onPlaced={closeInlineSlip}
-                            />
+                          <div ref={betslipRef} className="lg:hidden">
+                            {betSlipData && (
+                              <MBetSlip
+                                visible={isSlipOpen}
+                                backLayClsModal={betSlipData.slipCls}
+                                extraBgClass={betSlipData.slipBgClass}
+                                odds={betSlipData.odds}
+                                marketId={betSlipData.marketId}
+                                selectionId={betSlipData.selectionId}
+                                eventId="event123"
+                                marketType={market.marketType}
+                                runnerName={betSlipData.runnerName}
+                                minStake={betSlipData.min}
+                                maxStake={betSlipData.max}
+                                onClose={closeInlineSlip}
+                                onPlaced={closeInlineSlip}
+                              />
+                            )}
                           </div>
                         )}
                       </React.Fragment>
@@ -567,9 +589,21 @@ export default function MMarketDetailsPage() {
             ))}
           </div>
 
-          <div className="right-part hidden lg:block lg:w-[30%] ml-[5px]">
-            <DBetSlip />
-          </div>
+     <div className="right-part hidden lg:block lg:w-[30%] ml-[5px]">
+
+  <DBetSlip
+    visible={!!betSlipData}  
+    odds={betSlipData?.odds}
+    selectionId={betSlipData?.selectionId}
+    runnerName={betSlipData?.runnerName}
+    minStake={betSlipData?.min}
+    maxStake={betSlipData?.max}
+    backLayClsModal={betSlipData?.slipCls}
+    onClose={() => setBetSlipData(null)}
+  />
+
+</div>
+
         </div>
       )}
 
