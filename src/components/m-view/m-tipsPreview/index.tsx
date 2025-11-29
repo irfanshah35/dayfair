@@ -17,7 +17,7 @@ export default function MTipsPreview() {
         <TipsDetails item={selectedItem} goBack={() => setOpenDetails(false)} />
       ) : (
         <div className="px-3 py-2">
-          <div className="border border-[#0000002d] rounded-lg bg-white shadow-sm w-full">
+          <div className="border border-[#0000002d] rounded-lg bg-white text-black shadow-sm w-full">
             <h2 className="text-xl font-bold py-2 px-4">NEWS</h2>
 
             <div className="flex flex-col overflow-y-auto">
@@ -25,7 +25,7 @@ export default function MTipsPreview() {
                 <div
                   onClick={() => goToDetail(item)}
                   key={item.id}
-                  className="flex border-b border-[#edeef0] p-2 last:border-none"
+                  className="flex gap-2 border-b border-[#edeef0] p-2 last:border-none"
                 >
                   {/* IMAGE */}
                   <div className="w-1/3 max-w-1/3 min-w-1/3">
@@ -37,7 +37,7 @@ export default function MTipsPreview() {
                   </div>
 
                   {/* TEXT */}
-                  <div className="flex flex-col w-2/3 max-w-2/3 min-w-2/3 ml-[1%]">
+                  <div className="flex flex-col">
                     <h3 className="font-semibold text-[15px] leading-tight line-clamp-2">
                       {item.title}
                     </h3>
