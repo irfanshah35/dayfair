@@ -8,7 +8,7 @@ const DTopnav = () => {
 
   const navItems = [
     { href: "/", label: "HOME" },
-    { href: "/inplay", label: "IN-PLAY" },
+    { href: "/inplay", label: "In-Play" },
     { href: "/cricket", label: "CRICKET" },
     { href: "/soccer", label: "SOCCER" },
     { href: "/tennis", label: "TENNIS" },
@@ -32,11 +32,11 @@ const DTopnav = () => {
             <Link
               key={item.href}
               href={item.href}
-              className="nav-link px-[15px] py-0 h-text flex items-center text-black text-[14px] transition-opacity relative group font-bold"
+              className="nav-link px-[15px] uppercase tracking-[-0.1] py-0 h-text flex items-center text-black text-[14px] transition-opacity relative group font-bold"
             >
               {item.label}
               {isActive(item.href) && (
-                <span className="absolute tracking-[-5px] bottom-[-3px] left-0 right-0 h-0.5 bg-black"></span>
+                <span className="absolute bottom-[-3px] left-0 right-0 h-0.5 bg-black"></span>
               )}
 
               {!isActive(item.href) && (

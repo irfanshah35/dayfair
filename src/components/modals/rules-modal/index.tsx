@@ -26,7 +26,7 @@ export default function RulesModal({ open, onClose }: RulesModalProps) {
   // if (!open) return null;
   return (
     <div>
-      <div className="fixed inset-0 pt-3.5 bg-black/50 flex items-center min-[992px]:items-start justify-center z-50">
+      <div className="fixed text-black inset-0 pt-3.5 bg-black/50 flex items-center min-[992px]:items-start justify-center z-50">
         <div
           className={`
           bg-white mx-[7px] max-[768px]:w-[500px] max-h-screen [@media(min-width:992px)]:w-[880px] shadow-lg overflow-y-auto no-scrollbar

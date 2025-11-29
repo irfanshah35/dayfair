@@ -65,6 +65,7 @@ export default function RootLayout({
           ${robotoCondensed.variable} 
           antialiased
         `}
+        cz-shortcut-listen="true"
       >
         {isMobile ? (
           // Mobile View Layout

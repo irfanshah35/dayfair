@@ -22,7 +22,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Roboto Condensed, sans-serif !important; /* ✅ Override font */
+  font-family: "Roboto Condensed", sans-serif !important; /* ✅ Override font */
 }
 
 /* 🔥 Inplay animation */
@@ -32,9 +32,18 @@ body {
 }
 
 @keyframes inplayBlink {
-  0% { opacity: 1; color: red; }
-  50% { opacity: 1; color: green; }
-  100% { opacity: 1; color: red; }
+  0% {
+    opacity: 1;
+    color: red;
+  }
+  50% {
+    opacity: 1;
+    color: green;
+  }
+  100% {
+    opacity: 1;
+    color: red;
+  }
 }
 
 /* Buttons */
@@ -75,57 +84,57 @@ body {
 }
 /* live Casino  */
 .casino-box {
-    background: linear-gradient(-180deg, #f4b501 0%, #f68700 100%);
-    box-shadow: 0 5px 9px -3px;
-    border-radius: 4px;
-    margin-bottom: 15px;
-    cursor: pointer;
-    position: relative;
+  background: linear-gradient(-180deg, #f4b501 0%, #f68700 100%);
+  box-shadow: 0 5px 9px -3px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  cursor: pointer;
+  position: relative;
 }
 
 .casino-box img {
-    width: 100%;
+  width: 100%;
 }
 
 .casino-bottom {
-    text-align: center;
-    font-size: 14px;
-    padding: 4px 0;
+  text-align: center;
+  font-size: 14px;
+  padding: 4px 0;
 }
 
 @media (max-width: 1024px) {
-    .casino-box img {
-        min-height: 110px;
-        height: auto;
-    }
+  .casino-box img {
+    min-height: 110px;
+    height: auto;
+  }
 }
 .casino-bottom {
-    font-family: 'Roboto Condensed', sans-serif;
-    background: linear-gradient(180deg, #030a12, #444647 42%, #58595a);
-    padding: 4px 0;
-    text-align: center;
-    font-size: 16px;
-    line-height: 18px;
-    color: #fff;
-    letter-spacing: 0px;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    right: 0;
-    left: 0;
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    min-height: 32px;
+  font-family: "Roboto Condensed", sans-serif;
+  background: linear-gradient(180deg, #030a12, #444647 42%, #58595a);
+  padding: 4px 0;
+  text-align: center;
+  font-size: 16px;
+  line-height: 18px;
+  color: #fff;
+  letter-spacing: 0px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  right: 0;
+  left: 0;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 32px;
 }
 
 @media only screen and (max-width: 767px) {
-    .casino-bottom {
-        font-size: 12px;
-        line-height: 13px;
-        min-height: 32px; 
-        font-family: 'Roboto Condensed', sans-serif;
-    }
+  .casino-bottom {
+    font-size: 12px;
+    line-height: 13px;
+    min-height: 32px;
+    font-family: "Roboto Condensed", sans-serif;
+  }
 }
 
 .no-scrollbar::-webkit-scrollbar {
@@ -133,12 +142,12 @@ body {
 }
 
 .no-scrollbar {
-  -ms-overflow-style: none; 
-  scrollbar-width: none; 
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .btn-clr {
-    background: linear-gradient(180deg, #030a12, #444647 42%, #58595a);
+  background: linear-gradient(180deg, #030a12, #444647 42%, #58595a);
 }
 
 @keyframes pulseColor {

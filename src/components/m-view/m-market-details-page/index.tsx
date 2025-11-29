@@ -10,7 +10,7 @@ import { MARKETS_DATA } from "@/lib/projectData";
 export default function MMarketDetailsPage() {
   const [activeTab, setActiveTab] = useState("odds");
   const [activeCategory, setActiveCategory] = useState("Popular");
-  const [active, setActive] = useState(false);
+  // const [active, setActive] = useState(false);
   const betslipRef = useRef<HTMLDivElement>(null);
 
   // Betslip state
@@ -42,14 +42,14 @@ export default function MMarketDetailsPage() {
     "All Market",
   ];
 
-  useEffect(() => {
-    // Toggle active after 1s for demo
-    const timer = setInterval(() => {
-      setActive((prev) => !prev);
-    }, 800);
+  // useEffect(() => {
+  //   // Toggle active after 1s for demo
+  //   const timer = setInterval(() => {
+  //     setActive((prev) => !prev);
+  //   }, 800);
 
-    return () => clearInterval(timer);
-  }, []);
+  //   return () => clearInterval(timer);
+  // }, []);
   useEffect(() => {
     if (isSlipOpen && betslipRef.current) {
       // Wait for DOM to update
@@ -151,7 +151,7 @@ export default function MMarketDetailsPage() {
                   : ""
               }`}
             >
-              BET LIST (0)
+              BET LIST ( 0 )
             </a>
           </div>
         </div>
