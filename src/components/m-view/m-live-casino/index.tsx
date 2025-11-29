@@ -89,7 +89,7 @@ const MLiveCasino = () => {
 
       {pathname !== "/live-casino" && (
         <div className="px-2  lg:mb-3 w-full overflow-x-hidden">
-          <ul className="flex bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]  overflow-x-auto overflow-y-hidden scrollbar-none m-0 p-0 list-none whitespace-nowrap">
+          <ul className="flex  bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]  overflow-x-auto overflow-y-hidden scrollbar-none m-0 p-0 list-none whitespace-nowrap">
             {tabs.map((tab) => (
               <li key={tab} className="inline-block border-r  border-white">
                 <a onClick={() => setActiveTab(tab)} className="cursor-pointer">
@@ -127,8 +127,6 @@ const MLiveCasino = () => {
           ))}
         </div>
       </div>
-
-  
     </div>
   );
 };
