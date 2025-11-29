@@ -117,13 +117,13 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
         <div className="w-[95.5%]" style={{ margin: "0 auto" }}>
           {/* HEADER */}
           <div className="flex justify-between items-center mb-1.5">
-            <div className="px-[6px] md:px-[9px] flex-1">
+            <div className="px-1.5 md:px-[9px] flex-1">
               <span className="font-bold text-black text-[14px]">
                 {runnerName}
               </span>
             </div>
 
-            <div className="flex flex-1 items-center ml-[6px] md:ml-0 md:px-[9px] gap-[7px]">
+            <div className="flex flex-1 items-center ml-1.5 md:ml-0 md:px-[9px] gap-[7px]">
               <span className="text-[14px] font-bold text-black">MatchMe</span>
 
               <label className="matchMe relative w-[55px] h-[25px] inline-block cursor-pointer">
@@ -204,7 +204,7 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
           </div>
 
           {/* STAKE BUTTONS */}
-          <div className="grid grid-cols-4 gap-x-[7px] gap-y-[6px] mb-1.5">
+          <div className="grid grid-cols-4 gap-x-[7px] gap-y-1.5 mb-1.5">
             {stackButtons.map((value) => {
               const isSelected = betAmount === value.toString();
 
@@ -213,7 +213,7 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
                   key={value}
                   onClick={() => handleStackClick(value)}
                   className={`
-                    font-bold text-[14px] h-9 !leading-[36px] rounded-none transition-colors border
+                    font-bold text-[14px] h-9 leading-9! rounded-none transition-colors border
                     ${isSelected ? "border-black" : "border-white"}
                   `}
                   style={{
@@ -233,7 +233,7 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
             {/* Cancel Button */}
             <button
               onClick={handleCancel}
-              className="text-white font-bold leading-[36px] h-9 rounded-none transition-colors border border-white"
+              className="text-white font-bold leading-9 h-9 rounded-none transition-colors border border-white"
               style={{
                 fontSize: "14px",
                 background: btnBg,

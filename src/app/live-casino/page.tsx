@@ -1,12 +1,12 @@
-import React from 'react'
-import MLiveCasino from '../components/m-view/m-live-casino'
+import MLiveCasino from "@/components/m-view/m-live-casino";
+import React from "react";
 
 const LiveCasino = () => {
   return (
     <div>
-    <MLiveCasino/> 
+      <MLiveCasino />
     </div>
-  )
-}
+  );
+};
 
-export default LiveCasino
+export default LiveCasino;

@@ -2,13 +2,13 @@
 import { usePathname } from "next/navigation";
 import { Geist, Geist_Mono, Roboto_Condensed } from "next/font/google";
 import "./globals.css";
-import MFooter from "./components/m-view/m-footer";
-import MMenuTabs from "./components/m-view/m-menu-tabs";
-import MSportsTab from "./components/m-view/m-sports-tab";
 import { useEffect, useState } from "react";
-import Header from "./components/common/Header";
-import Sidebar from "./components/common/Sidebar";
-import DTopnav from "./components/d-view/d-topnav";
+import Header from "@/components/common/header";
+import MMenuTabs from "@/components/m-view/m-menu-tabs";
+import MSportsTab from "@/components/m-view/m-sports-tab";
+import MFooter from "@/components/m-view/m-footer";
+import DTopnav from "@/components/d-view/d-topnav";
+import Sidebar from "@/components/common/sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

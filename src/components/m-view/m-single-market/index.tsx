@@ -1,138 +1,16 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
+import { marketsSingle } from "@/lib/projectData";
 
 const MSingleMarket = () => {
   const router = useRouter();
 
-  const markets = [
-    {
-      match: "Otago Volts v Canterbury Kings ",
-      time: "23/11/2025 04:00 AM",
-      inplay: true,
-      odds: [
-        { back: 1.37, lay: 1.42 },
-        { back: 3.25, lay: 3.3 },
-        { back: 1.88, lay: 1.92 },
-      ],
-    },
-    {
-      match: "India v Australia",
-      time: "25/11/2025 07:00 PM",
-      inplay: false,
-      odds: [
-        { back: 1.55, lay: 1.6 },
-        { back: 3.45, lay: 3.5 },
-        { back: 2.1, lay: 2.15 },
-      ],
-    },
-    {
-      match: "England v Pakistan",
-      time: "01/12/2025 03:00 PM",
-      inplay: true,
-      odds: [
-        { back: 1.9, lay: 1.95 },
-        { back: 3.1, lay: 3.15 },
-        { back: 2.4, lay: 2.45 },
-      ],
-    },
-    {
-      match: "India v South Africa",
-      time: "23/11/2025 04:00 AM",
-      inplay: true,
-      odds: [
-        { back: 1.37, lay: 1.42 },
-        { back: 3.25, lay: 3.3 },
-        { back: 1.88, lay: 1.92 },
-      ],
-    },
-    {
-      match: "India v Australia",
-      time: "25/11/2025 07:00 PM",
-      inplay: false,
-      odds: [
-        { back: 1.55, lay: 1.6 },
-        { back: 3.45, lay: 3.5 },
-        { back: 2.1, lay: 2.15 },
-      ],
-    },
-    {
-      match: "England v Pakistan",
-      time: "01/12/2025 03:00 PM",
-      inplay: true,
-      odds: [
-        { back: 1.9, lay: 1.95 },
-        { back: 3.1, lay: 3.15 },
-        { back: 2.4, lay: 2.45 },
-      ],
-    },
-    {
-      match: "India v South Africa",
-      time: "23/11/2025 04:00 AM",
-      inplay: true,
-      odds: [
-        { back: 1.37, lay: 1.42 },
-        { back: 3.25, lay: 3.3 },
-        { back: 1.88, lay: 1.92 },
-      ],
-    },
-    {
-      match: "India v Australia",
-      time: "25/11/2025 07:00 PM",
-      inplay: false,
-      odds: [
-        { back: 1.55, lay: 1.6 },
-        { back: 3.45, lay: 3.5 },
-        { back: 2.1, lay: 2.15 },
-      ],
-    },
-    {
-      match: "England v Pakistan",
-      time: "01/12/2025 03:00 PM",
-      inplay: true,
-      odds: [
-        { back: 1.9, lay: 1.95 },
-        { back: 3.1, lay: 3.15 },
-        { back: 2.4, lay: 2.45 },
-      ],
-    },
-    {
-      match: "India v South Africa",
-      time: "23/11/2025 04:00 AM",
-      inplay: true,
-      odds: [
-        { back: 1.37, lay: 1.42 },
-        { back: 3.25, lay: 3.3 },
-        { back: 1.88, lay: 1.92 },
-      ],
-    },
-    {
-      match: "India v Australia",
-      time: "25/11/2025 07:00 PM",
-      inplay: false,
-      odds: [
-        { back: 1.55, lay: 1.6 },
-        { back: 3.45, lay: 3.5 },
-        { back: 2.1, lay: 2.15 },
-      ],
-    },
-    {
-      match: "England v Pakistan",
-      time: "01/12/2025 03:00 PM",
-      inplay: true,
-      odds: [
-        { back: 1.9, lay: 1.95 },
-        { back: 3.1, lay: 3.15 },
-        { back: 2.4, lay: 2.45 },
-      ],
-    },
-  ];
-
   return (
     <div className="lg:px-[9px]">
       <div className="lg:hidden overflow-y-auto max-h-[265px]">
-        {markets.length > 0 ? (
-          markets.map((item, idx) => (
+        {marketsSingle.length > 0 ? (
+          marketsSingle.map((item, idx) => (
             <div
               key={idx}
               onClick={() => router.push("/market-details")}
@@ -151,7 +29,7 @@ const MSingleMarket = () => {
                   <div className="w-1/3 text-right">
                     {item.inplay && (
                       <span className="inline-block">
-                        <span className="font-bold text-[12px] relative right-[1px] mr-1 align-top relative top-[-5px] animate-pulse">
+                        <span className="font-bold text-[12px] relative right-px mr-1 align-top top-[-5px] animate-pulse">
                           INPLAY
                         </span>
                       </span>
@@ -174,10 +52,10 @@ const MSingleMarket = () => {
                 <div className="flex">
                   {item.odds.map((o, i) => (
                     <div key={i} className="w-1/3 flex justify-center">
-                      <button className="w-1/2 bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[24px] border-0 cursor-pointer">
+                      <button className="w-1/2 bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
                         {o.back}
                       </button>
-                      <button className="w-1/2 bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[24px] border-0 cursor-pointer">
+                      <button className="w-1/2 bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
                         {o.lay}
                       </button>
                     </div>
@@ -222,8 +100,8 @@ const MSingleMarket = () => {
               </tr>
             </thead>
             <tbody>
-              {markets.length > 0 ? (
-                markets.map((item, idx) => (
+              {marketsSingle.length > 0 ? (
+                marketsSingle.map((item, idx) => (
                   <tr
                     key={idx}
                     onClick={() => router.push("/market-details")}
