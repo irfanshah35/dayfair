@@ -10,11 +10,34 @@ export default function Sidebar() {
   const [isOthersOpen, setIsOthersOpen] = useState(true);
   const [isAllSportsOpen, setIsAllSportsOpen] = useState(true);
 
-  const [open, setOpen] = useState<Record<string, boolean>>({});
+  // const [open, setOpen] = useState<Record<string, boolean>>({});
 
-  const toggle = (key: string) => {
-    setOpen((prev) => ({ ...prev, [key]: !prev[key] }));
+  const [open, setOpen] = useState<{
+    sport: string | null;
+    tournament: string | null;
+  }>({
+    sport: null,
+    tournament: null,
+  });
+
+  const toggleSport = (key: string) => {
+    setOpen((prev) => ({
+      sport: prev.sport === key ? null : key,  // open one, close others
+      tournament: null, // close all tournaments when switching sport
+    }));
   };
+
+  const toggleTournament = (key: string) => {
+    setOpen((prev) => ({
+      ...prev,
+      tournament: prev.tournament === key ? null : key,
+    }));
+  };
+
+
+  // const toggle = (key: string) => {
+  //   setOpen((prev) => ({ ...prev, [key]: !prev[key] }));
+  // };
 
   return (
     <div
@@ -35,9 +58,8 @@ export default function Sidebar() {
           <h5 className="inline-block w-full text-[18px] mb-0">
             Others
             <FaChevronDown
-              className={`float-right transition-transform ${
-                isOthersOpen ? "" : "-rotate-90"
-              }`}
+              className={`float-right transition-transform ${isOthersOpen ? "" : "-rotate-90"
+                }`}
               size={14}
             />
           </h5>
@@ -59,9 +81,8 @@ export default function Sidebar() {
           <h5 className="inline-block w-full text-[18px] mb-0">
             All Sports
             <FaChevronDown
-              className={`float-right transition-transform ${
-                isAllSportsOpen ? "" : "-rotate-90"
-              }`}
+              className={`float-right transition-transform ${isAllSportsOpen ? "" : "-rotate-90"
+                }`}
               size={14}
             />
           </h5>
@@ -75,10 +96,10 @@ export default function Sidebar() {
                   {/* Sport name */}
                   <div
                     className="cursor-pointer"
-                    onClick={() => toggle(sportObj.key)}
+                    onClick={() => toggleSport(sportObj.key)}
                   >
                     <span className="relative bottom-0.5">
-                      {open[sportObj.key] ? (
+                      {open.sport === sportObj.key ? (
                         <FaRegSquareMinus className="inline-block w-3.5 h-[19px]" />
                       ) : (
                         <FaRegSquarePlus className="inline-block w-3.5 h-[19px]" />
@@ -89,17 +110,17 @@ export default function Sidebar() {
                   </div>
 
                   {/* Tournament list */}
-                  {open[sportObj.key] && (
+                  {open.sport === sportObj.key && (
                     <ul className="mb-0 ml-0 pl-0">
                       {sportObj.tournaments.map((tour) => (
                         <li key={tour.key} className="list-none py-1 pl-5 pr-0">
                           {/* Tournament */}
                           <div
                             className="cursor-pointer"
-                            onClick={() => toggle(tour.key)}
+                            onClick={() => toggleTournament(tour.key)}
                           >
                             <span>
-                              {open[tour.key] ? (
+                              {open.tournament === tour.key ? (
                                 <FaRegSquareMinus
                                   className="inline-block align-middle"
                                   size={16}
@@ -115,7 +136,7 @@ export default function Sidebar() {
                           </div>
 
                           {/* Matches */}
-                          {open[tour.key] && (
+                          {open.tournament === tour.key && (
                             <ul className="mb-0 ml-0 pl-0">
                               {tour.matches.map((match, idx) => (
                                 <li
