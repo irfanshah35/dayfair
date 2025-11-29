@@ -1,14 +1,5 @@
-"use client";
-import { usePathname } from "next/navigation";
 import { Geist, Geist_Mono, Roboto_Condensed } from "next/font/google";
 import "./globals.css";
-import { useEffect, useState } from "react";
-import Header from "@/components/common/header";
-import MMenuTabs from "@/components/m-view/m-menu-tabs";
-import MSportsTab from "@/components/m-view/m-sports-tab";
-import MFooter from "@/components/m-view/m-footer";
-import DTopnav from "@/components/d-view/d-topnav";
-import Sidebar from "@/components/common/sidebar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,31 +22,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const pathname = usePathname();
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 992);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    console.log("Current route:", pathname);
-  }, [pathname]);
-
-  // Routes where header and footer should be hidden
-  const hideHeaderFooter = pathname === "/mlogin";
-
-  // Routes where MMenuTabs and MSportsTab should be hidden
-  const hideMenuAndSports =
-    pathname === "/market-details" || pathname === "/mlogin";
-
-  // Routes where only MSportsTab should be hidden
-  const hideSportsTab =
-    pathname === "/live-casino" || pathname === "/m-tipsreview";
-
   return (
     <html lang="en">
       <body
@@ -65,48 +31,9 @@ export default function RootLayout({
           ${robotoCondensed.variable} 
           antialiased
         `}
+        cz-shortcut-listen="true"
       >
-        {isMobile ? (
-          // Mobile View Layout
-          <>
-            {!hideHeaderFooter && <Header />}
-
-            {!hideMenuAndSports && (
-              <>
-                <MMenuTabs />
-                {!hideSportsTab && <MSportsTab />}
-              </>
-            )}
-
-            {children}
-
-            {!hideHeaderFooter && <MFooter />}
-          </>
-        ) : (
-          // Desktop View Layout
-          <>
-            {!hideHeaderFooter && <Header />}
-
-            <>
-              <DTopnav />
-            </>
-
-            <div className="flex lg:w-full">
-              {/* Left Sidebar  */}
-
-              <div className="min-w-[15%] min-h-screen bg-[#C3BDBD]">
-                <Sidebar />
-              </div>
-
-              {/* Main Content */}
-              <main className="flex-1 lg:min-w-[85%] overflow-hidden">
-                {children}
-              </main>
-            </div>
-
-            {!hideHeaderFooter && <MFooter />}
-          </>
-        )}
+        {children}
       </body>
     </html>
   );
