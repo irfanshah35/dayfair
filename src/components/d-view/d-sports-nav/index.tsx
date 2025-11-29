@@ -1,7 +1,10 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 
 const DSportNav = () => {
   const sports = ["Cricket", "Tennis", "Soccer", "Horse Racing"];
+
+  const [activeSport, setActiveSport] = useState("Cricket");
 
   return (
     <div className="w-full px-[9px]">
@@ -17,19 +20,22 @@ const DSportNav = () => {
         pt-0
         [scrollbar-width:none]
         bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]
+        no-scrollbar
       "
       >
-        {sports.map((sport, index) => (
+        {sports.map((sport) => (
           <li
-            key={index}
+            key={sport}
+            onClick={() => setActiveSport(sport)}
             className={`
               px-[15px] py-1
               cursor-pointer
               border-r border-white
               min-w-max
               text-[16px]
+              select-none
               ${
-                sport === "Cricket"
+                activeSport === sport
                   ? "text-black bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]"
                   : "text-white"
               }
@@ -39,6 +45,7 @@ const DSportNav = () => {
           </li>
         ))}
       </ul>
+
     </div>
   );
 };
