@@ -13,7 +13,7 @@ const Header = () => {
   const router = useRouter();
 
   const goToLogin = () => {
-    router.push("/mlogin");
+    router.push("/login");
   };
 
   React.useEffect(() => {
