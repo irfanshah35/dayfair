@@ -1,12 +1,11 @@
 "use client";
+import Loader from "@/components/common/loader";
+import DSportNav from "@/components/d-view/d-sports-nav";
+import MFooter from "@/components/m-view/m-footer";
+import MLiveCasino from "@/components/m-view/m-live-casino";
+import MSingleMarket from "@/components/m-view/m-single-market";
 import { useEffect, useState } from "react";
 // import MHeader from "./components/m-view/m-header";
-import MCasino from "./components/m-view/m-live-casino";
-import MSingleMarket from "./components/m-view/m-single-market";
-import Loader from "./components/common/loader";
-import DSingleMarket from "./components/d-view/d-single-market";
-import DSportNav from "./components/d-view/d-sports-nav";
-import MFooter from "./components/m-view/m-footer";
 
 export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
@@ -37,13 +36,13 @@ export default function Home() {
       {isMobile ? (
         <>
           <MSingleMarket />
-          <MCasino />
+          <MLiveCasino />
         </>
       ) : (
         <>
           <DSportNav />
           <MSingleMarket />
-          <MCasino />
+          <MLiveCasino />
           <MFooter />
         </>
       )}

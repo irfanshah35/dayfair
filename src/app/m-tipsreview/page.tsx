@@ -1,5 +1,5 @@
+import MTipsPreview from '@/components/m-view/m-tipsPreview'
 import React from 'react'
-import MTipsPreview from '../components/m-view/m-tipsPreview'
 
 export default function MTipsReview() {
   return (

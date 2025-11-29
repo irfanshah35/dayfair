@@ -1,7 +1,7 @@
 "use client";
+import Loader from "@/components/common/loader";
+import MMarketDetailsPage from "@/components/m-view/m-market-details-page";
 import React, { useEffect, useState } from "react";
-import MMarketDetailsPage from "../components/m-view/m-market-details-page";
-import Loader from "../components/common/loader";
 
 const MarketDetailsPage = () => {
   const [isLoading, setIsLoading] = useState(true);

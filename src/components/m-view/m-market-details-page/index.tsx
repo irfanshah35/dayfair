@@ -3,355 +3,9 @@
 import React from "react";
 import { useEffect, useState, useRef } from "react";
 import MBetSlip from "../m-betslip";
-import RulesModal from "@/app/modals/rules-modal";
-import DBetSlip from "../../d-view/d-betslip";
-
-// JSON Data for Markets
-const MARKETS_DATA = [
-  {
-    marketId: "1.12345",
-    marketName: "Match Odds",
-    marketType: "MATCH_ODDS",
-    status: "OPEN",
-    min: 100,
-    max: 50000,
-    totalMatched: 2700,
-    runners: [
-      {
-        selectionId: 111,
-        runnerName: "Titans W",
-        status: "ACTIVE",
-        backOdds: [
-          { price: 1.06, size: 5990 },
-          { price: 1.05, size: 4500 },
-          { price: 1.04, size: 3200 },
-        ],
-        layOdds: [
-          { price: 1.19, size: 4210 },
-          { price: 1.2, size: 3800 },
-          { price: 1.21, size: 2900 },
-        ],
-      },
-      {
-        selectionId: 222,
-        runnerName: "South Western Districts W",
-        status: "SUSPENDED",
-        backOdds: [
-          { price: 4.5, size: 3200 },
-          { price: 4.4, size: 2800 },
-          { price: 4.3, size: 2100 },
-        ],
-        layOdds: [
-          { price: 4.8, size: 2900 },
-          { price: 4.9, size: 2400 },
-          { price: 5.0, size: 1800 },
-        ],
-      },
-    ],
-  },
-  {
-    marketId: "1.23456",
-    marketName: "Bookmaker",
-    marketType: "BOOKMAKER",
-    status: "OPEN",
-    min: 100,
-    max: 25000,
-    totalMatched: 1800,
-    runners: [
-      {
-        selectionId: 333,
-        runnerName: "Titans W",
-        status: "ACTIVE",
-        backOdds: [
-          { price: 1.08, size: 4500 },
-          { price: 1.07, size: 3800 },
-          { price: 1.06, size: 2900 },
-        ],
-        layOdds: [
-          { price: 1.22, size: 3900 },
-          { price: 1.23, size: 3200 },
-          { price: 1.24, size: 2600 },
-        ],
-      },
-      {
-        selectionId: 444,
-        runnerName: "South Western Districts W",
-        status: "ACTIVE",
-        backOdds: [
-          { price: 4.2, size: 2800 },
-          { price: 4.1, size: 2300 },
-          { price: 4.0, size: 1900 },
-        ],
-        layOdds: [
-          { price: 4.6, size: 2500 },
-          { price: 4.7, size: 2100 },
-          { price: 4.8, size: 1700 },
-        ],
-      },
-    ],
-  },
-  {
-    marketId: "1.34567",
-    marketName: "Tied Match",
-    marketType: "TIED_MATCH",
-    status: "OPEN",
-    min: 50,
-    max: 10000,
-    totalMatched: 850,
-    runners: [
-      {
-        selectionId: 555,
-        runnerName: "Yes",
-        status: "ACTIVE",
-        backOdds: [
-          { price: 15.0, size: 1200 },
-          { price: 14.5, size: 950 },
-          { price: 14.0, size: 800 },
-        ],
-        layOdds: [
-          { price: 16.0, size: 1100 },
-          { price: 16.5, size: 900 },
-          { price: 17.0, size: 750 },
-        ],
-      },
-      {
-        selectionId: 666,
-        runnerName: "No",
-        status: "ACTIVE",
-        backOdds: [
-          { price: 1.01, size: 8500 },
-          { price: 1.005, size: 7200 },
-          { price: 1.003, size: 6100 },
-        ],
-        layOdds: [
-          { price: 1.02, size: 7800 },
-          { price: 1.025, size: 6500 },
-          { price: 1.03, size: 5400 },
-        ],
-      },
-    ],
-  },
-  {
-    marketId: "1.45678",
-    marketName: "Total Runs",
-    marketType: "TOTAL_RUNS",
-    status: "OPEN",
-    min: 100,
-    max: 20000,
-    totalMatched: 1450,
-    runners: [
-      {
-        selectionId: 777,
-        runnerName: "Over 285.5",
-        status: "ACTIVE",
-        backOdds: [
-          { price: 1.9, size: 3200 },
-          { price: 1.88, size: 2800 },
-          { price: 1.86, size: 2400 },
-        ],
-        layOdds: [
-          { price: 1.95, size: 2900 },
-          { price: 1.97, size: 2500 },
-          { price: 1.99, size: 2100 },
-        ],
-      },
-      {
-        selectionId: 888,
-        runnerName: "Under 285.5",
-        status: "ACTIVE",
-        backOdds: [
-          { price: 2.1, size: 2800 },
-          { price: 2.08, size: 2400 },
-          { price: 2.06, size: 2000 },
-        ],
-        layOdds: [
-          { price: 2.15, size: 2500 },
-          { price: 2.17, size: 2100 },
-          { price: 2.19, size: 1800 },
-        ],
-      },
-    ],
-  },
-  {
-    marketId: "1.56789",
-    marketName: "Top Batsman",
-    marketType: "TOP_BATSMAN",
-    status: "OPEN",
-    min: 50,
-    max: 5000,
-    totalMatched: 620,
-    runners: [
-      {
-        selectionId: 999,
-        runnerName: "Player A",
-        status: "ACTIVE",
-        backOdds: [
-          { price: 5.5, size: 1800 },
-          { price: 5.4, size: 1500 },
-          { price: 5.3, size: 1200 },
-        ],
-        layOdds: [
-          { price: 5.8, size: 1600 },
-          { price: 5.9, size: 1300 },
-          { price: 6.0, size: 1100 },
-        ],
-      },
-      {
-        selectionId: 1010,
-        runnerName: "Player B",
-        status: "ACTIVE",
-        backOdds: [
-          { price: 6.5, size: 1500 },
-          { price: 6.4, size: 1200 },
-          { price: 6.3, size: 1000 },
-        ],
-        layOdds: [
-          { price: 6.8, size: 1400 },
-          { price: 6.9, size: 1100 },
-          { price: 7.0, size: 900 },
-        ],
-      },
-      {
-        selectionId: 1111,
-        runnerName: "Player C",
-        status: "ACTIVE",
-        backOdds: [
-          { price: 7.0, size: 1300 },
-          { price: 6.9, size: 1100 },
-          { price: 6.8, size: 900 },
-        ],
-        layOdds: [
-          { price: 7.3, size: 1200 },
-          { price: 7.4, size: 1000 },
-          { price: 7.5, size: 800 },
-        ],
-      },
-    ],
-  },
-  {
-    marketId: "1.67890",
-    marketName: "Innings Runs",
-    marketType: "INNINGS_RUNS",
-    status: "OPEN",
-    min: 100,
-    max: 15000,
-    totalMatched: 980,
-    runners: [
-      {
-        selectionId: 1212,
-        runnerName: "150-175",
-        status: "ACTIVE",
-        backOdds: [
-          { price: 3.2, size: 2200 },
-          { price: 3.15, size: 1900 },
-          { price: 3.1, size: 1600 },
-        ],
-        layOdds: [
-          { price: 3.3, size: 2000 },
-          { price: 3.35, size: 1700 },
-          { price: 3.4, size: 1400 },
-        ],
-      },
-      {
-        selectionId: 1313,
-        runnerName: "175-200",
-        status: "ACTIVE",
-        backOdds: [
-          { price: 2.8, size: 2400 },
-          { price: 2.75, size: 2100 },
-          { price: 2.7, size: 1800 },
-        ],
-        layOdds: [
-          { price: 2.9, size: 2200 },
-          { price: 2.95, size: 1900 },
-          { price: 3.0, size: 1600 },
-        ],
-      },
-    ],
-  },
-  {
-    marketId: "1.78901",
-    marketName: "Most Sixes",
-    marketType: "MOST_SIXES",
-    status: "OPEN",
-    min: 50,
-    max: 8000,
-    totalMatched: 540,
-    runners: [
-      {
-        selectionId: 1414,
-        runnerName: "Titans W",
-        status: "ACTIVE",
-        backOdds: [
-          { price: 1.85, size: 2800 },
-          { price: 1.83, size: 2400 },
-          { price: 1.81, size: 2000 },
-        ],
-        layOdds: [
-          { price: 1.9, size: 2500 },
-          { price: 1.92, size: 2100 },
-          { price: 1.94, size: 1800 },
-        ],
-      },
-      {
-        selectionId: 1515,
-        runnerName: "South Western Districts W",
-        status: "ACTIVE",
-        backOdds: [
-          { price: 2.15, size: 2400 },
-          { price: 2.13, size: 2000 },
-          { price: 2.11, size: 1700 },
-        ],
-        layOdds: [
-          { price: 2.2, size: 2200 },
-          { price: 2.22, size: 1800 },
-          { price: 2.24, size: 1500 },
-        ],
-      },
-    ],
-  },
-  {
-    marketId: "1.89012",
-    marketName: "First Over Runs",
-    marketType: "FIRST_OVER_RUNS",
-    status: "SUSPENDED",
-    min: 50,
-    max: 5000,
-    totalMatched: 320,
-    runners: [
-      {
-        selectionId: 1616,
-        runnerName: "0-5 Runs",
-        status: "SUSPENDED",
-        backOdds: [
-          { price: 3.5, size: 1100 },
-          { price: 3.45, size: 950 },
-          { price: 3.4, size: 800 },
-        ],
-        layOdds: [
-          { price: 3.65, size: 1000 },
-          { price: 3.7, size: 850 },
-          { price: 3.75, size: 700 },
-        ],
-      },
-      {
-        selectionId: 1717,
-        runnerName: "6-10 Runs",
-        status: "SUSPENDED",
-        backOdds: [
-          { price: 2.8, size: 1300 },
-          { price: 2.75, size: 1100 },
-          { price: 2.7, size: 950 },
-        ],
-        layOdds: [
-          { price: 2.9, size: 1200 },
-          { price: 2.95, size: 1000 },
-          { price: 3.0, size: 850 },
-        ],
-      },
-    ],
-  },
-];
+import DBetSlip from "@/components/d-view/d-betslip";
+import RulesModal from "@/components/modals/rules-modal";
+import { MARKETS_DATA } from "@/lib/projectData";
 
 export default function MMarketDetailsPage() {
   const [activeTab, setActiveTab] = useState("odds");
@@ -518,7 +172,7 @@ export default function MMarketDetailsPage() {
           </div>
 
           {/* TV Icon */}
-          <div className="absolute top-[10px] right-2">
+          <div className="absolute top-2.5 right-2">
             <p className="mb-0 text-black">
               <svg
                 className="w-6 h-[22px]"
@@ -617,16 +271,16 @@ export default function MMarketDetailsPage() {
                 key={market.marketId}
                 className="bg-[linear-gradient(180deg,#000000,#ccc1c1)]"
               >
-                <div className=" mt-0 py-1 pl-2 pr-[6px] flex justify-between items-center">
+                <div className=" mt-0 py-1 pl-2 pr-1.5 flex justify-between items-center">
                   <div className="flex gap-2 items-center">
                     <span className="font-bold text-white text-[13px] lg:text-[14px]">
                       {market.marketName}
                     </span>
                     <div className="ml-3">
                       <div className="flex items-center">
-                        <span className="flex items-center relative top-[1px] text-white text-[13px] lg:text-[14px] font-bold">
+                        <span className="flex items-center relative top-px text-white text-[13px] lg:text-[14px] font-bold">
                           <span className="relative w-[18px] h-[18px] mr-[5px] bg-yellow-500 rounded-xs">
-                            <span className="w-[12px] h-[12px] bg-black rounded-full mr-[6px] absolute z-20 top-0.5 left-[3px]"></span>
+                            <span className="w-3 h-3 bg-black rounded-full mr-1.5 absolute z-20 top-0.5 left-[3px]"></span>
                           </span>
                           Cash Out
                         </span>
@@ -638,7 +292,7 @@ export default function MMarketDetailsPage() {
                     className="text-white"
                   >
                     <svg
-                      className="w-[16px] h-[15px] relative "
+                      className="w-4 h-[15px] relative "
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 24 24"
                       fill="currentColor"
