@@ -106,7 +106,7 @@ export default function RootLayout({
                 </div>
 
                 {/* SCROLLABLE CONTENT ONLY */}
-                <main className="ml-[15%] w-[85%] h-[calc(100vh-110px)] overflow-y-auto no-scrollbar pb-2">
+                <main className="ml-[15%] w-[85%] h-[calc(100vh-110px)] overflow-y-auto  pb-2">
                   {children}
                   <MFooter />
                 </main>

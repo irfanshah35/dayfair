@@ -8,7 +8,7 @@ const MSingleMarket = () => {
 
   return (
     <div className="lg:px-[9px]">
-      <div className="lg:hidden overflow-y-auto max-h-[265px]">
+      <div className="lg:hidden overflow-y-auto no-scrollbar max-h-[265px]">
         {marketsSingle.length > 0 ? (
           marketsSingle.map((item, idx) => (
             <div
