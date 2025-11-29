@@ -7,7 +7,7 @@ const MInplay = () => {
   const router = useRouter();
 
   return (
-    <div className="overflow-y-auto max-h-[265px]">
+    <div className="overflow-y-auto no-scrollbar max-h-[265px] ">
       {markets.map((item, idx) => (
         <div
           key={idx}
@@ -26,7 +26,7 @@ const MInplay = () => {
                 </p>
               </div>
 
-              <div className="w-1/3 text-right">
+              <div className="w-1/3 text-right  ">
                 {item.inplay && (
                   <span className="inline-block">
                     <span className="inplay-animation font-bold text-[12px] mr-1 align-top relative right-px top-[-5px]">
