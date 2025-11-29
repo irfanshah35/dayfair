@@ -1,7 +1,7 @@
 import MLoginPage from '@/components/m-view/m-login'
 import React from 'react'
 
-export default function MLogin() {
+export default function Login() {
   return (
     <div>
         <MLoginPage />
