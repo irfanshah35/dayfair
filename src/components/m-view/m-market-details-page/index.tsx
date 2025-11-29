@@ -226,14 +226,14 @@ export default function MMarketDetailsPage() {
             </div>
 
             {/* Game Status Banner */}
-            <div
-              className=" p-0 mb-[3px] bg-cover"
-              style={{
-                backgroundImage:
-                  "linear-gradient(0deg, #0000001a, #00000073), url('/market/market.jpg')",
-                backgroundSize: "408px 90px",
-              }}
-            >
+           <div
+  className="p-0 mb-[3px] bg-no-repeat bg-cover bg-center w-full h-[90px]"
+  style={{
+    backgroundImage:
+      "linear-gradient(0deg, #0000001a, #00000073), url('/market/market.jpg')",
+  }}
+>
+
               <div className="">
                 <div className="flex flex-col justify-between items-center px-3 pt-1.5 h-[90px]">
                   <div className="flex justify-between w-full">

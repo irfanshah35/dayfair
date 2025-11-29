@@ -179,13 +179,13 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
                       <div className="inline-flex flex-col">
                         <button
                           type="button"
-                          className="w-5 h-[11px] px-0 py-0 bg-[#CCCCCC] border border-gray-400 flex items-center justify-center hover:bg-gray-300"
+                          className="w-5 h-[11px] px-0 py-0 bg-[#CCCCCC]  flex items-center justify-center hover:bg-gray-300"
                         >
                           <FaAngleUp className="text-[10px] text-black" />
                         </button>
                         <button
                           type="button"
-                          className="w-5 h-[11px] px-0 py-0 bg-[#CCCCCC] border border-gray-400 flex items-center justify-center hover:bg-gray-300"
+                          className="w-5 h-[11px] px-0 py-0 bg-[#CCCCCC] flex items-center justify-center hover:bg-gray-300"
                         >
                           <FaAngleDown className="text-[10px] text-black" />
                         </button>
