@@ -39,11 +39,11 @@ export default function MLoginPage() {
   return (
     <div
       id="app"
-      className="min-h-screen bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] md:hidden"
+      className="min-h-screen bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]"
     >
       <div className="login w-full h-screen bg-cover flex justify-center items-center flex-col flex-wrap">
         <div className="wrapper w-full ">
-          <div className="container-fluid mt-0 mx-auto mb-[32.5%]">
+          <div className="container-fluid mt-0 mx-auto max-md:mb-[32.5%]">
             <div className="w-full flex justify-center">
               <div className="flex flex-col gap-1.5 max-[321]:w-[199.69px] w-[300px]">
                 {/* Login Form */}
