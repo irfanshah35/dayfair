@@ -90,7 +90,7 @@ const Header = () => {
                   onClick={() => setOpen(!open)}
                 />
               </li>
-              <li className="mr-[17px] ml-[15px] float-left cursor-pointer">
+              <li className="mr-[17px] ml-[15px] float-left cursor-pointer hover:underline">
                 <b className="text-[16px]"
                 onClick={() => setRulesOpen(true)}>Rules</b>
               </li>
