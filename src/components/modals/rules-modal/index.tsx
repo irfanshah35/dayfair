@@ -50,7 +50,7 @@ export default function RulesModal({ open, onClose }: RulesModalProps) {
           ref={modalRef}
           className={`
           bg-white mx-[7px] max-[768px]:w-[500px] max-h-screen [@media(min-width:992px)]:w-[83.3%] shadow-lg overflow-y-auto no-scrollbar [@media(min-width:992px)]:max-h-[96vh]
-          transform transition-all duration-300 ease-out [@media(min-width:1439px)]:w-[60%]
+          transform transition-all duration-300 ease-out
           ${open ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"}
         `}
         >
