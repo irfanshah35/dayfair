@@ -1,5 +1,7 @@
 "use client";
+import Link from "next/link";
 import React, { useState } from "react";
+import { IoClose } from "react-icons/io5";
 
 export default function MLoginPage() {
   const [formData, setFormData] = useState({
@@ -41,7 +43,12 @@ export default function MLoginPage() {
       id="app"
       className="min-h-screen bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]"
     >
-      <div className="login w-full h-screen bg-cover flex justify-center items-center flex-col flex-wrap">
+      <div className="login w-full h-screen bg-cover flex justify-center items-center flex-col flex-wrap relative">
+        <div>
+          <Link href='/' className="absolute top-5  right-5 text-white">
+            <IoClose size={24} className="cursor-pointer" />
+          </Link>
+        </div>
         <div className="wrapper w-full ">
           <div className="container-fluid mt-0 mx-auto max-md:mb-[32.5%]">
             <div className="w-full flex justify-center">

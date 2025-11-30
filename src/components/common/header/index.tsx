@@ -4,12 +4,14 @@ import Image from "next/image";
 import { FaHome, FaSearch, FaSearchPlus, FaTimes } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import RulesModal from "@/components/modals/rules-modal";
 
 const Header = () => {
   const [searchActive, setSearchActive] = useState(false);
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLLIElement | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const [isrulesopen, setRulesOpen] = useState(false);
   const router = useRouter();
 
   const goToLogin = () => {
@@ -89,7 +91,8 @@ const Header = () => {
                 />
               </li>
               <li className="mr-[17px] ml-[15px] float-left">
-                <b className="text-[16px]">Rules</b>
+                <b className="text-[16px]"
+                onClick={() => setRulesOpen(true)}>Rules</b>
               </li>
             </ul>
           </div>
@@ -156,6 +159,8 @@ const Header = () => {
           <div className="flex-[0_0_50%] max-w-[50%] text-right"></div>
         </div>
       </div>
+
+      <RulesModal open={isrulesopen} onClose={() => setRulesOpen(false)} />
       <style jsx>{`
         @keyframes fadeIn {
           from {
