@@ -89,34 +89,35 @@ const MLiveCasino = () => {
 
       {pathname !== "/live-casino" && (
         <div className="min-[992px]:px-2.5 w-full min-[992px]:mb-5">
-            <div className="min-[992px]:shadow-[0_6px_10px_rgba(0,0,0,0.4)]">
-
-          <ul className="flex  bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] no-scrollbar overflow-x-auto overflow-y-hidden scrollbar-none m-0 p-0 list-none whitespace-nowrap">
-            {tabs.map((tab) => (
-              <li key={tab} className="inline-block border-r  border-white">
-                <a onClick={() => setActiveTab(tab)} className="cursor-pointer">
-                  <div
-                    className={`p-2 text-xs min-[992px]:text-base min-[992px]:font-normal min-[992px]:py-1! min-[992px]:px-[15px]! font-bold tracking-wide ${
-                      activeTab === tab
-                        ? "bg-linear-to-b from-[#f4b501] to-[#f68700] text-black"
-                        : "text-white bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]!"
-                    }`}
-                    style={{
-                      padding: "8px",
-                      fontFamily: '"Roboto Condensed", sans-serif',
-                    }}
+          <div className="min-[992px]:shadow-[0_3px_10px_rgba(0,0,0,0.4)]">
+            <ul className="flex  bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] no-scrollbar overflow-x-auto overflow-y-hidden scrollbar-none m-0 p-0 list-none whitespace-nowrap">
+              {tabs.map((tab) => (
+                <li key={tab} className="inline-block border-r  border-white">
+                  <a
+                    onClick={() => setActiveTab(tab)}
+                    className="cursor-pointer"
                   >
-                    <div className="text-center  tracking-[-0.1px]">{tab}</div>
-                  </div>
-                  
-                  
-                </a>
-              </li>
-            ))}
-          </ul>
+                    <div
+                      className={`p-2 text-xs min-[992px]:text-base min-[992px]:font-normal min-[992px]:py-1! min-[992px]:px-[15px]! font-bold tracking-wide ${
+                        activeTab === tab
+                          ? "bg-linear-to-b from-[#f4b501] to-[#f68700] text-black"
+                          : "text-white bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]!"
+                      }`}
+                      style={{
+                        padding: "8px",
+                        fontFamily: '"Roboto Condensed", sans-serif',
+                      }}
+                    >
+                      <div className="text-center  tracking-[-0.1px]">
+                        {tab}
+                      </div>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-        </div>
-
       )}
       {/*  */}
       <div className="container mx-auto p-1 lg:pt-3">
