@@ -8,8 +8,8 @@ const MInplay = () => {
 
   return (
     <div className="lg:px-[9px]">
-      <div className="bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white mt-1 px-4 h-[32px] flex items-center font-medium text-[16px] leading-[19px]">
-        <h4 className="relative top-[-1px]">Soccer</h4>
+      <div className="bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white mt-1 px-4 h-8 flex items-center font-medium text-[16px] leading-[19px]">
+        <h4 className="relative top-[0.1px] font-medium">Soccer</h4>
       </div>
       <div className="lg:hidden overflow-y-auto no-scrollbar max-h-[265px]">
         {marketsSingle.length > 0 ? (
@@ -75,7 +75,7 @@ const MInplay = () => {
       </div>
 
       <div className="hidden lg:block w-full">
-        <div className="bg-white px-[9px]">
+        <div className="bg-white">
           <table className="w-full coupon-table">
             <thead>
               <tr className="bg-white border-b-2 border-[#dee2e6]">
