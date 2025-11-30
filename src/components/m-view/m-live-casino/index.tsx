@@ -89,7 +89,7 @@ const MLiveCasino = () => {
 
       {pathname !== "/live-casino" && (
         <div className="min-[992px]:px-2.5 w-full min-[992px]:mb-5">
-          <div className="min-[992px]:shadow-[0_3px_10px_rgba(0,0,0,0.4)]">
+          <div className="min-[992px]:shadow-[0_8px_8px_-7px_rgb(33,37,41)]">
             <ul className="flex  bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] no-scrollbar overflow-x-auto overflow-y-hidden scrollbar-none m-0 p-0 list-none whitespace-nowrap">
               {tabs.map((tab) => (
                 <li key={tab} className="inline-block border-r  border-white">
