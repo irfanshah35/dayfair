@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 interface RulesModalProps {
   open: boolean;
   onClose: () => void;
@@ -7,6 +7,25 @@ interface RulesModalProps {
 
 export default function RulesModal({ open, onClose }: RulesModalProps) {
   const [show, setShow] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
+
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+        onClose();
+      }
+    }
+
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
+
 
   // Handle slide-down animation
   useEffect(() => {
@@ -28,9 +47,10 @@ export default function RulesModal({ open, onClose }: RulesModalProps) {
     <div>
       <div className="fixed text-black inset-0 pt-3.5 bg-black/50 flex items-center min-[992px]:items-start justify-center z-50">
         <div
+          ref={modalRef}
           className={`
-          bg-white mx-[7px] max-[768px]:w-[500px] max-h-screen [@media(min-width:992px)]:w-[83.3%] shadow-lg overflow-y-auto no-scrollbar
-          transform transition-all duration-300 ease-out
+          bg-white mx-[7px] max-[768px]:w-[500px] max-h-screen [@media(min-width:992px)]:w-[83.3%] shadow-lg overflow-y-auto no-scrollbar [@media(min-width:992px)]:max-h-[96vh]
+          transform transition-all duration-300 ease-out [@media(min-width:1439px)]:w-[60%]
           ${open ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"}
         `}
         >
