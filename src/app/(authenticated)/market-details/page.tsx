@@ -1,41 +1,27 @@
 "use client";
+
+import dynamic from "next/dynamic";
 import Loader from "@/components/common/loader";
-import MMarketDetailsPage from "@/components/m-view/m-market-details-page";
-import React, { useEffect, useState } from "react";
 
-const MarketDetailsPage = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 992);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-  useEffect(() => {
-    // Simulate loading time
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (isLoading) {
-    return <Loader />;
+const MMarketDetailsPage = dynamic(
+  () =>
+    new Promise<typeof import("@/components/m-view/m-market-details-page")>(
+      (resolve) => {
+        setTimeout(() => {
+          resolve(import("@/components/m-view/m-market-details-page"));
+        }, 1500); // artificial delay for loader
+      }
+    ),
+  {
+    loading: () => <Loader />,
+    ssr: false,
   }
+);
+
+const MarketDetailsPage: React.FC = () => {
   return (
     <div>
-      {isMobile ? (
-        <>
-          <MMarketDetailsPage />
-        </>
-      ) : (
-        <>
-          <MMarketDetailsPage />
-        </>
-      )}
+      <MMarketDetailsPage />
     </div>
   );
 };

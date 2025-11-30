@@ -28,10 +28,10 @@ const MLiveCasino = () => {
                   <div
                     onClick={() => setActiveIndex(index)}
                     className={`text-center px-2 whitespace-nowrap h-[33px] py-[7px] tracking-[-0.10px] border-r border-white font-semibold transition cursor-pointer ${activeIndex === index
-                        ? "bg-linear-to-b from-[#f4b501] to-[#f68700] text-black"
-                        : item.gradient
-                          ? "bg-none text-white"
-                          : "text-white"
+                      ? "bg-linear-to-b from-[#f4b501] to-[#f68700] text-black"
+                      : item.gradient
+                        ? "bg-none text-white"
+                        : "text-white"
                       }`}
                   >
                     {item.label.includes("CASINO") ? (
@@ -96,8 +96,8 @@ const MLiveCasino = () => {
                   >
                     <div
                       className={`p-2 text-xs min-[992px]:text-base min-[992px]:font-normal min-[992px]:py-1! min-[992px]:px-[15px]! font-bold tracking-wide ${activeTab === tab
-                          ? "bg-linear-to-b from-[#f4b501] to-[#f68700] text-black"
-                          : "text-white bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]!"
+                        ? "bg-linear-to-b from-[#f4b501] to-[#f68700] text-black"
+                        : "text-white bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]!"
                         }`}
                       style={{
                         padding: "8px",
