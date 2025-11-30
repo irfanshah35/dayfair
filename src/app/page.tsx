@@ -2,7 +2,6 @@
 import DSportNav from "@/components/d-view/d-sports-nav";
 import MLiveCasino from "@/components/m-view/m-live-casino";
 import MSingleMarket from "@/components/m-view/m-single-market";
-import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 // import MHeader from "./components/m-view/m-header";
 
