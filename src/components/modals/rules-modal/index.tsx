@@ -29,23 +29,23 @@ export default function RulesModal({ open, onClose }: RulesModalProps) {
       <div className="fixed text-black inset-0 pt-3.5 bg-black/50 flex items-center min-[992px]:items-start justify-center z-50">
         <div
           className={`
-          bg-white mx-[7px] max-[768px]:w-[500px] max-h-screen [@media(min-width:992px)]:w-[880px] shadow-lg overflow-y-auto no-scrollbar
+          bg-white mx-[7px] max-[768px]:w-[500px] max-h-screen [@media(min-width:992px)]:w-[83.3%] shadow-lg overflow-y-auto no-scrollbar
           transform transition-all duration-300 ease-out
           ${open ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"}
         `}
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-2.5 h-[49px] md:py-0! bg-[linear-gradient(180deg,#000000,#000000_42%,#000000)] text-white">
+          <div className="flex items-center justify-between px-2.5 h-[49px] md:py-0! bg-[linear-gradient(180deg,#000000,#000000_42%,#000000)] text-white [@media(min-width:992px)]:h-[50px]">
             <h1 className="text-xl font-medium">Rules</h1>
             <button
               onClick={onClose}
-              className="bg-transparent border-0 p-0 text-[35px]"
+              className="bg-transparent border-0 p-0 text-[35px] cursor-pointer [@media(min-width:992px)]:text-[33px]"
             >
               ×
             </button>
           </div>
-          <div className="p-3 pt-9 md:pt-14! pb-9 text-[15px]">
-            <span className="">
+          <div className="p-3 pt-9 md:pt-14 pb-9 text-[15px] [@media(min-width:992px)]:text-[12px] [@media(min-width:992px)]:pt-[31px]">
+            <span className="text-[#212529] tracking-[-0.1px]">
               <b>MARKET INFORMATION</b>
             </span>
             <br />
@@ -53,46 +53,13 @@ export default function RulesModal({ open, onClose }: RulesModalProps) {
 
             <p>
               For further information please see{" "}
-              <a
-                href="http://content.betfair.com/aboutus/content.asp?sWhichKey=Rules%20and%20Regulations#undefined.do"
-                target="_blank"
-                className="text-blue-600 underline"
-              >
+              <a className="text-blue-600 underline">
                 Rules &amp; Regs
               </a>
               .
             </p>
-
             <br />
-            <p className="hidden md:block">
-              How many runs will be scored in the stated number of overs? Line
-              market:This market operate with a bet delay of 3 seconds; All bets
-              are struck at 2.0 . The 'price' at which your bet is placed
-              defines the number of runs bet upon. "Over Line" (Buy) bets win
-              when more runs are scored in the specified number of overs than
-              the 'price' at which the bet is matched. "Under Line" (Sell) bets
-              win when fewer runs are scored in the specified number of overs
-              than the 'price' at which the bet is matched. Special rules for
-              Overs Runs Line markets: Bets will be void - regardless of whether
-              the outcome of the bet is already unconditionally determined -
-              when any of the following are the case: -if the scheduled number
-              of overs for the innings is reduced by rain interruption and, at
-              settlement time, the actual number of overs bowled is less than
-              the number of overs stipulated at the head of these rules. - if
-              the scheduled number of overs for the innings is reduced for any
-              other reason after the innings has begun and at settlement time,
-              that new number of scheduled overs is less than the number of
-              overs stipulated at the head of these rules. Please note if the
-              batting side reach their target within the 20 overs or have been
-              bowled out and the innings hasn’t been reduced in overs to less
-              than the stipulated number at the head of the rules, the market
-              will be settled. For clarification this market will be settled on
-              the final score achieved by the batting side including any extras
-              or penalty runs awarded during the innings, any penalty runs added
-              to a score after the completion of an innings will not count.
-            </p>
-
-            <div className="md:hidden">
+            <div className="">
               <p>
                 Which team will be awarded the most points in this match? At the
                 scheduled start of the match all unmatched bets will be
