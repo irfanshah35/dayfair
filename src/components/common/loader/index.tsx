@@ -2,11 +2,8 @@ import React from "react";
 
 const Loader = () => {
   return (
-    <div className="flex absolute inset-0 items-center justify-center min-h-screen bg-white/10">
-      <div
-        className="relative w-12 h-12 -mt-20"
-        style={{ animation: "spin 1.5s linear infinite" }}
-      >
+    <div className="flex absolute z-9999999 inset-0 items-center justify-center min-h-screen bg-white/30">
+      <div className="relative w-12 h-12  animate-spin">
         {[...Array(8)].map((_, index) => (
           <div
             key={index}
@@ -21,16 +18,6 @@ const Loader = () => {
           />
         ))}
       </div>
-      <style jsx>{`
-        @keyframes spin {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-      `}</style>
     </div>
   );
 };

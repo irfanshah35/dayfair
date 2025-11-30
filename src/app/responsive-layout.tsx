@@ -6,16 +6,10 @@ import MFooter from "@/components/m-view/m-footer";
 import MMenuTabs from "@/components/m-view/m-menu-tabs";
 import MSportsTab from "@/components/m-view/m-sports-tab";
 import { usePathname } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "./loading";
 
-
-
-export default function ResponsiveLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ResponsiveLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -23,27 +17,34 @@ export default function ResponsiveLayout({
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 992);
-      setIsReady(true); // hydration complete
+      setIsReady(true);
     };
 
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // 🔥 FIX: No empty white screen + no footer/header flicker
+  if (!isReady) {
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white z-[9999]">
+        <Loading />
+      </div>
+    );
+  }
+
   const hideMenuAndSports = pathname === "/market-details";
-  const hideSportsTab =
-    pathname === "/live-casino" || pathname === "/m-tipsreview";
+  const hideSportsTab = pathname === "/live-casino" || pathname === "/m-tipsreview";
 
   if (pathname === "/login") {
     return children;
   }
+
   return (
     <>
-      {!isReady ? (
-        <Loading />
-      ) : isMobile ? (
+      {isMobile ? (
         <div className="relative w-full h-screen overflow-hidden">
-          {/* FIXED TOP AREA */}
           <div className="fixed top-0 left-0 w-full z-50 bg-white shadow">
             <Header />
             {!hideMenuAndSports && (
@@ -54,8 +55,7 @@ export default function ResponsiveLayout({
             )}
           </div>
 
-          {/* MAIN SCROLL CONTAINER */}
-          <div className={`overflow-y-auto h-full`}>
+          <div className="overflow-y-auto h-full">
             <div
               className={`${
                 hideMenuAndSports
@@ -71,7 +71,6 @@ export default function ResponsiveLayout({
         </div>
       ) : (
         <div className="relative w-full h-screen overflow-hidden">
-          {/* FIXED TOP */}
           <div className="fixed top-0 left-0 w-full z-50 bg-white shadow">
             <Header />
             <DTopnav />
@@ -79,13 +78,11 @@ export default function ResponsiveLayout({
 
           <div className="h-[118]"></div>
           <div className="flex h-full">
-            {/* FIXED SIDEBAR */}
             <div className="fixed top-[119px] left-0 h-[calc(100vh-110px)] overflow-y-auto no-scrollbar w-[15%] bg-[#C3BDBD]">
               <Sidebar />
             </div>
 
-            {/* SCROLLABLE CONTENT ONLY */}
-            <main className="ml-[15%] w-[85%] h-[calc(100vh-110px)] overflow-y-auto  pb-2">
+            <main className="ml-[15%] w-[85%] h-[calc(100vh-110px)] overflow-y-auto pb-2">
               {children}
               <MFooter />
             </main>
