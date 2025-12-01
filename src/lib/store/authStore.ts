@@ -8,6 +8,7 @@ interface AuthState {
   userDetail: any | null;
   error: string | null;
   showModal: boolean;
+  checkLogin: (token: string) => void;
 
   // ACTIONS
   loginUser: (
@@ -20,11 +21,15 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set, get) => ({
-  isLoggedIn: false,
   token: null,
+  isLoggedIn: false,
   userDetail: null,
   error: null,
   showModal: false,
+
+  checkLogin: (token: string) => {
+    set({ token: token, isLoggedIn: !!token });
+  },
 
   // ---------------------------------------------
   // LOGIN ACTION

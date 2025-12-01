@@ -5,6 +5,7 @@ import { FaHome, FaSearch, FaSearchPlus, FaTimes } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import RulesModal from "@/components/modals/rules-modal";
+import { useAuthStore } from "@/lib/store/authStore";
 
 const Header = () => {
   const [searchActive, setSearchActive] = useState(false);
@@ -13,6 +14,7 @@ const Header = () => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [isrulesopen, setRulesOpen] = useState(false);
   const router = useRouter();
+  const { isLoggedIn } = useAuthStore();
 
   const goToLogin = () => {
     router.push("/login");
@@ -27,6 +29,7 @@ const Header = () => {
   }, [searchActive]);
 
   useEffect(() => {
+    console.log(isLoggedIn)
     function handleClickOutside(e: MouseEvent) {
       const target = e.target as Node | null;
       if (
@@ -91,8 +94,9 @@ const Header = () => {
                 />
               </li>
               <li className="mr-[17px] ml-[15px] float-left cursor-pointer hover:underline">
-                <b className="text-[16px]"
-                onClick={() => setRulesOpen(true)}>Rules</b>
+                <b className="text-[16px]" onClick={() => setRulesOpen(true)}>
+                  Rules
+                </b>
               </li>
             </ul>
           </div>
