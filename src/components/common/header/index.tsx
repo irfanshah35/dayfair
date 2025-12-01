@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import RulesModal from "@/components/modals/rules-modal";
 import { useAuthStore } from "@/lib/store/authStore";
-import { useAppStore } from "@/lib/store/store";
 import { CONFIG } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
 
