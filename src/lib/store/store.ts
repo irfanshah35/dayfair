@@ -19,7 +19,7 @@ export const useAppStore = create<any>((set) => ({
 
 
   // auth setter
-  setUserBalance: (value: boolean) => set({ userBalance: value }),
+  setUserBalance: (value: any) => set({ userBalance: value }),
 
  
 
