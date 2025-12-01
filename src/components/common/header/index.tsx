@@ -19,6 +19,7 @@ const Header = () => {
   const [isrulesopen, setRulesOpen] = useState(false);
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
+  const {userBalance} = useAppStore();
 
   const goToLogin = () => {
     if (!isLoggedIn) {
