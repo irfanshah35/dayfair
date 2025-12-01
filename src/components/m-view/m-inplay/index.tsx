@@ -38,15 +38,13 @@ const MInplay = () => {
     return indexA - indexB;
   });
 
-  
-
   return (
     <div className="lg:px-[9px]">
       {sortedSports.map((sport) => {
         const events = groupedBySport[sport];
-        
+
         return (
-          <div key={sport} >
+          <div key={sport}>
             {/* Sport Header */}
             <div className="bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white mt-1 px-4 h-8 flex items-center font-medium text-[16px] leading-[19px]">
               <h4 className="relative top-[0.1px] font-medium">{sport}</h4>
@@ -55,19 +53,23 @@ const MInplay = () => {
             {/* Mobile View */}
             <div className="lg:hidden overflow-y-auto no-scrollbar max-h-[265px]">
               {events.length > 0 ? (
-                events.map((item, idx) => (
+                events.map((item: any, idx: number) => (
                   <div
                     key={idx}
-                    onClick={() => router.push(`/market-details/${item.eventType?.id}/${item.event?.id}`)}
+                    onClick={() =>
+                      router.push(
+                        `/market-details/${item.eventType?.id}/${item.event?.id}`
+                      )
+                    }
                     className="text-black block no-underline cursor-pointer hover:bg-[#e5eef3]"
                   >
                     <div className="bg-[#f1f5f8] border-b border-[#d6d8d7] px-3 pt-[5px] pb-[3px]">
                       <div className="flex items-center">
                         <div className="w-2/3 flex flex-col">
                           <p className="mb-0 text-[13px] font-bold leading-tight">
-                            {item.runnersName?.[0]?.runnerName} v {item.runnersName?.[1]?.runnerName}
+                            {item.runnersName?.[0]?.runnerName} v{" "}
+                            {item.runnersName?.[1]?.runnerName}
                           </p>
-                          
                         </div>
                         <div className="w-1/3 text-right">
                           {item.inplay && (
@@ -96,30 +98,36 @@ const MInplay = () => {
                         {/* Runner 1 odds */}
                         <div className="w-1/3 flex justify-center">
                           <button className="w-1/2 bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
-                            {item.runners?.[0]?.ex?.availableToBack?.[0]?.price || "-"}
+                            {item.runners?.[0]?.ex?.availableToBack?.[0]
+                              ?.price || "-"}
                           </button>
                           <button className="w-1/2 bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
-                            {item.runners?.[0]?.ex?.availableToLay?.[0]?.price || "-"}
+                            {item.runners?.[0]?.ex?.availableToLay?.[0]
+                              ?.price || "-"}
                           </button>
                         </div>
-                        
+
                         {/* Draw/X odds (Runner 3 if exists, or show "-") */}
                         <div className="w-1/3 flex justify-center">
                           <button className="w-1/2 bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
-                            {item.runners?.[2]?.ex?.availableToBack?.[0]?.price || "-"}
+                            {item.runners?.[2]?.ex?.availableToBack?.[0]
+                              ?.price || "-"}
                           </button>
                           <button className="w-1/2 bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
-                            {item.runners?.[2]?.ex?.availableToLay?.[0]?.price || "-"}
+                            {item.runners?.[2]?.ex?.availableToLay?.[0]
+                              ?.price || "-"}
                           </button>
                         </div>
-                        
+
                         {/* Runner 2 odds */}
                         <div className="w-1/3 flex justify-center">
                           <button className="w-1/2 bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
-                            {item.runners?.[1]?.ex?.availableToBack?.[0]?.price || "-"}
+                            {item.runners?.[1]?.ex?.availableToBack?.[0]
+                              ?.price || "-"}
                           </button>
                           <button className="w-1/2 bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
-                            {item.runners?.[1]?.ex?.availableToLay?.[0]?.price || "-"}
+                            {item.runners?.[1]?.ex?.availableToLay?.[0]
+                              ?.price || "-"}
                           </button>
                         </div>
                       </div>
@@ -164,18 +172,22 @@ const MInplay = () => {
                   </thead>
                   <tbody>
                     {events.length > 0 ? (
-                      events.map((item, idx) => (
+                      events.map((item: any, idx: number) => (
                         <tr
                           key={idx}
-                          onClick={() => router.push(`/market-details/${item.eventType?.id}/${item.event?.id}`)}
+                          onClick={() =>
+                            router.push(
+                              `/market-details/${item.eventType?.id}/${item.event?.id}`
+                            )
+                          }
                           className="cursor-pointer border-b border-[#d6d8d7]"
                         >
                           <td className="px-[15px] align-middle">
                             <div className="flex justify-between items-center">
                               <div className="game-name float-left text-left relative bottom-[3px]">
                                 <a className="text-[#212529] hover:underline cursor-pointer text-[14px]">
-                                  {item.runnersName?.[0]?.runnerName} v {item.runnersName?.[1]?.runnerName}
-                                 
+                                  {item.runnersName?.[0]?.runnerName} v{" "}
+                                  {item.runnersName?.[1]?.runnerName}
                                 </a>
                               </div>
                               <div className="game-icons float-right w-auto flex items-center space-x-1 -mt-px">
@@ -191,36 +203,42 @@ const MInplay = () => {
                           {/* Runner 1 odds */}
                           <td>
                             <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                              {item.runners?.[0]?.ex?.availableToBack?.[0]?.price || "-"}
+                              {item.runners?.[0]?.ex?.availableToBack?.[0]
+                                ?.price || "-"}
                             </button>
                           </td>
                           <td>
                             <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                              {item.runners?.[0]?.ex?.availableToLay?.[0]?.price || "-"}
+                              {item.runners?.[0]?.ex?.availableToLay?.[0]
+                                ?.price || "-"}
                             </button>
                           </td>
 
                           {/* Draw/X odds (Runner 3 if exists) */}
                           <td>
                             <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                              {item.runners?.[2]?.ex?.availableToBack?.[0]?.price || "-"}
+                              {item.runners?.[2]?.ex?.availableToBack?.[0]
+                                ?.price || "-"}
                             </button>
                           </td>
                           <td>
                             <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                              {item.runners?.[2]?.ex?.availableToLay?.[0]?.price || "-"}
+                              {item.runners?.[2]?.ex?.availableToLay?.[0]
+                                ?.price || "-"}
                             </button>
                           </td>
 
                           {/* Runner 2 odds */}
                           <td>
                             <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                              {item.runners?.[1]?.ex?.availableToBack?.[0]?.price || "-"}
+                              {item.runners?.[1]?.ex?.availableToBack?.[0]
+                                ?.price || "-"}
                             </button>
                           </td>
                           <td>
                             <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                              {item.runners?.[1]?.ex?.availableToLay?.[0]?.price || "-"}
+                              {item.runners?.[1]?.ex?.availableToLay?.[0]
+                                ?.price || "-"}
                             </button>
                           </td>
                         </tr>
