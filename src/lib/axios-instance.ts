@@ -5,7 +5,27 @@ export const http = axios.create({
   baseURL: BASE_URL,
   headers: {
     "x-Requested-With": "XMLHttpRequest",
-    "Content-Type": "application/json,",
+    "Content-Type": "application/json",
   },
   withCredentials: false,
 });
+
+// -----------------------
+// 🔥 Request Interceptor
+// -----------------------
+http.interceptors.request.use(
+  (config) => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+
+      if (token) {
+        config.headers["Authorization"] = `Bearer ${token}`;
+      }
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);

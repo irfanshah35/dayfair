@@ -11,16 +11,25 @@ import Loading from "./loading";
 import { fetchData } from "@/lib/functions";
 import { CONFIG } from "@/lib/config";
 import { useAppStore } from "../lib/store/store";
+import { useAuthStore } from "@/lib/store/authStore";
 
 export default function ResponsiveLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { setCasinoEvents,allEventsList,exchangeTypeList,menuList,exchangeNews } = useAppStore();
+  const {
+    setCasinoEvents,
+    setAllEventsList,
+    setExchangeTypeList,
+    setMenuList,
+    setExchangeNews,
+    setUserBalance,
+  } = useAppStore();
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const { checkLogin, isLoggedIn } = useAuthStore();
 
   useEffect(() => {
     const handleResize = () => {
@@ -34,11 +43,13 @@ export default function ResponsiveLayout({
   }, []);
 
   useEffect(() => {
+    const token = localStorage.getItem("token");
+    checkLogin(token || "");
     fetchData({
       url: CONFIG.getAllEventsList,
       payload: { key: CONFIG.siteKey },
       cachedKey: "allEventsList",
-       setFn: allEventsList,
+      setFn: setAllEventsList,
       expireIn: CONFIG.getAllEventsListTime,
     });
     fetchData({
@@ -52,24 +63,34 @@ export default function ResponsiveLayout({
       url: CONFIG.menuList,
       payload: { key: CONFIG.siteKey },
       cachedKey: "menuList",
-      setFn: menuList,
+      setFn: setMenuList,
       expireIn: CONFIG.menuListTime,
     });
     fetchData({
       url: CONFIG.getExchangeTypeList,
       payload: { key: CONFIG.siteKey },
       cachedKey: "exchangeTypeList",
-      setFn: exchangeTypeList,
+      setFn: setExchangeTypeList,
       expireIn: CONFIG.getExchangeTypeListTime,
     });
     fetchData({
       url: CONFIG.getExchangeNews,
       payload: { key: CONFIG.siteKey },
       cachedKey: "exchangeNews",
-      setFn: exchangeNews,
+      setFn: setExchangeNews,
       expireIn: CONFIG.getExchangeNewsTime,
     });
   }, []);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchData({
+        url: CONFIG.getUserBalance,
+        payload: { key: CONFIG.siteKey },
+        setFn: setUserBalance,
+      });
+    }
+  }, [isLoggedIn]);
 
   // 🔥 FIX: No empty white screen + no footer/header flicker
   if (!isReady) {
