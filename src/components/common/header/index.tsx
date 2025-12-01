@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import RulesModal from "@/components/modals/rules-modal";
 import { useAuthStore } from "@/lib/store/authStore";
+import { useAppStore } from "@/lib/store/store";
 
 const Header = () => {
   const [searchActive, setSearchActive] = useState(false);
@@ -15,9 +16,13 @@ const Header = () => {
   const [isrulesopen, setRulesOpen] = useState(false);
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
+  const { userBalance } = useAppStore();
 
   const goToLogin = () => {
-    router.push("/login");
+    if (!isLoggedIn) {
+      router.push("/login");
+      return;
+    }
   };
 
   React.useEffect(() => {
@@ -29,6 +34,8 @@ const Header = () => {
   }, [searchActive]);
 
   useEffect(() => {
+    console.log(userBalance, "balance");
+
     console.log(isLoggedIn)
     function handleClickOutside(e: MouseEvent) {
       const target = e.target as Node | null;
@@ -98,6 +105,34 @@ const Header = () => {
                   Rules
                 </b>
               </li>
+
+              {isLoggedIn && (
+                <li className="float-left text-[16px] mr-[17px]">
+                  <div className="text-start leading-[23px]">
+                    <span><b>BALANCE:&nbsp;</b></span>
+                    <b>
+                      <span className="userTotalBalance">
+                        {userBalance?.toFixed(2) ?? "0.00"}
+                      </span>
+                    </b>
+                  </div>
+                  <div className="text-start leading-[23px]">
+                    <button
+                      type="button"
+                      className="cursor-pointer"
+                    >
+                      <span><b>EXPOSURE:&nbsp;</b></span>
+                      <b>
+                        <span className="">
+                          0.00
+                          {/* {userExposure?.toFixed(2) ?? "0.00"} */}
+                        </span>
+                      </b>
+                    </button>
+                  </div>
+                </li>
+              )}
+
             </ul>
           </div>
           <div className="w-[110%] gap-1 flex items-center">
@@ -112,7 +147,8 @@ const Header = () => {
                 }}
                 tabIndex={0}
               >
-                LOGIN
+                {/* { isLoggedIn ? `Balance: $${userBalance.toFixed(2)}` : "Login" } */}
+                {isLoggedIn ? `ACCOUNT` : "Login"}
               </button>
             </div>
           </div>
@@ -139,11 +175,10 @@ const Header = () => {
                 className={`
             bg-transparent text-black border-0 outline-0 h-[25px]
             transition-all duration-500 ease-linear text-[12px]  
-            ${
-              searchActive
-                ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
-                : "w-0 opacity-0 pl-0 pr-0"
-            }
+            ${searchActive
+                    ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
+                    : "w-0 opacity-0 pl-0 pr-0"
+                  }
           `}
               />
 
