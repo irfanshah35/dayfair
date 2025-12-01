@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import RulesModal from "@/components/modals/rules-modal";
 import { useAuthStore } from "@/lib/store/authStore";
-import { useAppStore } from "@/lib/store/store";
 import { CONFIG } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
 
@@ -19,7 +18,6 @@ const Header = () => {
   const [isrulesopen, setRulesOpen] = useState(false);
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
-  const {userBalance} = useAppStore();
 
   const goToLogin = () => {
     if (!isLoggedIn) {
