@@ -7,16 +7,18 @@ import Link from "next/link";
 import RulesModal from "@/components/modals/rules-modal";
 import { useAuthStore } from "@/lib/store/authStore";
 import { useAppStore } from "@/lib/store/store";
+import { CONFIG } from "@/lib/config";
+import { fetchData } from "@/lib/functions";
 
 const Header = () => {
   const [searchActive, setSearchActive] = useState(false);
+  const [userBalance, setUserBalance] = useState<any>();
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLLIElement | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [isrulesopen, setRulesOpen] = useState(false);
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
-  const { userBalance } = useAppStore();
 
   const goToLogin = () => {
     if (!isLoggedIn) {
@@ -34,9 +36,6 @@ const Header = () => {
   }, [searchActive]);
 
   useEffect(() => {
-    console.log(userBalance, "balance");
-
-    console.log(isLoggedIn)
     function handleClickOutside(e: MouseEvent) {
       const target = e.target as Node | null;
       if (
@@ -51,6 +50,16 @@ const Header = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchData({
+        url: CONFIG.getUserBalance,
+        payload: { key: CONFIG.siteKey },
+        setFn: setUserBalance,
+      });
+    }
+  }, [isLoggedIn]);
 
   return (
     <header className="relative min-h-[65px] md:min-h-20 overflow-x-clip bg-black text-white px-[5px]">
@@ -109,22 +118,23 @@ const Header = () => {
               {isLoggedIn && (
                 <li className="float-left text-[16px] mr-[17px]">
                   <div className="text-start leading-[23px]">
-                    <span><b>BALANCE:&nbsp;</b></span>
+                    <span>
+                      <b>BALANCE:&nbsp;</b>
+                    </span>
                     <b>
                       <span className="userTotalBalance">
-                        {userBalance?.toFixed(2) ?? "0.00"}
+                        {userBalance?.bankBalance || "0.00"}
                       </span>
                     </b>
                   </div>
                   <div className="text-start leading-[23px]">
-                    <button
-                      type="button"
-                      className="cursor-pointer"
-                    >
-                      <span><b>EXPOSURE:&nbsp;</b></span>
+                    <button type="button" className="cursor-pointer">
+                      <span>
+                        <b>EXPOSURE:&nbsp;</b>
+                      </span>
                       <b>
                         <span className="">
-                          0.00
+                          {userBalance?.exposure || "0.00"}
                           {/* {userExposure?.toFixed(2) ?? "0.00"} */}
                         </span>
                       </b>
@@ -132,7 +142,6 @@ const Header = () => {
                   </div>
                 </li>
               )}
-
             </ul>
           </div>
           <div className="w-[110%] gap-1 flex items-center">
@@ -175,10 +184,11 @@ const Header = () => {
                 className={`
             bg-transparent text-black border-0 outline-0 h-[25px]
             transition-all duration-500 ease-linear text-[12px]  
-            ${searchActive
-                    ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
-                    : "w-0 opacity-0 pl-0 pr-0"
-                  }
+            ${
+              searchActive
+                ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
+                : "w-0 opacity-0 pl-0 pr-0"
+            }
           `}
               />
 
