@@ -10,12 +10,14 @@ import { useEffect, useState } from "react";
 import Loading from "./loading";
 import { fetchData } from "@/lib/functions";
 import { CONFIG } from "@/lib/config";
+import { useAppStore } from "../lib/store/store";
 
 export default function ResponsiveLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const { setCasinoEvents,allEventsList,exchangeTypeList,menuList,exchangeNews } = useAppStore();
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -36,30 +38,35 @@ export default function ResponsiveLayout({
       url: CONFIG.getAllEventsList,
       payload: { key: CONFIG.siteKey },
       cachedKey: "allEventsList",
+       setFn: allEventsList,
       expireIn: CONFIG.getAllEventsListTime,
     });
     fetchData({
       url: CONFIG.getTopCasinoGame,
       payload: { key: CONFIG.siteKey },
       cachedKey: "casinoEvents",
+      setFn: setCasinoEvents,
       expireIn: CONFIG.getTopCasinoGameTime,
     });
     fetchData({
       url: CONFIG.menuList,
       payload: { key: CONFIG.siteKey },
       cachedKey: "menuList",
+      setFn: menuList,
       expireIn: CONFIG.menuListTime,
     });
     fetchData({
       url: CONFIG.getExchangeTypeList,
       payload: { key: CONFIG.siteKey },
       cachedKey: "exchangeTypeList",
+      setFn: exchangeTypeList,
       expireIn: CONFIG.getExchangeTypeListTime,
     });
     fetchData({
       url: CONFIG.getExchangeNews,
       payload: { key: CONFIG.siteKey },
       cachedKey: "exchangeNews",
+      setFn: exchangeNews,
       expireIn: CONFIG.getExchangeNewsTime,
     });
   }, []);
