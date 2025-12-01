@@ -1,8 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import { useAppStore } from "@/lib/store/store";
+import React, { useEffect, useState } from "react";
 
 const MSportsTab = () => {
   const [activeTab, setActiveTab] = useState(4);
+  const menuList = useAppStore((state) => state.menuList);
+  const eventTypes = menuList?.eventTypes || [];
 
   const items = [
     { id: 4, text: "Cricket", icon: "icon-cricket-white" },
@@ -11,20 +14,25 @@ const MSportsTab = () => {
     { id: 998917, text: "Volleyball", icon: "icon-VolleyBall-white" },
   ];
 
+
+  useEffect(()=>{
+  console.log("menuList",menuList);
+  console.log("eventTypes", eventTypes);  
+ },[menuList])
   return (
     <div className="w-full">
       <ul className="flex list-none bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] mb-0 pl-0 overflow-x-scroll">
-        {items.map((item) => (
-          <li key={item.id}>
+        {eventTypes.map((item:any) => (
+          <li key={item.eventType.id}>
             <a
-              id={`${item.id}`}
+              id={`${item.eventType.id}`}
               className="no-underline cursor-pointer"
-              onClick={() => setActiveTab(item.id)}
+              onClick={() => setActiveTab(item.eventType.id)}
             >
               <div
                 className={`flex flex-col text-center text-[12px] p-2 pb-[3px] min-w-max relative text-white
                                     ${
-                                      activeTab === item.id
+                                      activeTab === item.eventType.id
                                         ? "bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]"
                                         : "bg-transparent"
                                     }
@@ -38,7 +46,7 @@ const MSportsTab = () => {
                     />
                   </div>
                   <div className="text-[12px] font-semibold uppercase tracking-[-0.1px]">
-                    {item.text}
+                    {item.eventType.name}
                   </div>
                 </div>
               </div>

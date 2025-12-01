@@ -1,36 +1,38 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
+import { useAppStore } from "@/lib/store/store";
 import { useRouter, usePathname } from "next/navigation";
+import { useEffect } from "react";
 
 const MMenuTabs = () => {
   const router = useRouter();
   const pathname = usePathname();
 
-  //  Active tab
+  const exchangeTypeList = useAppStore((state) => state.exchangeTypeList);
+
+  useEffect(() => {
+    console.log("exchangeTypeList", exchangeTypeList);
+  }, [exchangeTypeList]);
+
+  //  Dynamic active tab based on URL
   const activeTab =
     pathname === "/inplay"
-      ? 10
+      ? "10"
       : pathname === "/"
-      ? 11
+      ? "11"
       : pathname === "/live-casino"
-      ? 16
+      ? "16"
       : pathname === "/m-tipsreview"
-      ? 98
-      : 11;
+      ? "98"
+      : "11";
 
-  const tabs = [
-    { id: 10, label: "INPLAY", hasHeartbeat: true },
-    { id: 11, label: "EXCHANGE", hasHeartbeat: false },
-    { id: 16, label: "LIVE CASINO", hasHeartbeat: true },
-    { id: 98, label: "TIPS & PREVIEWS", hasHeartbeat: false },
-  ];
-
-  const goToLogin = (tab: any) => {
-    if (tab.id === 10) router.push("/inplay");
-    else if (tab.id === 11) router.push("/");
-    else if (tab.id === 16) router.push("/live-casino");
-    else if (tab.id === 98) router.push("/m-tipsreview");
+  // Dynamic navigation by exchangeId
+  const navigateById = (id: string) => {
+    if (id === "10") router.push("/inplay");
+    else if (id === "11") router.push("/");
+    else if (id === "16") router.push("/live-casino");
+    else if (id === "98") router.push("/m-tipsreview");
   };
 
   return (
@@ -38,15 +40,14 @@ const MMenuTabs = () => {
       <ul
         className="flex overflow-x-auto overflow-y-hidden relative shadow-[0_-5px_5px_-5px_rgba(0,0,0,0.5)] scrollbar-none border-0 rounded-none m-0 p-0 flex-nowrap"
         style={{
-          background:
-            "linear-gradient(180deg, #030a12, #444647 42%, #58595a)",
+          background: "linear-gradient(180deg, #030a12, #444647 42%, #58595a)",
         }}
       >
-        {tabs.map((tab, index) => (
+        {exchangeTypeList?.map((tab: any, index: number) => (
           <li
-            key={tab.id}
+            key={tab.exchangeId}
             className={`flex-[1_1_auto] text-center mb-0 py-2.5 relative ${
-              activeTab === tab.id
+              activeTab === tab.exchangeId
                 ? "border-t-2 border-white"
                 : "border-t-2 border-transparent"
             }`}
@@ -54,25 +55,17 @@ const MMenuTabs = () => {
           >
             <a
               className={`mb-[3px] ml-0.5 relative block tracking-[-0.1px] text-white font-bold whitespace-nowrap no-underline cursor-pointer text-[12px] pt-0 pb-0 ${
-                index < tabs.length - 1 ? "border-r border-white" : ""
+                index < exchangeTypeList.length - 1 ? "border-r border-white" : ""
               }`}
-              style={{
-                textDecoration: "none",
-                borderRadius: 0,
-              }}
-              onClick={() => goToLogin(tab)}
+              onClick={() => navigateById(tab.exchangeId)}
             >
               <div
                 className={`
-                  ${tab.hasHeartbeat ? "heartbeat-anim" : ""}
-                  ${
-                    activeTab === tab.id
-                      ? "relative top-0.5"
-                      : ""
-                  }
+                  ${tab.highlight ? "heartbeat-anim" : ""}
+                  ${activeTab === tab.exchangeId ? "relative top-0.5" : ""}
                 `}
               >
-                {tab.label}
+                {tab.exchangeName}
               </div>
             </a>
           </li>
