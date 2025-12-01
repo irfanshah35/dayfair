@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import RulesModal from "@/components/modals/rules-modal";
 import { useAuthStore } from "@/lib/store/authStore";
+import { useAppStore } from "@/lib/store/store";
 
 const Header = () => {
   const [searchActive, setSearchActive] = useState(false);
@@ -15,6 +16,7 @@ const Header = () => {
   const [isrulesopen, setRulesOpen] = useState(false);
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
+  const {userBalance} = useAppStore();
 
   const goToLogin = () => {
     router.push("/login");
@@ -29,7 +31,7 @@ const Header = () => {
   }, [searchActive]);
 
   useEffect(() => {
-    console.log(isLoggedIn)
+    console.log(userBalance)
     function handleClickOutside(e: MouseEvent) {
       const target = e.target as Node | null;
       if (
@@ -100,22 +102,57 @@ const Header = () => {
               </li>
             </ul>
           </div>
-          <div className="w-[110%] gap-1 flex items-center">
-            <div className="flex-1 md:hidden"></div>
-            <div className="flex-1 flex justify-end md:pe-4 md:p-[3px] md:flex-[0_0_auto]">
-              <button
-                onClick={goToLogin}
-                className="h-[30px] border w-[89.5px] border-black rounded-[3.875px] text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px] md:w-[108px] md:font-bold"
-                style={{
-                  background:
-                    "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
-                }}
-                tabIndex={0}
-              >
-                LOGIN
-              </button>
-            </div>
-          </div>
+<div className="w-[110%] gap-1 flex items-center">
+  <div className="flex-1 md:hidden">
+    {/* Mobile balance (ignore for now as requested) */}
+  </div>
+
+  <div className="hidden md:flex items-center justify-end gap-6 pr-4">
+
+  {/* {isLoggedIn && (
+  <div className="flex flex-col text-[13px] font-bold text-white leading-[14px]">
+    <span>
+      BALANCE : <span className="userTotalBalance">{0}</span>
+    </span>
+    <span>
+      EXPOSURE : <span className="userTotalExposure">{0}</span>
+    </span>
+  </div>
+)} */}
+
+
+
+    {/* BUTTON SECTION */}
+    <div className="flex">
+      {!isLoggedIn ? (
+        // LOGIN BUTTON
+        <button
+          onClick={goToLogin}
+          className="h-[30px] border w-[89.5px] border-black rounded-[3.875px] text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px] md:w-[108px] md:font-bold"
+          style={{
+            background:
+              "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
+          }}
+          tabIndex={0}
+        >
+          LOGIN
+        </button>
+      ) : (
+        <button
+          onClick={() => router.push("/account")}
+          className="h-[30px] border w-[110px] border-black rounded-[3.875px] text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity md:w-[108px] md:font-bold"
+          style={{
+            background:
+              "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
+          }}
+        >
+          ACCOUNT
+        </button>
+      )}
+    </div>
+  </div>
+</div>
+
         </div>
       </div>
 

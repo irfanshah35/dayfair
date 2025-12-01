@@ -10,26 +10,22 @@ export const useAppStore = create<any>((set) => ({
   menuList: null,
   exchangeNews: null,
 
-  
   setCasinoEvents: (data: any) => set({ casinoEvents: data }),
   setExchangeTypeList: (data: any) => set({ exchangeTypeList: data }),
   setMenuList: (data: any) => set({ menuList: data }),
-  setallEventsList: (data: any) => set({ allEventsList: data }),
+  setAllEventsList: (data: any) => set({ allEventsList: data }),
   setExchangeNews: (data: any) => set({ exchangeNews: data }),
-
 
   // auth setter
   setUserBalance: (value: boolean) => set({ userBalance: value }),
 
- 
-
-//   reset: () =>
-//     set({
-//       trendingList: [],
-//       allEventsList: [],
-//       isAuthUser: false,
-//       AllSportList: [],
-//       isLoginOpen: false,
-//       isRegisterOpen: false,
-//     }),
+  //   reset: () =>
+  //     set({
+  //       trendingList: [],
+  //       allEventsList: [],
+  //       isAuthUser: false,
+  //       AllSportList: [],
+  //       isLoginOpen: false,
+  //       isRegisterOpen: false,
+  //     }),
 }));
