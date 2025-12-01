@@ -17,7 +17,7 @@ export const useAppStore = create<any>((set) => ({
   setExchangeNews: (data: any) => set({ exchangeNews: data }),
 
   // auth setter
-  setUserBalance: (value: boolean) => set({ userBalance: value }),
+  setUserBalance: (value: any) => set({ userBalance: value }),
 
   //   reset: () =>
   //     set({

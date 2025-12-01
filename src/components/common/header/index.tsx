@@ -7,9 +7,12 @@ import Link from "next/link";
 import RulesModal from "@/components/modals/rules-modal";
 import { useAuthStore } from "@/lib/store/authStore";
 import { useAppStore } from "@/lib/store/store";
+import { CONFIG } from "@/lib/config";
+import { fetchData } from "@/lib/functions";
 
 const Header = () => {
   const [searchActive, setSearchActive] = useState(false);
+  const [userBalance, setUserBalance] = useState<any>();
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLLIElement | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -19,7 +22,10 @@ const Header = () => {
   const {userBalance} = useAppStore();
 
   const goToLogin = () => {
-    router.push("/login");
+    if (!isLoggedIn) {
+      router.push("/login");
+      return;
+    }
   };
 
   React.useEffect(() => {
@@ -31,7 +37,6 @@ const Header = () => {
   }, [searchActive]);
 
   useEffect(() => {
-    console.log(userBalance)
     function handleClickOutside(e: MouseEvent) {
       const target = e.target as Node | null;
       if (
@@ -46,6 +51,16 @@ const Header = () => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchData({
+        url: CONFIG.getUserBalance,
+        payload: { key: CONFIG.siteKey },
+        setFn: setUserBalance,
+      });
+    }
+  }, [isLoggedIn]);
 
   return (
     <header className="relative min-h-[65px] md:min-h-20 overflow-x-clip bg-black text-white px-[5px]">
@@ -100,59 +115,53 @@ const Header = () => {
                   Rules
                 </b>
               </li>
+
+              {isLoggedIn && (
+                <li className="float-left text-[16px] mr-[17px]">
+                  <div className="text-start leading-[23px]">
+                    <span>
+                      <b>BALANCE:&nbsp;</b>
+                    </span>
+                    <b>
+                      <span className="userTotalBalance">
+                        {userBalance?.bankBalance || "0.00"}
+                      </span>
+                    </b>
+                  </div>
+                  <div className="text-start leading-[23px]">
+                    <button type="button" className="cursor-pointer">
+                      <span>
+                        <b>EXPOSURE:&nbsp;</b>
+                      </span>
+                      <b>
+                        <span className="">
+                          {userBalance?.exposure || "0.00"}
+                          {/* {userExposure?.toFixed(2) ?? "0.00"} */}
+                        </span>
+                      </b>
+                    </button>
+                  </div>
+                </li>
+              )}
             </ul>
           </div>
-<div className="w-[110%] gap-1 flex items-center">
-  <div className="flex-1 md:hidden">
-    {/* Mobile balance (ignore for now as requested) */}
-  </div>
-
-  <div className="hidden md:flex items-center justify-end gap-6 pr-4">
-
-  {/* {isLoggedIn && (
-  <div className="flex flex-col text-[13px] font-bold text-white leading-[14px]">
-    <span>
-      BALANCE : <span className="userTotalBalance">{0}</span>
-    </span>
-    <span>
-      EXPOSURE : <span className="userTotalExposure">{0}</span>
-    </span>
-  </div>
-)} */}
-
-
-
-    {/* BUTTON SECTION */}
-    <div className="flex">
-      {!isLoggedIn ? (
-        // LOGIN BUTTON
-        <button
-          onClick={goToLogin}
-          className="h-[30px] border w-[89.5px] border-black rounded-[3.875px] text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px] md:w-[108px] md:font-bold"
-          style={{
-            background:
-              "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
-          }}
-          tabIndex={0}
-        >
-          LOGIN
-        </button>
-      ) : (
-        <button
-          onClick={() => router.push("/account")}
-          className="h-[30px] border w-[110px] border-black rounded-[3.875px] text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity md:w-[108px] md:font-bold"
-          style={{
-            background:
-              "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
-          }}
-        >
-          ACCOUNT
-        </button>
-      )}
-    </div>
-  </div>
-</div>
-
+          <div className="w-[110%] gap-1 flex items-center">
+            <div className="flex-1 md:hidden"></div>
+            <div className="flex-1 flex justify-end md:pe-4 md:p-[3px] md:flex-[0_0_auto]">
+              <button
+                onClick={goToLogin}
+                className="h-[30px] border w-[89.5px] border-black rounded-[3.875px] text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px] md:w-[108px] md:font-bold"
+                style={{
+                  background:
+                    "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
+                }}
+                tabIndex={0}
+              >
+                {/* { isLoggedIn ? `Balance: $${userBalance.toFixed(2)}` : "Login" } */}
+                {isLoggedIn ? `ACCOUNT` : "Login"}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

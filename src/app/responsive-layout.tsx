@@ -82,16 +82,6 @@ export default function ResponsiveLayout({
     });
   }, []);
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetchData({
-        url: CONFIG.getUserBalance,
-        payload: { key: CONFIG.siteKey },
-        setFn: setUserBalance,
-      });
-    }
-  }, [isLoggedIn]);
-
   // 🔥 FIX: No empty white screen + no footer/header flicker
   if (!isReady) {
     return (
