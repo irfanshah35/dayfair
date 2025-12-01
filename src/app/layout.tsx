@@ -2,6 +2,12 @@ import { Geist, Geist_Mono, Roboto_Condensed } from "next/font/google";
 import "./globals.css";
 import ResponsiveLayout from "./responsive-layout";
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
+import { ToastProvider } from "@/components/common/toast/toast-context";
+
+const ToastContainer = dynamic(
+  () => import("@/components/common/toast/toast-container")
+);
 
 export const metadata: Metadata = {
   title: "Dayfair",
@@ -40,8 +46,10 @@ export default function RootLayout({
         `}
         cz-shortcut-listen="true"
       >
-        {/* ================= MOBILE VIEW ================= */}
-        <ResponsiveLayout>{children}</ResponsiveLayout>
+        <ToastProvider>
+          <ResponsiveLayout>{children}</ResponsiveLayout>
+          <ToastContainer />
+        </ToastProvider>
       </body>
     </html>
   );

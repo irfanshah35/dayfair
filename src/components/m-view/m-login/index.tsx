@@ -1,9 +1,13 @@
 "use client";
+import { useToast } from "@/components/common/toast/toast-context";
+import { useAuthStore } from "@/lib/store/authStore";
 import Link from "next/link";
 import React, { useState } from "react";
 import { IoClose } from "react-icons/io5";
 
 export default function MLoginPage() {
+  const { loginUser } = useAuthStore();
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
@@ -17,35 +21,34 @@ export default function MLoginPage() {
     });
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    // Username empty?
     if (!formData.username) {
       setError("Please enter username");
       return;
     }
-
-    // Password empty?
     if (!formData.password) {
       setError("Please enter password");
       return;
     }
 
-    // Dono filled → clear error
     setError("");
 
-    console.log("Form Values =", formData);
+    await loginUser(
+      formData.username,
+      formData.password,
+      showToast // pass toast fn
+    );
   };
-
   return (
     <div
       id="app"
-      className="min-h-screen bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]"
+      className="min-h-screen text-black bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]"
     >
       <div className="login w-full h-screen bg-cover flex justify-center items-center flex-col flex-wrap relative">
         <div>
-          <Link href='/' className="absolute top-5  right-5 text-white">
+          <Link href="/" className="absolute top-5  right-5 text-white">
             <IoClose size={24} className="cursor-pointer" />
           </Link>
         </div>

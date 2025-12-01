@@ -8,8 +8,14 @@ import MSportsTab from "@/components/m-view/m-sports-tab";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import Loading from "./loading";
+import { fetchData } from "@/lib/functions";
+import { CONFIG } from "@/lib/config";
 
-export default function ResponsiveLayout({ children }: { children: React.ReactNode }) {
+export default function ResponsiveLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -25,17 +31,51 @@ export default function ResponsiveLayout({ children }: { children: React.ReactNo
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    fetchData({
+      url: CONFIG.getAllEventsList,
+      payload: { key: CONFIG.siteKey },
+      cachedKey: "allEventsList",
+      expireIn: CONFIG.getAllEventsListTime,
+    });
+    fetchData({
+      url: CONFIG.getTopCasinoGame,
+      payload: { key: CONFIG.siteKey },
+      cachedKey: "casinoEvents",
+      expireIn: CONFIG.getTopCasinoGameTime,
+    });
+    fetchData({
+      url: CONFIG.menuList,
+      payload: { key: CONFIG.siteKey },
+      cachedKey: "menuList",
+      expireIn: CONFIG.menuListTime,
+    });
+    fetchData({
+      url: CONFIG.getExchangeTypeList,
+      payload: { key: CONFIG.siteKey },
+      cachedKey: "exchangeTypeList",
+      expireIn: CONFIG.getExchangeTypeListTime,
+    });
+    fetchData({
+      url: CONFIG.getExchangeNews,
+      payload: { key: CONFIG.siteKey },
+      cachedKey: "exchangeNews",
+      expireIn: CONFIG.getExchangeNewsTime,
+    });
+  }, []);
+
   // 🔥 FIX: No empty white screen + no footer/header flicker
   if (!isReady) {
     return (
-      <div className="fixed inset-0 flex items-center justify-center bg-white z-[9999]">
+      <div className="fixed inset-0 flex items-center justify-center bg-white z-9999">
         <Loading />
       </div>
     );
   }
 
   const hideMenuAndSports = pathname === "/market-details";
-  const hideSportsTab = pathname === "/live-casino" || pathname === "/m-tipsreview";
+  const hideSportsTab =
+    pathname === "/live-casino" || pathname === "/m-tipsreview";
 
   if (pathname === "/login") {
     return children;
