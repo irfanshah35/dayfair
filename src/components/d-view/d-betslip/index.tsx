@@ -21,7 +21,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
   odds = 2.26,
   marketId = "",
   selectionId = 0,
-  runnerName = "West Indies U19",
+  runnerName = "West Indies",
   minStake = 1,
   maxStake = 99999999,
   onClose,
@@ -86,12 +86,6 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
     return "#72bbef";
   };
 
-  const shortNameFirstLine = runnerName
-    ? runnerName.split(" ").slice(0, 2).join(" ")
-    : "";
-  const shortNameSecondLine = runnerName
-    ? runnerName.split(" ").slice(2).join(" ")
-    : "";
 
   return (
     <div className="w-full">
@@ -135,14 +129,14 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-[#ccc]">
-                  <th className="text-center text-[12px] font-bold p-[3px_15px_2px] text-[#303030] border-b border-[#dee2e6]"></th>
+                  <th className="text-center text-[12px] font-bold p-[5px_8px_2px] text-[#303030] border-b border-[#dee2e6]"></th>
                   <th className="text-center text-[12px] font-bold p-[3px_0_2px] text-[#303030] border-b border-[#dee2e6]">
                     (Bet For)
                   </th>
-                  <th className="text-center text-[12px] font-bold p-[3px_0_2px] text-[#303030] border-b border-[#dee2e6]">
+                  <th className="text-center text-[12px] pr-4.5 font-bold p-[3px_0_2px] text-[#303030] border-b border-[#dee2e6]">
                     Odds
                   </th>
-                  <th className="text-center text-[12px] font-bold p-[3px_0_2px] text-[#303030] border-b border-[#dee2e6]">
+                  <th className="text-center text-[12px] pr-15 font-bold p-[3px_0_2px] text-[#303030] border-b border-[#dee2e6]">
                     Stake
                   </th>
                   <th className="text-end text-[12px] font-bold p-[3px_0_2px] pr-[5px] text-[#303030] border-b border-[#dee2e6]">
@@ -152,23 +146,21 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
               </thead>
               <tbody>
                 <tr className="bg-transparent">
-                  <td className="text-center p-1 align-middle text-[12px] font-bold">
+                  <td className=" p-1 align-middle text-[12px] font-bold">
                     <button
                       type="button"
                       onClick={handleClose}
-                      className="text-red-600 cursor-pointer text-[16px]"
+                      className="text-red-600 cursor-pointer pl-2 text-[12px]"
                     >
                       <FaTimes />
                     </button>
                   </td>
-                  <td className="px-2 py-0 align-middle text-[12px] font-bold">
+                  <td className="px-1 py-0 align-middle text-[12px] font-bold">
                     <div className="text-[12px] font-bold text-black leading-tight py-1">
-                      {shortNameFirstLine}
-                      <br />
-                      {shortNameSecondLine}
+                      {runnerName}
                     </div>
                   </td>
-                  <td className="px-1 py-0 align-middle text-[12px] font-bold">
+                  <td className="px-0 py-0  relative left-3.5 align-middle text-[12px] font-bold">
                     <div className="whitespace-nowrap inline-flex items-center">
                       <input
                         type="text"
@@ -192,7 +184,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
                       </div>
                     </div>
                   </td>
-                  <td className="px-7 py-0 align-middle text-[12px] font-bold">
+                  <td className="px-7 pl-10 pr-11 py-0 align-middle text-[12px] font-bold">
                     <input
                       type="number"
                       maxLength={10}
