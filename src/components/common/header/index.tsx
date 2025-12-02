@@ -160,28 +160,6 @@ const Header = () => {
         <div className="flex flex-col md:flex-row justify-end w-full md:h-[66px] flex-1">
           <div className="hidden md:flex md:ml-[17px] p-1 items-center justify-end flex-[0_0_auto] w-[83.33333333%] max-w-full">
             <ul className="hidden md:flex list-none mt-2.5 mb-3 items-center pl-8">
-              {/* <li
-                ref={wrapperRef}
-                className="mr-5 relative float-left flex items-start"
-              >
-                <input
-                  type="text"
-                  placeholder="All Events"
-                  className={`
-          h-[38px] border-0 p-0 outline-0 placeholder:text-black
-          bg-[linear-gradient(180deg,#fff_0%,#fff_100%)] text-black
-          transition-[width] duration-400 ease-linear
-          ${open ? "w-[300px] px-2.5" : "w-0 px-0"}
-        `}
-                />
-
-                <FaSearchPlus
-                  className="text-white ml-2.5 mt-[5px] cursor-pointer"
-                  size={24}
-                  onClick={() => setOpen(!open)}
-                />
-              </li> */}
-
               <li ref={wrapperRef} className="mr-5 relative float-left flex items-start">
                 <input
                   type="text"
@@ -211,12 +189,12 @@ const Header = () => {
                         onClick={() => handleSelect(match)}
                         className="p-2 hover:bg-gray-100 text-black cursor-pointer"
                       >
-                        <div className="flex justify-between items-start">
-                          <div className="flex flex-col">
+                        <div className="flex items-start">
+                          <div className="flex flex-col w-[50%]">
                             <span className=" font-bold">{match.sport} | {match.market}</span>
                             <span className="">{match.name}</span>
                           </div>
-                          <div className="">{match.datetime}</div>
+                          <div className="w-[50%]">{match.datetime}</div>
                         </div>
                       </li>
                     ))}
