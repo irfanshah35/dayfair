@@ -198,19 +198,40 @@ export async function loginRequest({
   }
 }
 
+// export function formatDateStamp(isoString: string) {
+//   if (!isoString) return "";
+
+//   const date = new Date(isoString);
+
+//   const formatted = date.toLocaleString("en-GB", {
+//     day: "numeric",
+//     month: "numeric",
+//     year: "numeric",
+//     hour: "2-digit",
+//     minute: "2-digit",
+//     hour12: true,
+//   });
+
+//   return formatted.replace(",", ""); // remove comma
+// }
 export function formatDateStamp(isoString: string) {
   if (!isoString) return "";
 
   const date = new Date(isoString);
 
-  const formatted = date.toLocaleString("en-GB", {
-    day: "numeric",
-    month: "numeric",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
+  const day = date.getDate();
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
 
-  return formatted.replace(",", ""); // remove comma
+  let hours = date.getHours();
+  const minutes = date.getMinutes().toString().padStart(2, "0");
+
+  const ampm = hours >= 12 ? "PM" : "AM"; // UPPERCASE
+
+  hours = hours % 12 || 12;
+
+  const time = `${hours.toString().padStart(2, "0")}:${minutes} ${ampm}`;
+
+  return `${day}/${month}/${year} ${time}`;
 }
+
