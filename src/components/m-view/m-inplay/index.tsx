@@ -2,13 +2,15 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/lib/store/store";
+import MSportsTab from "../m-sports-tab";
 
 interface MInplayProps {
-  activeTabId?: number;
+  activeTab?: string;
 }
 
-const MInplay = ({ activeTabId }: MInplayProps) => {
+const MInplay = () => {
   const { allEventsList } = useAppStore();
+  const [activeTab, setActiveTab] = useState("4");
   const router = useRouter();
   const [inPlayEvents, setInPlayEvents] = useState<any[]>([]);
 
@@ -52,20 +54,17 @@ const MInplay = ({ activeTabId }: MInplayProps) => {
 
   // Calculate mobile events based on active tab
   const mobileEvents = useMemo(() => {
-    if (!activeTabId) {
+    if (!activeTab) {
       return sortedSports.flatMap((sport) => groupedBySport[sport].events);
     }
 
     // Filter only events that match the active tab ID
     const filtered = inPlayEvents.filter(
-      (ev: any) => ev.eventType?.id === activeTabId
+      (ev: any) => ev.eventType?.id === activeTab
     );
 
-    console.log("Active Tab ID:", activeTabId);
-    console.log("Filtered Mobile Events:", filtered);
-
     return filtered;
-  }, [activeTabId, inPlayEvents, sortedSports, groupedBySport]);
+  }, [activeTab, inPlayEvents, sortedSports, groupedBySport]);
 
   const renderEventCard = (item: any, idx: number) => (
     <div
@@ -139,11 +138,13 @@ const MInplay = ({ activeTabId }: MInplayProps) => {
     <div className="lg:px-[9px]">
       {/* Mobile View - No Sport Headers, Filtered by Active Tab */}
       <div className="lg:hidden">
+        <MSportsTab activeTab={activeTab} setActiveTab={setActiveTab} />
         {mobileEvents.length > 0 ? (
           <div className="overflow-y-auto no-scrollbar max-h-[265px]">
-            {mobileEvents.map((item: any, idx: number) =>
-              renderEventCard(item, idx)
-            )}
+            {mobileEvents.map((item: any, idx: number) => {
+              console.log(mobileEvents);
+              return renderEventCard(item, idx);
+            })}
           </div>
         ) : (
           <div className="text-center bg-[#ccc] pt-2 pb-[9px] px-[15px] mb-[25px] text-[12px] text-[#21252a]">
