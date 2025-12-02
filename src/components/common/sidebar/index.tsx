@@ -1,5 +1,7 @@
 "use client";
 import { sportsData } from "@/lib/projectData";
+import { useAppStore } from "@/lib/store/store";
+import Link from "next/link";
 import React, { useState } from "react";
 import { FaChevronDown, FaCaretRight } from "react-icons/fa";
 import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
@@ -9,6 +11,8 @@ import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
 export default function Sidebar() {
   const [isOthersOpen, setIsOthersOpen] = useState(true);
   const [isAllSportsOpen, setIsAllSportsOpen] = useState(true);
+
+  // const {}=useAppStore()
 
   // const [open, setOpen] = useState<Record<string, boolean>>({});
 
@@ -67,7 +71,11 @@ export default function Sidebar() {
 
         {isOthersOpen && (
           <nav className="bg-[#C3BDBD]">
-            <ul className="mt-0 mb-0 -ml-3.5">{/* Empty */}</ul>
+            <ul className="py-[5] px-3 ml-[-9]">
+              <li className="list-none text-white ml-2.5">
+                <Link href={'/live-casino'}>Casino</Link>
+              </li>
+            </ul>
           </nav>
         )}
       </div>
