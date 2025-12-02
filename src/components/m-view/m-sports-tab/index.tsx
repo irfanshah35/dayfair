@@ -20,7 +20,7 @@ const MSportsTab = ({
   return (
     <div className="w-full">
       <ul className="flex list-none bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] mb-0 pl-0 overflow-x-scroll">
-        {eventTypes.map((item: any) => (
+        {eventTypes?.map((item: any) => (
           <li key={item.eventType.id}>
             <a
               id={`${item.eventType.id}`}

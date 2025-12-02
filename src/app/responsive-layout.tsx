@@ -92,8 +92,6 @@ export default function ResponsiveLayout({
   }
 
   const hideMenuAndSports = pathname === "/market-details";
-  const hideSportsTab =
-    pathname === "/live-casino" || pathname === "/m-tipsreview";
 
   if (pathname === "/login") {
     return children;
@@ -114,7 +112,7 @@ export default function ResponsiveLayout({
 
           <div className="overflow-y-auto h-full">
             <div
-              className={`${hideMenuAndSports ? "h-[100px]" : "h-[142.6px]"}`}
+              className={`${hideMenuAndSports ? "h-[100px]" : "h-[142px]"}`}
             ></div>
             {children}
             <MFooter />
@@ -129,7 +127,7 @@ export default function ResponsiveLayout({
 
           <div className="h-[118]"></div>
           <div className="flex h-full">
-            <div className="fixed top-[119px] left-0 h-[calc(100vh-110px)] overflow-y-auto no-scrollbar w-[15%] bg-[#C3BDBD]">
+            <div className="fixed top-[119px] left-0 h-[calc(100vh-150px)] overflow-y-auto no-scrollbar w-[15%] bg-[#C3BDBD]">
               <Sidebar />
             </div>
 
