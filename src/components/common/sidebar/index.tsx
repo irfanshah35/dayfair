@@ -59,7 +59,7 @@ export default function Sidebar() {
   const { menuList, allEventsList } = useAppStore();
 
   useEffect(() => {
-    console.log("allEventsList in Sidebar:", allEventsList);
+    console.log("allEventsList in Sidebar:");
   }, [allEventsList]);
 
   useEffect(() => {

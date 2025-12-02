@@ -1,6 +1,6 @@
 "use client";
 import { useAppStore } from "@/lib/store/store";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const MSportsTab = ({
   setActiveTab,
@@ -10,11 +10,11 @@ const MSportsTab = ({
   setActiveTab: (value: string) => void;
 }) => {
   const menuList = useAppStore((state) => state.menuList);
-  const eventTypes = menuList?.eventTypes || [];
+  const [eventTypes, setEventTypes] = useState<any>();
 
   useEffect(() => {
-    console.log("menuList", menuList);
-    console.log("eventTypes", eventTypes);
+    const event = menuList?.eventTypes || [];
+    setEventTypes(event);
   }, [menuList]);
 
   return (

@@ -28,7 +28,6 @@ export default function Home() {
       {/* ================= DESKTOP VIEW ================= */}
       {!isMobile && (
         <div>
-          <DSportNav />
           <MSingleMarket />
           <MLiveCasino />
         </div>

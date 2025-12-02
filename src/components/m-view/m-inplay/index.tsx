@@ -23,8 +23,6 @@ const MInplay = () => {
     const filtered = Object.values(allEventsList)
       .flat()
       .filter((ev: any) => ev?.inplay === true);
-
-    console.log("🔥 In-Play Events:", filtered);
     setInPlayEvents(filtered);
   }, [allEventsList]);
 
@@ -142,7 +140,6 @@ const MInplay = () => {
         {mobileEvents.length > 0 ? (
           <div className="overflow-y-auto no-scrollbar max-h-[265px]">
             {mobileEvents.map((item: any, idx: number) => {
-              console.log(mobileEvents);
               return renderEventCard(item, idx);
             })}
           </div>

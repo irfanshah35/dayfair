@@ -5,6 +5,7 @@ import { marketsSingle } from "@/lib/projectData";
 import MSportsTab from "../m-sports-tab";
 import { useAppStore } from "@/lib/store/store";
 import { formatDateStamp } from "@/lib/functions";
+import DSportNav from "@/components/d-view/d-sports-nav";
 
 const MSingleMarket = () => {
   const router = useRouter();
@@ -28,10 +29,14 @@ const MSingleMarket = () => {
 
     setFilteredEvents(data || []);
   }, [allEventsList, activeTab]);
+
+  const odds = [0, 2, 1];
   return (
     <>
-      {isMobile && (
+      {isMobile ? (
         <MSportsTab activeTab={activeTab} setActiveTab={setActiveTab} />
+      ) : (
+        <DSportNav activeTab={activeTab} setActiveTab={setActiveTab}/>
       )}
       <div className="lg:px-[9px]">
         <div className="lg:hidden overflow-y-auto no-scrollbar max-h-[265px]">
@@ -76,13 +81,15 @@ const MSingleMarket = () => {
                   </div>
 
                   <div className="flex">
-                    {item?.odds?.map((o:any, i:number) => (
-                      <div key={i} className="w-1/3 flex justify-center">
+                    {odds?.map((o) => (
+                      <div key={o} className="w-1/3 flex justify-center">
                         <button className="w-1/2 bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
-                          {o?.back}
+                          {item?.runners[o]?.ex?.availableToBack[0]?.price ||
+                            "-"}
                         </button>
                         <button className="w-1/2 bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
-                          {o?.lay}
+                          {item?.runners[o]?.ex?.availableToLay[0]?.price ||
+                            "-"}
                         </button>
                       </div>
                     ))}
@@ -126,8 +133,8 @@ const MSingleMarket = () => {
                 </tr>
               </thead>
               <tbody>
-                {marketsSingle.length > 0 ? (
-                  marketsSingle.map((item, idx) => (
+                {filteredEvents?.length > 0 ? (
+                  filteredEvents?.map((item: any, idx: number) => (
                     <tr
                       key={idx}
                       onClick={() => router.push("/market-details")}
@@ -137,17 +144,17 @@ const MSingleMarket = () => {
                         <div className="flex justify-between items-center">
                           <div className="game-name float-left text-left relative bottom-[3px]">
                             <a className="text-[#212529] hover:underline cursor-pointer text-[14px]">
-                              {item.match}
-                              {item.time && (
+                              {item?.event?.name}
+                              {item?.marketStartTime && (
                                 <span className="text-[#212529]">
                                   {" "}
-                                  / {item.time}
+                                  / {formatDateStamp(item?.marketStartTime)}
                                 </span>
                               )}
                             </a>
                           </div>
                           <div className="game-icons float-right w-auto flex items-center space-x-1 -mt-px">
-                            {item.inplay && (
+                            {item?.inplay && (
                               <span
                                 className="game-icon w-[25px] flex justify-center items-center
 "
@@ -156,7 +163,7 @@ const MSingleMarket = () => {
                               </span>
                             )}
 
-                            {!item.inplay && (
+                            {!item?.inplay && (
                               <span className="game-icon">
                                 <i className="fas fa-clock text-green-600 text-sm"></i>
                               </span>
@@ -167,34 +174,40 @@ const MSingleMarket = () => {
 
                       <td>
                         <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                          {item.odds[0].back}
+                          {item?.runners[0]?.ex?.availableToBack[0]?.price ||
+                            "-"}
                         </button>
                       </td>
                       <td>
                         <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                          {item.odds[0].lay}
+                          {item?.runners[0]?.ex?.availableToLay[0]?.price ||
+                            "-"}
                         </button>
                       </td>
 
                       <td>
                         <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                          {item.odds[1].back || "0"}
+                          {item?.runners[2]?.ex?.availableToBack[0]?.price ||
+                            "-"}
                         </button>
                       </td>
                       <td>
                         <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                          {item.odds[1].lay || "0"}
+                          {item?.runners[2]?.ex?.availableToLay[0]?.price ||
+                            "-"}
                         </button>
                       </td>
 
                       <td>
                         <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                          {item.odds[2].back}
+                          {item?.runners[1]?.ex?.availableToBack[0]?.price ||
+                            "-"}
                         </button>
                       </td>
                       <td>
                         <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                          {item.odds[2].lay}
+                          {item?.runners[1]?.ex?.availableToLay[0]?.price ||
+                            "-"}
                         </button>
                       </td>
                     </tr>

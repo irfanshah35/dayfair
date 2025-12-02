@@ -156,7 +156,7 @@ const Header = () => {
               <div className="float-left text-[16px] mr-[17px] hidden md:flex flex-col justify-center">
                 <div className="text-start leading-[23px]">
                   <span>
-                    <b>BALANCE:&nbsp;</b>
+                    <b>BALANCE&nbsp;:&nbsp;</b>
                   </span>
                   <b>
                     <span className="userTotalBalance">
@@ -167,7 +167,7 @@ const Header = () => {
                 <div className="text-start leading-[23px]">
                   <button type="button" className="cursor-pointer">
                     <span>
-                      <b>EXPOSURE:&nbsp;</b>
+                      <b>EXPOSURE&nbsp;:&nbsp;</b>
                     </span>
                     <b>
                       <span className="">
