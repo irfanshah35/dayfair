@@ -150,8 +150,7 @@ body {
   background: linear-gradient(180deg, #030a12, #444647 42%, #58595a);
 }
 .heading-clr {
-
-        background: linear-gradient(-180deg, #f4b501 0%, #f68700 100%);
+  background: linear-gradient(-180deg, #f4b501 0%, #f68700 100%);
 }
 
 @keyframes pulseColor {

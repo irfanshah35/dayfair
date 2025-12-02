@@ -1,10 +1,21 @@
 "use client";
-import React, { useState } from "react";
+import { useAppStore } from "@/lib/store/store";
+import React, { useEffect, useState } from "react";
 
-const DSportNav = () => {
-  const sports = ["Cricket", "Tennis", "Soccer", "Horse Racing"];
+const DSportNav = ({
+  setActiveTab,
+  activeTab,
+}: {
+  activeTab: string;
+  setActiveTab: (value: string) => void;
+}) => {
+  const menuList = useAppStore((state) => state.menuList);
+  const [eventTypes, setEventTypes] = useState<any[]>([]);
 
-  const [activeSport, setActiveSport] = useState("Cricket");
+  useEffect(() => {
+    const types = menuList?.eventTypes || [];
+    setEventTypes(types);
+  }, [menuList]);
 
   return (
     <div className="w-full px-[9px]">
@@ -23,10 +34,10 @@ const DSportNav = () => {
         no-scrollbar
       "
       >
-        {sports.map((sport) => (
+        {eventTypes?.map((sport: any) => (
           <li
-            key={sport}
-            onClick={() => setActiveSport(sport)}
+            key={sport?.eventType?.id}
+            onClick={() => setActiveTab(sport?.eventType?.id)}
             className={`
               px-[15px] py-1
               cursor-pointer
@@ -35,17 +46,16 @@ const DSportNav = () => {
               text-[16px]
               select-none
               ${
-                activeSport === sport
+                activeTab === sport?.eventType?.id
                   ? "text-black bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]"
                   : "text-white"
               }
             `}
           >
-            <a>{sport}</a>
+            <a>{sport?.eventType?.name}</a>
           </li>
         ))}
       </ul>
-
     </div>
   );
 };
