@@ -1,10 +1,14 @@
 "use client";
 import { useAppStore } from "@/lib/store/store";
-import React, { useEffect, useState } from "react";
-import MInplay from "../m-inplay"; // Import the MInplay component
+import { useEffect } from "react";
 
-const MSportsTab = () => {
-  const [activeTab, setActiveTab] = useState(4);
+const MSportsTab = ({
+  setActiveTab,
+  activeTab,
+}: {
+  activeTab: string;
+  setActiveTab: (value: string) => void;
+}) => {
   const menuList = useAppStore((state) => state.menuList);
   const eventTypes = menuList?.eventTypes || [];
 
@@ -51,7 +55,7 @@ const MSportsTab = () => {
       </ul>
 
       {/* Pass activeTab to MInplay component */}
-      <MInplay activeTabId={activeTab} />
+      {/* <MInplay activeTabId={activeTab} /> */}
     </div>
   );
 };
