@@ -1,43 +1,133 @@
 "use client";
-import { sportsData } from "@/lib/projectData";
 import { useAppStore } from "@/lib/store/store";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaChevronDown, FaCaretRight } from "react-icons/fa";
 import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
 
+const adaptEventsMap = (raw: any): Record<string, any[]> => {
+  if (!raw || typeof raw !== "object") return {};
+  const out: Record<string, any[]> = {};
 
+  Object.keys(raw).forEach((sportId) => {
+    const arr = raw[sportId] || [];
+    out[sportId] = arr.map((it: any) => ({
+      sportId: String(sportId),
+      tournamentId: String(it?.competition?.id ?? ""),
+      tournamentName: it?.competition?.name ?? "",
+      totalMatched: it?.oddsData?.totalMatched ?? it?.totalMatched ?? 0,
+      eventId: String(it?.event?.id ?? it?.id ?? ""),
+      eventTypeId: String(it?.eventType?.id ?? ""),
+      // preserve original for routing/other fields you might need
+      __raw: it,
+    }));
+  });
+
+  return out;
+};
+
+const buildTournamentsForSport = (
+  sportId: string,
+  eventsMap: Record<string, any[]>
+) => {
+  const arr = eventsMap[sportId] || [];
+  const seen = new Set<string>();
+  const unique: any[] = [];
+
+  // Keep first occurrence for each tournamentId
+  for (const ev of arr) {
+    if (ev.tournamentId && !seen.has(ev.tournamentId)) {
+      seen.add(ev.tournamentId);
+      unique.push({
+        tournamentId: ev.tournamentId,
+        tournamentName: ev.tournamentName,
+      });
+    }
+  }
+  // Optional: sort by name
+  unique.sort((a, b) => a.tournamentName.localeCompare(b.tournamentName));
+  return unique;
+};
 
 export default function Sidebar() {
   const [isOthersOpen, setIsOthersOpen] = useState(true);
   const [isAllSportsOpen, setIsAllSportsOpen] = useState(true);
+  const [eventList, setEventList] = useState<any>();
+  const [popularSportsList, setPopularSportList] = useState<any>();
+  const [tournamentList, setTournamentList] = useState<any>();
 
-  // const {}=useAppStore()
+  const { menuList, allEventsList } = useAppStore();
+
+  useEffect(() => {
+    console.log("allEventsList in Sidebar:", allEventsList);
+  }, [allEventsList]);
+
+  useEffect(() => {
+    const events = adaptEventsMap(allEventsList);
+    const adapted = adaptSports(menuList?.eventTypes || []);
+    const popularSports = adapted.filter((s: any) => {
+      const list = events?.[String(s.sportId)];
+      return Array.isArray(list) && list.length > 0;
+    });
+    setPopularSportList(popularSports);
+  }, [menuList, allEventsList]);
+
+  const priorityOrder: Record<string, number> = {
+    Cricket: 1,
+    Soccer: 2,
+    Tennis: 3,
+  };
+
+  const adaptSports = (list: any[]): any[] => {
+    return (list || [])
+      .map((x: any) => ({
+        sportId: String(x?.eventType?.id ?? ""),
+        sportName: x?.eventType?.name ?? "",
+        sequence: priorityOrder[x?.eventType?.name] ?? 999,
+        marketCount: x?.marketCount ?? 0,
+        isOpen: false,
+      }))
+      .filter((s) => s.sportId !== "66103") // keep your original filter
+      .sort((a, b) => a.sequence - b.sequence);
+  };
 
   // const [open, setOpen] = useState<Record<string, boolean>>({});
 
   const [open, setOpen] = useState<{
-    sport: string | null;
+    sport: string;
     tournament: string | null;
   }>({
-    sport: null,
+    sport: "0",
     tournament: null,
   });
 
   const toggleSport = (key: string) => {
     setOpen((prev) => ({
-      sport: prev.sport === key ? null : key,  // open one, close others
+      sport: prev.sport === key ? "0" : key, // open one, close others
       tournament: null, // close all tournaments when switching sport
     }));
+    const events = adaptEventsMap(allEventsList);
+    const tournament = buildTournamentsForSport(key, events || {});
+    setTournamentList(tournament);
   };
 
   const toggleTournament = (key: string) => {
     setOpen((prev) => ({
       ...prev,
-      tournament: prev.tournament === key ? null : key,
+      tournament: prev.tournament === key ? "0" : key, // close all tournaments when switching sport
     }));
-  };
+    const events = adaptEventsMap(allEventsList);
+    const eventData = events[open.sport];
+    const filteredEvents = eventData.filter(
+      (e: any) => e.tournamentId === String(key)
+    );
 
+    const sortedEvents = filteredEvents?.sort(
+      (a: any, b: any) => b.totalMatched - a.totalMatched
+    );
+
+    setEventList(sortedEvents);
+  };
 
   // const toggle = (key: string) => {
   //   setOpen((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -45,7 +135,7 @@ export default function Sidebar() {
 
   return (
     <div
-      className="p-0 min-h-screen h-full hidden md:block"
+      className="p-0 h-full hidden md:block"
       style={{
         background: "linear-gradient(-180deg, #b8b3b3 0%, #dad6d6 100%)",
         fontFamily: "'Roboto Condensed', sans-serif",
@@ -62,8 +152,9 @@ export default function Sidebar() {
           <h5 className="inline-block w-full text-[18px] mb-0">
             Others
             <FaChevronDown
-              className={`float-right transition-transform ${isOthersOpen ? "" : "-rotate-90"
-                }`}
+              className={`float-right transition-transform ${
+                isOthersOpen ? "" : "-rotate-90"
+              }`}
               size={14}
             />
           </h5>
@@ -73,7 +164,7 @@ export default function Sidebar() {
           <nav className="bg-[#C3BDBD]">
             <ul className="py-[5] px-3 ml-[-9]">
               <li className="list-none text-white ml-2.5">
-                <Link href={'/live-casino'}>Casino</Link>
+                <Link href={"/live-casino"}>Casino</Link>
               </li>
             </ul>
           </nav>
@@ -89,8 +180,9 @@ export default function Sidebar() {
           <h5 className="inline-block w-full text-[18px] mb-0">
             All Sports
             <FaChevronDown
-              className={`float-right transition-transform ${isAllSportsOpen ? "" : "-rotate-90"
-                }`}
+              className={`float-right transition-transform ${
+                isAllSportsOpen ? "" : "-rotate-90"
+              }`}
               size={14}
             />
           </h5>
@@ -98,37 +190,40 @@ export default function Sidebar() {
 
         {isAllSportsOpen && (
           <nav className="bg-[#C3BDBD] py-[3px] text-white">
-            {sportsData.map((sportObj) => (
-              <ul key={sportObj.key} className="mt-1 mb-0">
+            {popularSportsList?.map((item: any, idx: number) => (
+              <ul key={idx} className="mt-1 mb-0">
                 <li className="list-none  pt-0.5 pl-2.5 pr-0">
                   {/* Sport name */}
                   <div
                     className="cursor-pointer"
-                    onClick={() => toggleSport(sportObj.key)}
+                    onClick={() => toggleSport(item?.sportId)}
                   >
                     <span className="relative bottom-0.5">
-                      {open.sport === sportObj.key ? (
+                      {open.sport === item?.sportId ? (
                         <FaRegSquareMinus className="inline-block w-3.5 h-[19px]" />
                       ) : (
                         <FaRegSquarePlus className="inline-block w-3.5 h-[19px]" />
                       )}
                     </span>
 
-                    <span className="pl-1.5">{sportObj.sport}</span>
+                    <span className="pl-1.5">{item?.sportName}</span>
                   </div>
 
                   {/* Tournament list */}
-                  {open.sport === sportObj.key && (
+                  {open.sport === item?.sportId && (
                     <ul className="mb-0 ml-0 pl-0">
-                      {sportObj.tournaments.map((tour) => (
-                        <li key={tour.key} className="list-none py-1 pl-5 pr-0">
+                      {tournamentList?.map((tour: any) => (
+                        <li
+                          key={tour?.tournamentId}
+                          className="list-none py-1 pl-5 pr-0"
+                        >
                           {/* Tournament */}
                           <div
                             className="cursor-pointer"
-                            onClick={() => toggleTournament(tour.key)}
+                            onClick={() => toggleTournament(tour?.tournamentId)}
                           >
                             <span>
-                              {open.tournament === tour.key ? (
+                              {open.tournament === tour?.tournamentId ? (
                                 <FaRegSquareMinus
                                   className="inline-block align-middle"
                                   size={16}
@@ -140,13 +235,13 @@ export default function Sidebar() {
                                 />
                               )}
                             </span>
-                            <span className="pl-1">{tour.title}</span>
+                            <span className="pl-1">{tour?.tournamentName}</span>
                           </div>
 
                           {/* Matches */}
-                          {open.tournament === tour.key && (
+                          {open.tournament === tour?.tournamentId && (
                             <ul className="mb-0 ml-0 pl-0">
-                              {tour.matches.map((match, idx) => (
+                              {eventList?.map((event: any, idx: number) => (
                                 <li
                                   key={idx}
                                   className="list-none py-1 pl-4 pr-0"
@@ -156,7 +251,11 @@ export default function Sidebar() {
                                       className="inline-block mt-0.5"
                                       size={17}
                                     />
-                                    <span>{match}</span>
+                                    <span>
+                                      {event?.__raw?.event?.name ||
+                                        event?.__raw?.name ||
+                                        "Event " + event?.eventId}
+                                    </span>
                                   </div>
                                 </li>
                               ))}
