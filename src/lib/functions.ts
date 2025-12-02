@@ -83,7 +83,6 @@ export async function fetchData({
   }
 }
 
-
 export async function loginRequest({
   url,
   username,
@@ -197,4 +196,21 @@ export async function loginRequest({
       meta: { message: errorMsg, status_code: 500 },
     };
   }
+}
+
+export function formatDateStamp(isoString: string) {
+  if (!isoString) return "";
+
+  const date = new Date(isoString);
+
+  const formatted = date.toLocaleString("en-GB", {
+    day: "numeric",
+    month: "numeric",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+
+  return formatted.replace(",", ""); // remove comma
 }
