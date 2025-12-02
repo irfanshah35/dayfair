@@ -89,15 +89,15 @@ export default function AccountStatement() {
   };
 
   return (
-    <div className="m-[5px] ">
-      <div className="relative flex flex-col min-w-0 break-words bg-white border border-black/[0.125] rounded">
+    <div className="md:m-[5px] ">
+      <div className="relative flex flex-col min-w-0 wrap-break-word bg-white md:border border-black/12.5 rounded">
         {/* Card Header */}
-        <div className="px-4 rounded-xs bg-black/[0.03] border-b btn-clr border-black/[0.125]">
+        <div className="px-4 py-1 md:py-0 rounded-xs bg-black/3 border-b btn-clr border-black/12.5">
           <h4 className="mb-0 text-base md:text-[24px] ">Account Statement</h4>
         </div>
 
         {/* Card Body */}
-        <div className="p-[5px] pb-[10px] pt-[10px] text-base  lg:overflow-y-auto lg:overflow-x-hidden">
+        <div className="p-[5px] pb-2.5 pt-2.5 text-base">
           {/* Filter Row */}
           <div className="flex flex-wrap items-end mt-2 -mx-[5px]">
             {/* Start Date */}
@@ -111,7 +111,7 @@ export default function AccountStatement() {
             </div>
 
             {/* End Date */}
-            <div className="w-full md:w-1/6 px-[5px] mb-2 md:mb-0">
+            <div className="w-full md:w-1/6 px-[5px] mb-2  md:mb-0">
               <CustomCalendar
                 selected={endDate}
                 onChange={setEndDate}
@@ -125,7 +125,7 @@ export default function AccountStatement() {
             {/* Submit Button */}
             <div className="w-full md:w-1/6 px-[5px]">
               <button
-                className="w-full h-[38px] px-[9px] py-[6px] text-base font-normal text-black heading-clr  border border-black rounded cursor-pointer hover:opacity-90"
+                className="w-full h-[38px] px-[9px] py-1.5 text-base font-normal text-black heading-clr  border border-black rounded cursor-pointer hover:opacity-90"
                 onClick={submitData}
               >
                 Submit
@@ -134,24 +134,25 @@ export default function AccountStatement() {
           </div>
 
           {/* Table */}
+      {/* Table */}
           <div className="flex flex-wrap -mx-[5px] mt-3">
             <div className="w-full px-[5px] overflow-x-auto">
-              <table className="w-full border-collapse border border-black/[0.125]">
+              <table className="w-full border-collapse border border-black/12.5">
                 <thead>
                   <tr>
-                    <th className="px-3 py-3 text-center text-black bg-[#e9ecef] border border-black/[0.125]">
+                    <th className="px-2 py-2 md:px-3 md:py-3 text-center text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Date / Time
                     </th>
-                    <th className="px-3 py-3 text-center  text-black bg-[#e9ecef] border border-black/[0.125]">
+                    <th className="px-2 py-2 md:px-3 md:py-3 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Credit
                     </th>
-                    <th className="px-3 py-3 text-center  text-black bg-[#e9ecef] border border-black/[0.125]">
+                    <th className="px-2 py-2 md:px-3 md:py-3 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Debit
                     </th>
-                    <th className="px-3 py-3 text-center  text-black bg-[#e9ecef] border border-black/[0.125] font-bold">
+                    <th className="px-2 py-2 md:px-3 md:py-3 text-center  text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm md:text-base">
                       Balance
                     </th>
-                    <th className="px-3 py-3 text-center  text-black bg-[#e9ecef] border border-black/[0.125]">
+                    <th className="px-2 py-2 md:px-3 md:py-3 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Remark
                     </th>
                   </tr>
@@ -161,23 +162,23 @@ export default function AccountStatement() {
                   {statementList.length > 0 ? (
                     statementList.map((statement, index) => (
                       <tr key={index}>
-                        <td className="px-3 py-3 text-center border  text-black border-black/[0.125]">
+                        <td className="px-2 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
                           {formatDateTime(statement.createdAt)}
                         </td>
-                        <td className="px-3 py-3 text-center border  text-black border-black/[0.125]">
+                        <td className="px-2 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
                           {statement.deposit || "0"}
                         </td>
-                        <td className="px-3 py-3 text-center border  text-black border-black/[0.125]">
+                        <td className="px-2 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
                           <span className="font-bold text-red-600">
                             {statement.withdraw || "0"}
                           </span>
                         </td>
-                        <td className="px-3 py-3 text-center border  text-black border-black/[0.125]">
+                        <td className="px-2 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
                           <span className="font-bold">
                             {statement.bankBalance}
                           </span>
                         </td>
-                        <td className="px-3 py-3 text-center border  text-black border-black/[0.125]">
+                        <td className="px-2 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
                           {statement.remark || "NA"}
                         </td>
                       </tr>
@@ -186,7 +187,7 @@ export default function AccountStatement() {
                     <tr>
                       <td
                         colSpan={5}
-                        className="px-3 py-3 text-center border  text-black border-black/[0.125] bg-transparent"
+                        className="px-2 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 bg-transparent text-xs md:text-base"
                       >
                         No data available in table
                       </td>
@@ -200,7 +201,7 @@ export default function AccountStatement() {
           {/* Mobile Pagination */}
           <div className="flex md:hidden justify-between items-center gap-2 mt-2">
             <button
-              className={`px-[10px] py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
                 currentPage === 1 ? "opacity-40 pointer-events-none" : "hover:bg-[#f1f1f1]"
               }`}
               onClick={goToFirst}
@@ -209,7 +210,7 @@ export default function AccountStatement() {
               First
             </button>
             <button
-              className={`px-[10px] py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
                 currentPage === 1 ? "opacity-40 pointer-events-none" : "hover:bg-[#f1f1f1]"
               }`}
               onClick={goToPrevious}
@@ -218,12 +219,12 @@ export default function AccountStatement() {
               Previous
             </button>
 
-            <span className="inline-flex items-center justify-center min-w-[32px] px-[10px] py-1 rounded-[16px] font-bold text-black bg-gradient-to-b from-[#f4b501] to-[#f68700]">
+            <span className="inline-flex items-center justify-center min-w-8 px-2.5 py-1 rounded-2xl font-bold text-black bg-linear-to-b from-[#f4b501] to-[#f68700]">
               {currentPage}
             </span>
 
             <button
-              className={`px-[10px] py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
                 currentPage === totalPages
                   ? "opacity-40 pointer-events-none"
                   : "hover:bg-[#f1f1f1]"
@@ -234,7 +235,7 @@ export default function AccountStatement() {
               Next
             </button>
             <button
-              className={`px-[10px] py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
                 currentPage === totalPages
                   ? "opacity-40 pointer-events-none"
                   : "hover:bg-[#f1f1f1]"
@@ -258,7 +259,7 @@ export default function AccountStatement() {
             {/* Center: Pagination buttons */}
             <div className="hidden md:flex items-center gap-2">
               <button
-                className={`px-[10px] py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
                   currentPage === 1 ? "opacity-40 pointer-events-none" : "hover:bg-[#f1f1f1]"
                 }`}
                 onClick={goToFirst}
@@ -267,7 +268,7 @@ export default function AccountStatement() {
                 First
               </button>
               <button
-                className={`px-[10px] py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
                   currentPage === 1 ? "opacity-40 pointer-events-none" : "hover:bg-[#f1f1f1]"
                 }`}
                 onClick={goToPrevious}
@@ -276,12 +277,12 @@ export default function AccountStatement() {
                 Previous
               </button>
 
-              <span className="inline-flex items-center justify-center min-w-[32px] px-[10px] py-1 rounded-[16px] font-bold text-black bg-gradient-to-b from-[#f4b501] to-[#f68700]">
+              <span className="inline-flex items-center justify-center min-w-8 px-2.5 py-1 rounded-2xl font-bold text-black bg-linear-to-b from-[#f4b501] to-[#f68700]">
                 {currentPage}
               </span>
 
               <button
-                className={`px-[10px] py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
                   currentPage === totalPages
                     ? "opacity-40 pointer-events-none"
                     : "hover:bg-[#f1f1f1]"
@@ -292,7 +293,7 @@ export default function AccountStatement() {
                 Next
               </button>
               <button
-                className={`px-[10px] py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
                   currentPage === totalPages
                     ? "opacity-40 pointer-events-none"
                     : "hover:bg-[#f1f1f1]"

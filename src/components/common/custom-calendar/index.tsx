@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import {  FaCalendarAlt, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaRegCalendarDays } from "react-icons/fa6";
 
 const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const months = [
@@ -135,11 +137,12 @@ const CustomCalendar = ({
   };
 
   const formatDate = (date: Date) => {
-    if (dateFormat === "dd-MM-yyyy") {
-      return `${String(date.getDate()).padStart(2, "0")}-${String(date.getMonth() + 1).padStart(2, "0")}-${date.getFullYear()}`;
-    }
-    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
-  };
+  const day = String(date.getDate()).padStart(2, '0'); // Add leading zero if needed
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Add leading zero if needed
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`; // Format as dd-MM-yyyy
+};
+
 
   const handleDateSelect = (day: number, isOtherMonth: boolean, disabled: boolean) => {
     if (disabled || isOtherMonth) return;
@@ -250,15 +253,14 @@ const CustomCalendar = ({
     <>
       <div className="flex items-center justify-between mb-2 px-1">
         <button
-          onClick={handlePrevMonth}
-          disabled={!canGoPrevMonth()}
-          className={`w-6 h-6 flex items-center justify-center rounded pl-3 ${!canGoPrevMonth() ? "opacity-40 cursor-not-allowed" : "text-gray-600 cursor-pointer"}`}
-          aria-label="Previous month"
-          type="button"
-        >
-          <img src="/assets/account-statement/arrow.png" alt="" className="min-w-[22px] rotate-180" />
-        </button>
-
+  onClick={handlePrevMonth}
+  disabled={!canGoPrevMonth()}
+  className={`w-6 h-6 flex items-center justify-center rounded pl-3 ${!canGoPrevMonth() ? "opacity-40 cursor-not-allowed" : "text-black cursor-pointer"}`}
+  aria-label="Previous month"
+  type="button"
+>
+  <FaChevronLeft className="text-black text-[22px]" />
+</button>
         <div className="text-[16px] font-medium text-gray-800">
           <span className="cursor-pointer" onClick={() => setActiveTab("date")}>
             {months[currentMonth]} &nbsp;
@@ -268,15 +270,18 @@ const CustomCalendar = ({
           </span>
         </div>
 
-        <button
-          onClick={handleNextMonth}
-          disabled={!canGoNextMonth()}
-          className={`w-6 h-6 flex items-center justify-center rounded pr-3 ${!canGoNextMonth() ? "opacity-40 cursor-not-allowed" : "text-gray-600 cursor-pointer"}`}
-          aria-label="Next month"
-          type="button"
-        >
-          <img src="/assets/account-statement/arrow.png" alt="" className="min-w-[22px]" />
-        </button>
+  
+
+<button
+  onClick={handleNextMonth}
+  disabled={!canGoNextMonth()}
+  className={`w-6 h-6 flex items-center justify-center rounded pr-3 ${!canGoNextMonth() ? "opacity-40 cursor-not-allowed" : "text-black cursor-pointer"}`}
+  aria-label="Next month"
+  type="button"
+>
+  <FaChevronRight className="text-black text-[22px]" />
+</button>
+
       </div>
 
       <div className="grid grid-cols-7 gap-1 mb-1">
@@ -291,13 +296,14 @@ const CustomCalendar = ({
         {calendarDays.map((dayObj, index) => {
           const isSelected = !!selectedDate && dayObj.isCurrentMonth && selectedDate.getDate() === dayObj.day && selectedDate.getMonth() === currentMonth && selectedDate.getFullYear() === currentYear;
           const dayOfWeek = index % 7;
-          const baseText = dayObj.isCurrentMonth
-            ? dayOfWeek === 5
-              ? ""
-              : dayOfWeek === 6
-              ? "text-red-600 hover:bg-red-50"
-              : "text-gray-800 hover:bg-gray-100"
-            : "text-gray-400 cursor-not-allowed";
+        const baseText = dayObj.isCurrentMonth
+  ? dayOfWeek === 6 // Saturday
+    ? "text-gray-800 hover:bg-gray-100" // Add same hover effect for Saturday
+    : dayOfWeek === 5 // Friday
+    ? "text-gray-800 hover:bg-gray-100"
+    : "text-gray-800 hover:bg-gray-100"
+  : "text-gray-400 cursor-not-allowed";
+
 
           const disabledClasses = dayObj.disabled ? "opacity-40 cursor-not-allowed hover:bg-transparent" : "";
 
@@ -371,23 +377,23 @@ const CustomCalendar = ({
 
   return (
     <div className="lg:w-full md:w-3/12 w-full relative">
-      <div className="flex items-center bg-[#e5e7ea] rounded-[4px] border-[#c8ced2] overflow-hidden max-w-[733.79px]">
+      <div className="flex items-center  bg-[#e5e7ea] rounded-[4px] border-[#c8ced2] overflow-hidden max-w-[733.79px]">
         <input
           readOnly={readOnly}
           autoComplete={autoComplete}
           onClick={toggleCalendar}
           value={selectedDate ? formatDate(selectedDate) : ""}
           placeholder={placeholderText}
-          className="form-control my-date-picker text-[14px]! text-[#555] py-[6px] pr-[8px] pl-[15px]! w-full bg-[#e5e7ea]! placeholder:text-[#5c6873] border! border-gray-300! rounded-tr-none! rounded-br-none! focus:outline-none rounded-none"
+          className="form-control my-date-picker text-[16px]! text-[#555] py-[6px]  pl-[5px]! w-full bg-white! placeholder:text-[#5c6873] border-2 border-gray-300! rounded-tr-none! rounded-br-none! focus:outline-none rounded-none"
           name="datepicker"
         />
 
         <button
           type="button"
           onClick={toggleCalendar}
-          className="btnpicker btnpickerenabled h-[35px] min-w-[40px] bg-[#c8ced2] flex items-center justify-center hover:bg-[#b8bec2] transition ml-[-2px]"
+          className="btnpicker btnpickerenabled h-[40px] min-w-[40px]  bg-[#c8ced2] flex items-center justify-center hover:bg-[#b8bec2] transition ml-[-2px]"
         >
-          <i className="fa fa-calendar text-black text-[14px] mb-[1px]" />
+  <FaRegCalendarDays  className="text-black text-[18px] mb-[1px]" />
         </button>
       </div>
 
