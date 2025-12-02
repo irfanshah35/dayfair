@@ -140,19 +140,19 @@ export default function AccountStatement() {
               <table className="w-full border-collapse border border-black/12.5">
                 <thead>
                   <tr>
-                    <th className="px-2 py-2 md:px-3 md:py-3 text-center text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="px-2 py-1 md:px-3 md:py-2 text-center text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Date / Time
                     </th>
-                    <th className="px-2 py-2 md:px-3 md:py-3 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="px-2 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Credit
                     </th>
-                    <th className="px-2 py-2 md:px-3 md:py-3 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="px-2 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Debit
                     </th>
-                    <th className="px-2 py-2 md:px-3 md:py-3 text-center  text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm md:text-base">
+                    <th className="px-2 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm md:text-base">
                       Balance
                     </th>
-                    <th className="px-2 py-2 md:px-3 md:py-3 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="px-2 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Remark
                     </th>
                   </tr>
