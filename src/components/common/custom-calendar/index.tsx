@@ -376,22 +376,22 @@ const CustomCalendar = ({
   );
 
   return (
-    <div className="lg:w-full md:w-3/12 w-full relative">
-      <div className="flex items-center  bg-[#e5e7ea] rounded-[4px] border-[#c8ced2] overflow-hidden max-w-[733.79px]">
+    <div className="md:w-full lg:w-full md:w-3/12 w-full relative">
+      <div className="flex items-center c bg-[#e5e7ea] rounded-[4px] border-[#c8ced2] overflow-hidden max-w-[733.79px]">
         <input
           readOnly={readOnly}
           autoComplete={autoComplete}
           onClick={toggleCalendar}
           value={selectedDate ? formatDate(selectedDate) : ""}
           placeholder={placeholderText}
-          className="form-control my-date-picker text-[16px]! text-[#555] py-[6px]  pl-[5px]! w-full bg-white! placeholder:text-[#5c6873] border-2 border-gray-300! rounded-tr-none! rounded-br-none! focus:outline-none rounded-none"
+          className="form-control my-date-picker h-[38px] text-[16px]! text-[#555] py-[6px]  pl-[5px]! w-full bg-white! placeholder:text-[#5c6873] border-2 border-gray-300! rounded-tr-none! rounded-br-none! focus:outline-none rounded-none"
           name="datepicker"
         />
 
         <button
           type="button"
           onClick={toggleCalendar}
-          className="btnpicker btnpickerenabled h-[40px] min-w-[40px]  bg-[#c8ced2] flex items-center justify-center hover:bg-[#b8bec2] transition ml-[-2px]"
+          className="btnpicker btnpickerenabled h-[38px] min-w-[40px]  bg-[#c8ced2] flex items-center justify-center hover:bg-[#b8bec2] transition ml-[-2px]"
         >
   <FaRegCalendarDays  className="text-black text-[18px] mb-[1px]" />
         </button>
