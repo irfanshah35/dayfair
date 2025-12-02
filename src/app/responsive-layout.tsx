@@ -108,7 +108,6 @@ export default function ResponsiveLayout({
             {!hideMenuAndSports && (
               <>
                 <MMenuTabs />
-                {!hideSportsTab && <MSportsTab />}
               </>
             )}
           </div>
@@ -118,9 +117,7 @@ export default function ResponsiveLayout({
               className={`${
                 hideMenuAndSports
                   ? "h-[100px]"
-                  : hideSportsTab
-                  ? "h-[142.6px]"
-                  : "h-[196.6px]"
+                  : "h-[142.6px]"
               }`}
             ></div>
             {children}
@@ -141,7 +138,7 @@ export default function ResponsiveLayout({
             </div>
 
             <main className="ml-[15%] w-[85%] h-[calc(100vh-110px)] overflow-y-auto pb-2">
-              {children}
+              <div className="min-h-[calc(100vh-148px)]">{children}</div>
               <MFooter />
             </main>
           </div>
