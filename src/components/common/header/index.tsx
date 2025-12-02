@@ -8,6 +8,26 @@ import RulesModal from "@/components/modals/rules-modal";
 import { useAuthStore } from "@/lib/store/authStore";
 import { CONFIG } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
+import ExposureModal from "@/components/modals/exposure-modal";
+
+interface Match {
+  sport: string;
+  market: string;
+  name: string;
+  datetime: string;
+}
+
+const matches: Match[] = [
+  { sport: "Cricket", market: "MATCH_ODDS", name: "New Zealand v West Indies", datetime: "3/12/2025 02:09 AM" },
+  { sport: "Cricket", market: "MATCH_ODDS", name: "Australia v England", datetime: "3/12/2025 02:09 AM" },
+  { sport: "Cricket", market: "MATCH_ODDS", name: "Australia v England", datetime: "3/12/2025 02:09 AM" },
+  { sport: "Cricket", market: "MATCH_ODDS", name: "Australia v England", datetime: "3/12/2025 02:09 AM" },
+  { sport: "Cricket", market: "MATCH_ODDS", name: "Australia v England", datetime: "3/12/2025 02:09 AM" },
+  { sport: "Cricket", market: "MATCH_ODDS", name: "Australia v England", datetime: "3/12/2025 02:09 AM" },
+  { sport: "Cricket", market: "MATCH_ODDS", name: "India v South Africa", datetime: "3/12/2025 02:09 AM" },
+  { sport: "Soccer", market: "MATCH_ODDS", name: "Sporting Cristal v Alianza Lima", datetime: "3/12/2025 02:09 AM" },
+  { sport: "Cricket", market: "MATCH_ODDS", name: "Nigeria v Zambia", datetime: "3/12/2025 02:09 AM" },
+];
 
 const Header = () => {
   const [searchActive, setSearchActive] = useState(false);
@@ -20,6 +40,10 @@ const Header = () => {
   const router = useRouter();
   const { isLoggedIn } = useAuthStore();
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isexposureopen, setExposureOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
+
 
   const goToLogin = () => {
     if (!isLoggedIn) {
@@ -65,12 +89,46 @@ const Header = () => {
   }, [isLoggedIn]);
 
   useEffect(() => {
-    function handleClickOutside(e:any) {
+    function handleClickOutside(e: any) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setAccountOpen(false);
       }
     }
 
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+
+  // filtering 
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value);
+
+    if (!value.trim()) {
+      setFilteredMatches([]);
+      return;
+    }
+
+    const filtered = matches.filter((m) =>
+      m.name.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredMatches(filtered);
+  };
+
+  const handleSelect = (match: Match) => {
+    setQuery(match.name);
+    setFilteredMatches([]);
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        setFilteredMatches([]);
+      }
+    };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
@@ -102,13 +160,12 @@ const Header = () => {
         <div className="flex flex-col md:flex-row justify-end w-full md:h-[66px] flex-1">
           <div className="hidden md:flex md:ml-[17px] p-1 items-center justify-end flex-[0_0_auto] w-[83.33333333%] max-w-full">
             <ul className="hidden md:flex list-none mt-2.5 mb-3 items-center pl-8">
-              <li
-                ref={wrapperRef}
-                className="mr-5 relative float-left flex items-start"
-              >
+              <li ref={wrapperRef} className="mr-5 relative float-left flex items-start">
                 <input
                   type="text"
                   placeholder="All Events"
+                  value={query}
+                  onChange={handleInputChange}
                   className={`
           h-[38px] border-0 p-0 outline-0 placeholder:text-black
           bg-[linear-gradient(180deg,#fff_0%,#fff_100%)] text-black
@@ -122,6 +179,27 @@ const Header = () => {
                   size={24}
                   onClick={() => setOpen(!open)}
                 />
+
+                {/* Dropdown */}
+                {filteredMatches.length > 0 && open && (
+                  <ul className="absolute top-8.5 left-0 right-0 bg-white border border-gray-300  mt-1  overflow-y-auto z-10 shadow-[1px_0_10px_#000] w-[500px] h-[450px]">
+                    {filteredMatches.map((match, index) => (
+                      <li
+                        key={index}
+                        onClick={() => handleSelect(match)}
+                        className="p-2 hover:bg-gray-100 text-black cursor-pointer"
+                      >
+                        <div className="flex items-start">
+                          <div className="flex flex-col w-[50%]">
+                            <span className=" font-bold">{match.sport} | {match.market}</span>
+                            <span className="">{match.name}</span>
+                          </div>
+                          <div className="w-[50%]">{match.datetime}</div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
               <li className="mr-[17px] ml-[15px] float-left cursor-pointer hover:underline">
                 <b className="text-[16px]" onClick={() => setRulesOpen(true)}>
@@ -165,7 +243,7 @@ const Header = () => {
                   </b>
                 </div>
                 <div className="text-start leading-[23px]">
-                  <button type="button" className="cursor-pointer">
+                  <button onClick={() => setExposureOpen(!isexposureopen)} type="button" className="cursor-pointer">
                     <span>
                       <b>EXPOSURE&nbsp;:&nbsp;</b>
                     </span>
@@ -262,6 +340,7 @@ const Header = () => {
         </div>
       )}
       <RulesModal open={isrulesopen} onClose={() => setRulesOpen(false)} />
+      <ExposureModal open={isexposureopen} onClose={() => setExposureOpen(false)} />
       <style jsx>{`
         @keyframes fadeIn {
           from {
@@ -322,7 +401,7 @@ const AccountDropDown = () => {
     },
   ];
 
-  const  SignOut = () => {
+  const SignOut = () => {
     router.push("/login");
   };
 

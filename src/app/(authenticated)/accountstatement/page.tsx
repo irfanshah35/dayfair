@@ -89,19 +89,19 @@ export default function AccountStatement() {
   };
 
   return (
-    <div className="md:m-[5px] ">
+    <div className="md:mx-[5px] md:my-[6px]">
       <div className="relative flex flex-col min-w-0 wrap-break-word bg-white md:border border-black/12.5 rounded">
         {/* Card Header */}
-        <div className="px-4 py-1 md:py-0 rounded-xs bg-black/3 border-b btn-clr border-black/12.5">
-          <h4 className="mb-0 text-base md:text-[24px] ">Account Statement</h4>
+        <div className="px-4 py-1 md:py-0 h-[37.8px] md:rounded-t-[4px] bg-black/3 border-b btn-clr border-black/12.5">
+          <h4 className="mb-0 text-base !text-white md:text-[24px]">Account Statement</h4>
         </div>
 
         {/* Card Body */}
         <div className="p-[5px] pb-2.5 pt-2.5 text-base">
           {/* Filter Row */}
-          <div className="flex flex-wrap items-end mt-2 -mx-[5px]">
+          <div className="flex flex-wrap items-center mt-[7px] -mx-[5px]">
             {/* Start Date */}
-            <div className="w-full md:w-1/6 px-[5px] mb-2 md:mb-0">
+            <div className="w-full md:w-1/6 pl-[5px] pr-[9px] mb-2 md:mb-0">
               <CustomCalendar
                 selected={startDate}
                 onChange={setStartDate}
@@ -111,7 +111,7 @@ export default function AccountStatement() {
             </div>
 
             {/* End Date */}
-            <div className="w-full md:w-1/6 px-[5px] mb-2  md:mb-0">
+            <div className="w-full md:w-1/6 px-[9px] mb-2  md:mb-0">
               <CustomCalendar
                 selected={endDate}
                 onChange={setEndDate}
@@ -123,7 +123,7 @@ export default function AccountStatement() {
             </div>
 
             {/* Submit Button */}
-            <div className="w-full md:w-1/6 px-[5px]">
+            <div className="w-full md:w-1/6 px-[9px] pr-[9px]">
               <button
                 className="w-full h-[38px] px-[9px] py-1.5 text-base font-normal text-black heading-clr  border border-black rounded cursor-pointer hover:opacity-90"
                 onClick={submitData}
@@ -140,19 +140,19 @@ export default function AccountStatement() {
               <table className="w-full border-collapse border border-black/12.5">
                 <thead>
                   <tr>
-                    <th className="px-2 py-1 md:px-3 md:py-2 text-center text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="p-[2px] md:px-3 md:py-2 text-center text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Date / Time
                     </th>
-                    <th className="px-2 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="p-[2px] py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Credit
                     </th>
-                    <th className="px-2 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="p-[2px] py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Debit
                     </th>
-                    <th className="px-2 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm md:text-base">
+                    <th className="p-[2px] py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm md:text-base">
                       Balance
                     </th>
-                    <th className="px-2 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="p-[2px] py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Remark
                     </th>
                   </tr>
@@ -162,23 +162,23 @@ export default function AccountStatement() {
                   {statementList.length > 0 ? (
                     statementList.map((statement, index) => (
                       <tr key={index}>
-                        <td className="px-2 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 text-xs md:text-base">
                           {formatDateTime(statement.createdAt)}
                         </td>
-                        <td className="px-2 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 text-xs md:text-base">
                           {statement.deposit || "0"}
                         </td>
-                        <td className="px-2 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 text-xs md:text-base">
                           <span className="font-bold text-red-600">
                             {statement.withdraw || "0"}
                           </span>
                         </td>
-                        <td className="px-2 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 text-xs md:text-base">
                           <span className="font-bold">
                             {statement.bankBalance}
                           </span>
                         </td>
-                        <td className="px-2 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 text-xs md:text-base">
                           {statement.remark || "NA"}
                         </td>
                       </tr>
@@ -248,7 +248,7 @@ export default function AccountStatement() {
           </div>
 
           {/* Desktop Pagination */}
-          <div className="flex flex-col md:flex-row justify-between items-center mt-3 gap-2 md:gap-3 text-sm">
+          <div className="flex md:flex-row justify-between items-center mt-3 gap-2 md:gap-3 text-sm">
             {/* Left: Showing text */}
             <div className="text-xs text-black md:text-sm">
               <span>
@@ -309,7 +309,7 @@ export default function AccountStatement() {
             <div className="flex items-center gap-2 text-xs md:text-sm">
               <span className="whitespace-nowrap text-black mr-1">Jump to page</span>
               <input
-                className="w-[90px] px-2 py-1 text-sm border border-[#ced4da] rounded"
+                className="w-[90px] h-[38px] px-2 py-1 text-sm border border-[#ced4da] rounded"
                 type="number"
                 min="1"
                 max={totalPages}
@@ -317,7 +317,7 @@ export default function AccountStatement() {
                 onChange={(e) => setJumptoPage(e.target.value)}
               />
               <button
-                className="px-3.5 py-1 rounded-xl font-bold text-black heading-clr border border-black  cursor-pointer hover:opacity-90"
+                className="flex justify-center items-center w-[43.13px] h-[28px] rounded-xl font-bold text-black heading-clr border border-black  cursor-pointer hover:opacity-90"
                 onClick={jumpPage}
               >
                 Go
