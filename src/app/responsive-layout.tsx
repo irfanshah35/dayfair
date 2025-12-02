@@ -114,11 +114,7 @@ export default function ResponsiveLayout({
 
           <div className="overflow-y-auto h-full">
             <div
-              className={`${
-                hideMenuAndSports
-                  ? "h-[100px]"
-                  : "h-[142.6px]"
-              }`}
+              className={`${hideMenuAndSports ? "h-[100px]" : "h-[142.6px]"}`}
             ></div>
             {children}
             <MFooter />
@@ -138,9 +134,12 @@ export default function ResponsiveLayout({
             </div>
 
             <main className="ml-[15%] w-[85%] h-[calc(100vh-110px)] overflow-y-auto pb-2">
-              <div className="min-h-[calc(100vh-148px)]">{children}</div>
-              <MFooter />
+              {children}
+              <div className="h-[30]"></div>
             </main>
+          </div>
+          <div className="fixed bottom-0 left-0 w-full z-50 bg-white shadow">
+            <MFooter />
           </div>
         </div>
       )}

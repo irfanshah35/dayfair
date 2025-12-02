@@ -1,5 +1,6 @@
 "use client";
 import { sportsData } from "@/lib/projectData";
+import { useAppStore } from "@/lib/store/store";
 import Link from "next/link";
 import React, { useState } from "react";
 import { FaChevronDown, FaCaretRight } from "react-icons/fa";
@@ -10,6 +11,8 @@ import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
 export default function Sidebar() {
   const [isOthersOpen, setIsOthersOpen] = useState(true);
   const [isAllSportsOpen, setIsAllSportsOpen] = useState(true);
+
+  // const {}=useAppStore()
 
   // const [open, setOpen] = useState<Record<string, boolean>>({});
 
