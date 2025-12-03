@@ -88,11 +88,11 @@ export default function BetHistory() {
   };
 
   return (
-    <div className="md:mx-[5px] md:my-[6px] ">
+    <div className="md:mx-[5px] md:my-1.5 ">
       <div className="relative flex flex-col min-w-0 wrap-break-word bg-white md:border border-black/12.5 rounded">
         {/* Card Header */}
-        <div className="px-4 py-1 md:py-0 h-[37.8px] md:rounded-t-[4px] bg-black/3 border-b btn-clr border-black/12.5">
-          <h4 className="mb-0 text-base !text-white md:text-[24px]">Bet History</h4>
+        <div className="px-4 py-1 md:py-0 h-[37.8px] md:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5">
+          <h4 className="mb-0 text-base text-white! md:text-[24px]">Bet History</h4>
         </div>
 
         {/* Card Body */}
@@ -171,7 +171,7 @@ export default function BetHistory() {
             </div>
 
             {/* Submit Button */}
-            <div className="w-full md:w-1/6 pl-[5px] md:!pl-[9px] px-[9px]">
+            <div className="w-full md:w-1/6 pl-[5px] md:pl-[9px]! px-[9px]">
               <button
                 className=" w-full md:w-[76px] h-[38px] px-[9px] py-1.5 text-base font-normal text-black heading-clr  border border-black rounded cursor-pointer hover:opacity-90 bg-[#F4A500]"
                 onClick={submitData}
@@ -189,22 +189,22 @@ export default function BetHistory() {
               <table className="w-full border-collapse border border-black/12.5">
                 <thead>
                   <tr className="md:h-[43px]">
-                    <th className="px-[2px] py-1 md:px-3 md:py-2 text-left  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="px-0.5 py-1 md:px-3 md:py-2 text-left  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Description
                     </th>
-                    <th className="px-[2px] py-1 md:px-3 md:py-2 text-left  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="px-0.5 py-1 md:px-3 md:py-2 text-left  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Bid Type
                     </th>
-                    <th className="px-[2px] py-1 md:px-3 md:py-2 text-left  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="px-0.5 py-1 md:px-3 md:py-2 text-left  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Odds Req
                     </th>
-                    <th className="px-[2px] py-1 md:px-3 md:py-2 text-left text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm md:text-base">
+                    <th className="px-0.5 py-1 md:px-3 md:py-2 text-left text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm md:text-base">
                       Stake
                     </th>
-                    <th className="px-[2px] py-1 md:px-3 md:py-2 text-left text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="px-0.5 py-1 md:px-3 md:py-2 text-left text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Avg Odds
                     </th>
-                    <th className="px-[2px] py-1 md:px-3 md:py-2 text-left text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="px-0.5 py-1 md:px-3 md:py-2 text-left text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       P&L
                     </th>
                   </tr>
@@ -214,26 +214,26 @@ export default function BetHistory() {
                   {statementList.length > 0 ? (
                     statementList.map((statement, index) => (
                       <tr key={index}>
-                        <td className="px-[2px] py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-0.5 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
                           {formatDateTime(statement.description)}
                         </td>
-                        <td className="px-[2px] py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-0.5 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
                           {statement.bidType || "0"}
                         </td>
-                        <td className="px-[2px] py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-0.5 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
                           <span className="font-bold text-red-600">
                             {statement.oddsReq || "0"}
                           </span>
                         </td>
-                        <td className="px-[2px] py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-0.5 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
                           <span className="font-bold">
                             {statement.stake}
                           </span>
                         </td>
-                        <td className="px-[2px] py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-0.5 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
                           {statement.avgOdds || "NA"}
                         </td>
-                        <td className="px-[2px] py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-0.5 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
                           {statement.profitLoss || "NA"}
                         </td>
                       </tr>

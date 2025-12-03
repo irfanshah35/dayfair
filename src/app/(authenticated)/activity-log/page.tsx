@@ -65,13 +65,13 @@ export default function ActivityLog() {
       <div className="flex items-center gap-2 mx-2">
         <button
           onClick={switchTab('activity')}
-          className={`w-full my-[9px] px-[14px] py-[10px] border-0 rounded-[30px] text-black text-[16px] font-semibold border-[1px] cursor-pointer border-black ${activeTab === 'activity' ? 'bg-linear-to-b from-[#f4b501] to-[#f68700]' : ''}`}>
+          className={`w-full my-[9px] px-3.5 py-2.5 rounded-[30px] text-black text-[16px] font-semibold border cursor-pointer border-black ${activeTab === 'activity' ? 'bg-linear-to-b from-[#f4b501] to-[#f68700]' : ''}`}>
           Activity Log
         </button>
 
         <button
           onClick={switchTab('password')}
-          className={`w-full  my-[9px] px-[14px] py-[10px] border-0 rounded-[30px] text-black text-[16px] font-semibold border-[1px] cursor-pointer border-black` + (activeTab === 'password' ? ' bg-linear-to-b from-[#f4b501] to-[#f68700]' : '')}>
+          className={`w-full  my-[9px] px-3.5 py-2.5 border-0 rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black` + (activeTab === 'password' ? ' bg-linear-to-b from-[#f4b501] to-[#f68700]' : '')}>
           Password History
         </button>
       </div>
@@ -145,7 +145,7 @@ export default function ActivityLog() {
 
               <table className="w-full border border-[#C8CED3]">
                 <thead>
-                  <tr className="bg-gradient-to-b from-[#030a12] via-[#444647] to-[#58595a] md:[background:white]">
+                  <tr className="bg-linear-to-b from-[#030a12] via-[#444647] to-[#58595a] md:[background:white]">
                     <th className="max-w-48 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
                       Login Date & Time
                     </th>

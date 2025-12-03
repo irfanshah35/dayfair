@@ -87,10 +87,10 @@ export default function ProfitLoss() {
   };
 
   return (
-    <div className="md:mx-[5px] md:my-[6px] ">
-      <div className="relative flex flex-col min-w-0 wrap-break-word bg-white md:border border-black/12.5 rounded-[4px]">
+    <div className="md:mx-[5px] md:my-1.5 ">
+      <div className="relative flex flex-col min-w-0 wrap-break-word bg-white md:border border-black/12.5 rounded-sm">
         {/* Card Header */}
-        <div className="px-4 py-1 md:py-0 h-[37.8px] md:rounded-t-[4px] bg-black/3 border-b btn-clr border-black/12.5">
+        <div className="px-4 py-1 md:py-0 h-[37.8px] md:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5">
           <h4 className="mb-0 text-base text-white md:text-[24px]">Profit Loss</h4>
         </div>
 
@@ -138,16 +138,16 @@ export default function ProfitLoss() {
               <table className="w-full border-collapse border border-black/12.5">
                 <thead>
                   <tr className="grid grid-cols-4 w-full md:h-[43px]">
-                    <th className="p-[2px] md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
                       Sport Name
                     </th>
-                    <th className="p-[2px] md:px-3 md:py-[9px] text-center  text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 md:px-3 md:py-[9px] text-center  text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
                       Profit/Loss
                     </th>
-                    <th className="p-[2px] md:px-3 md:py-[9px]md:py-[9px] text-center  text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 md:px-3 md:py-[9px]md:py-[9px] text-center  text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
                       Commission
                     </th>
-                    <th className="p-[2px] md:px-3 md:py-[9px] text-center  text-black bg-[#e9ecef] border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 md:px-3 md:py-[9px] text-center  text-black bg-[#e9ecef] border-black/12.5 text-sm md:text-base">
                       Total P&L
                     </th>
                   </tr>
@@ -208,7 +208,7 @@ export default function ProfitLoss() {
               Previous
             </button>
 
-            <span className="inline-flex items-center justify-center border py-[4.5px] px-[9px] rounded-[4px] h-[29px] text-black bg-linear-to-b from-[#f4b501] to-[#f68700]">
+            <span className="inline-flex items-center justify-center border py-[4.5px] px-[9px] rounded-sm h-[29px] text-black bg-linear-to-b from-[#f4b501] to-[#f68700]">
               {currentPage}
             </span>
 
