@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import CustomCalendar from "../../../components/common/custom-calendar";
+import { CONFIG } from "@/lib/config";
+import { fetchData } from "@/lib/functions";
 
 interface StatementItem {
   createdAt: string;
@@ -10,28 +12,28 @@ interface StatementItem {
   remark: string | null;
 }
 
+interface ApiResponse {
+  data: StatementItem[];
+  total: number;
+  currentPage: number;
+  meta: {
+    message: string;
+    status_code: number;
+    status: boolean;
+  };
+}
+
 export default function AccountStatement() {
-  const [statementList] = useState<StatementItem[]>([
-    {
-      createdAt: new Date(Date.now() - 172800000).toISOString(),
-      deposit: 2000,
-      withdraw: null,
-      bankBalance: 1000,
-      remark: " Opening Balance (Master)",
-    },
-  ]);
-  
+  const [statementList, setStatementList] = useState<StatementItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(25);
-  const totalRecords = 1;
-  const totalPages = 1;
-  const startIndex = 1;
-  const endIndex = 1;
+  const [totalRecords, setTotalRecords] = useState(0);
   const [jumptoPage, setJumptoPage] = useState<number | string>("");
-
-  // Date states
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const totalPages = Math.ceil(totalRecords / pageSize) || 1;
+  const startIndex = totalRecords > 0 ? (currentPage - 1) * pageSize + 1 : 0;
+  const endIndex = Math.min(currentPage * pageSize, totalRecords);
 
   useEffect(() => {
     const today = new Date();
@@ -42,8 +44,37 @@ export default function AccountStatement() {
     setEndDate(today);
   }, []);
 
+  const [accountStatement, setAccountStatement] = useState<any>();
+
+  const fetchAccountStatement = async () => {
+    if (!startDate || !endDate) {
+      return;
+    }
+
+    const payload = {
+      page: currentPage,
+      pageSize: pageSize,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      key: CONFIG.siteKey,
+    };
+
+    try {
+      await fetchData({
+        url: CONFIG.statement,
+        payload: payload,
+        setFn: setAccountStatement,
+      });
+    } catch (error) {
+      console.error("Error fetching statement:", error);
+    }
+  };
+
   const submitData = () => {
-    console.log("Submit clicked", { startDate, endDate });
+    setCurrentPage(1);
+    if (startDate && endDate) {
+      fetchAccountStatement();
+    }
   };
 
   const goToFirst = () => {
@@ -51,6 +82,12 @@ export default function AccountStatement() {
       setCurrentPage(1);
     }
   };
+
+  useEffect(() => {
+    if (startDate && endDate) {
+      fetchAccountStatement();
+    }
+  }, [currentPage]);
 
   const goToPrevious = () => {
     if (currentPage > 1) {
@@ -89,11 +126,13 @@ export default function AccountStatement() {
   };
 
   return (
-    <div className="md:mx-[5px] md:my-[6px]">
+    <div className="md:mx-[5px] md:my-1.5">
       <div className="relative flex flex-col min-w-0 wrap-break-word bg-white md:border border-black/12.5 rounded">
         {/* Card Header */}
-        <div className="px-4 py-1 md:py-0 h-[37.8px] md:rounded-t-[4px] bg-black/3 border-b btn-clr border-black/12.5">
-          <h4 className="mb-0 text-base !text-white md:text-[24px]">Account Statement</h4>
+        <div className="px-4 py-1 md:py-0 h-[37.8px] md:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5">
+          <h4 className="mb-0 text-base text-white! md:text-[24px]">
+            Account Statement
+          </h4>
         </div>
 
         {/* Card Body */}
@@ -111,7 +150,7 @@ export default function AccountStatement() {
             </div>
 
             {/* End Date */}
-            <div className="w-full md:w-1/6 px-[9px] mb-2  md:mb-0">
+            <div className="w-full md:w-1/6 pl-[5px]  pr-[9px] mb-2  md:mb-0">
               <CustomCalendar
                 selected={endDate}
                 onChange={setEndDate}
@@ -134,33 +173,32 @@ export default function AccountStatement() {
           </div>
 
           {/* Table */}
-      {/* Table */}
           <div className="flex flex-wrap -mx-[5px] mt-3">
             <div className="w-full px-[5px] overflow-x-auto">
               <table className="w-full border-collapse border border-black/12.5">
                 <thead>
                   <tr>
-                    <th className="p-[2px] md:px-3 md:py-2 text-center text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 md:px-3 md:py-2 text-center text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Date / Time
                     </th>
-                    <th className="p-[2px] py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Credit
                     </th>
-                    <th className="p-[2px] py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Debit
                     </th>
-                    <th className="p-[2px] py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm md:text-base">
+                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm md:text-base">
                       Balance
                     </th>
-                    <th className="p-[2px] py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
                       Remark
                     </th>
                   </tr>
                 </thead>
 
                 <tbody>
-                  {statementList.length > 0 ? (
-                    statementList.map((statement, index) => (
+                  {accountStatement?.length > 0 ? (
+                    accountStatement.map((statement, index) => (
                       <tr key={index}>
                         <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 text-xs md:text-base">
                           {formatDateTime(statement.createdAt)}
@@ -202,7 +240,9 @@ export default function AccountStatement() {
           <div className="flex md:hidden justify-between items-center gap-2 mt-2">
             <button
               className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
-                currentPage === 1 ? "opacity-40 pointer-events-none" : "hover:bg-[#f1f1f1]"
+                currentPage === 1
+                  ? "opacity-40 pointer-events-none"
+                  : "hover:bg-[#f1f1f1]"
               }`}
               onClick={goToFirst}
               disabled={currentPage === 1}
@@ -211,7 +251,9 @@ export default function AccountStatement() {
             </button>
             <button
               className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
-                currentPage === 1 ? "opacity-40 pointer-events-none" : "hover:bg-[#f1f1f1]"
+                currentPage === 1
+                  ? "opacity-40 pointer-events-none"
+                  : "hover:bg-[#f1f1f1]"
               }`}
               onClick={goToPrevious}
               disabled={currentPage === 1}
@@ -260,7 +302,9 @@ export default function AccountStatement() {
             <div className="hidden md:flex items-center gap-2">
               <button
                 className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
-                  currentPage === 1 ? "opacity-40 pointer-events-none" : "hover:bg-[#f1f1f1]"
+                  currentPage === 1
+                    ? "opacity-40 pointer-events-none"
+                    : "hover:bg-[#f1f1f1]"
                 }`}
                 onClick={goToFirst}
                 disabled={currentPage === 1}
@@ -269,7 +313,9 @@ export default function AccountStatement() {
               </button>
               <button
                 className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
-                  currentPage === 1 ? "opacity-40 pointer-events-none" : "hover:bg-[#f1f1f1]"
+                  currentPage === 1
+                    ? "opacity-40 pointer-events-none"
+                    : "hover:bg-[#f1f1f1]"
                 }`}
                 onClick={goToPrevious}
                 disabled={currentPage === 1}
@@ -307,7 +353,9 @@ export default function AccountStatement() {
 
             {/* Right: Jump to page */}
             <div className="flex items-center gap-2 text-xs md:text-sm">
-              <span className="whitespace-nowrap text-black mr-1">Jump to page</span>
+              <span className="whitespace-nowrap text-black mr-1">
+                Jump to page
+              </span>
               <input
                 className="w-[90px] h-[38px] px-2 py-1 text-sm border border-[#ced4da] rounded"
                 type="number"
