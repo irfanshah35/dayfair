@@ -1,6 +1,8 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import CustomCalendar from "../../../components/common/custom-calendar";
+import { CONFIG } from "@/lib/config";
+import { fetchData } from "@/lib/functions";
 
 interface StatementItem {
   description: string;
@@ -9,28 +11,45 @@ interface StatementItem {
   stake: number;
   avgOdds: string | null;
   profitLoss: number;
+}
 
+interface ApiResponse {
+  data: StatementItem[];
+  total: number;
+  currentPage: number;
+  totalPages: number;
+  perPage: number;
+  nextPage: number;
+  prevPage: number;
+  meta: {
+    message: string;
+    status_code: number;
+    status: boolean;
+  };
 }
 
 export default function BetHistory() {
-  const [statementList] = useState<StatementItem[]>([
-
-  ]);
-
+  const [statementList, setStatementList] = useState<StatementItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(25);
-  const totalRecords = 1;
-  const totalPages = 1;
-  const startIndex = 1;
-  const endIndex = 1;
+  const [limit] = useState(25);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const totalPages = Math.ceil(totalRecords / limit) || 1;
+  const startIndex = totalRecords > 0 ? (currentPage - 1) * limit + 1 : 0;
+  const endIndex = Math.min(currentPage * limit, totalRecords);
   const [jumptoPage, setJumptoPage] = useState<number | string>("");
 
   // Date states
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const [sportType, setSportType] = useState("Exchange");
-  const [betType, setBetType] = useState("UNMATCHED");
+  const [exchangeType, setExchangeType] = useState("EXCHANGE");
+  const [betStatus, setBetStatus] = useState("UNMATCHED");
+  const [mounted, setMounted] = useState(false);
+  const [betHistoryData, setBetHistoryData] = useState<any>();
 
+  useEffect(() => {
+    fetchBetHistory();
+    setMounted(true);
+  }, [mounted]);
 
   useEffect(() => {
     const today = new Date();
@@ -41,9 +60,45 @@ export default function BetHistory() {
     setEndDate(today);
   }, []);
 
-  const submitData = () => {
-    console.log("Submit clicked", { startDate, endDate });
+  const fetchBetHistory = async () => {
+    if (!startDate || !endDate) {
+      return;
+    }
+
+    const payload = {
+      page: currentPage,
+      limit: limit,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      exchangeType: exchangeType,
+      betStatus: betStatus,
+      key: CONFIG.siteKey,
+    };
+
+    try {
+      await fetchData({
+        url: CONFIG.betHistory,
+        payload: payload,
+        setFn: setBetHistoryData,
+      });
+    } catch (error) {
+      console.error("Error fetching bet history:", error);
+    }
   };
+
+  const submitData = () => {
+    setCurrentPage(1);
+    if (startDate && endDate) {
+      fetchBetHistory();
+    }
+  };
+
+  // Pagination fetch
+  useEffect(() => {
+    if (startDate && endDate) {
+      fetchBetHistory();
+    }
+  }, [currentPage]);
 
   const goToFirst = () => {
     if (currentPage !== 1) {
@@ -111,16 +166,16 @@ export default function BetHistory() {
                     backgroundPosition: "right 0.75rem center",
                     backgroundSize: "8px 10px",
                   }}
-                  value={sportType}
-                  onChange={(e) => setSportType(e.target.value)}
+                  value={exchangeType}
+                  onChange={(e) => setExchangeType(e.target.value)}
                 >
-                  <option value="Exchange">Exchange</option>
-                  <option value="Sport Type">Sport Type</option>
-                  <option value="Casino">Casino</option>
+                  <option value="EXCHANGE">Exchange</option>
+                  <option value="SPORT">Sport Type</option>
+                  <option value="CASINO">Casino</option>
                 </select>
               </div>
 
-              {/* UNMATCHED Dropdown */}
+              {/* Bet Status Dropdown */}
               <div className="flex-1 md:w-1/2 md:pl-[9px]">
                 <select
                   className="w-full h-[38px] px-3 py-1.5 text-base text-[#555] bg-white border border-[#ced4da] rounded appearance-none cursor-pointer"
@@ -130,8 +185,8 @@ export default function BetHistory() {
                     backgroundPosition: "right 0.75rem center",
                     backgroundSize: "8px 10px",
                   }}
-                  value={betType}
-                  onChange={(e) => setBetType(e.target.value)}
+                  value={betStatus}
+                  onChange={(e) => setBetStatus(e.target.value)}
                 >
                   <option value="UNMATCHED">UNMATCHED</option>
                   <option value="MATCHED">MATCHED</option>
@@ -181,8 +236,6 @@ export default function BetHistory() {
             </div>
           </div>
 
-
-
           {/* Table */}
           <div className="flex flex-wrap -mx-[5px] mt-3">
             <div className="w-full px-[5px] overflow-x-auto">
@@ -211,11 +264,11 @@ export default function BetHistory() {
                 </thead>
 
                 <tbody>
-                  {statementList.length > 0 ? (
-                    statementList.map((statement, index) => (
+                  {betHistoryData?.length > 0 ? (
+                    betHistoryData?.map((statement: any, index: number) => (
                       <tr key={index}>
                         <td className="px-0.5 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
-                          {formatDateTime(statement.description)}
+                          {statement.description}
                         </td>
                         <td className="px-0.5 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 text-xs md:text-base">
                           {statement.bidType || "0"}
@@ -254,18 +307,24 @@ export default function BetHistory() {
           </div>
 
           {/* Mobile Pagination */}
-          {/* <div className="flex md:hidden justify-between items-center gap-2 mt-2">
+          <div className="flex md:hidden justify-between items-center gap-2 mt-2">
             <button
-              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === 1 ? "opacity-40 pointer-events-none" : "hover:bg-[#f1f1f1]"
-                }`}
+              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+                currentPage === 1
+                  ? "opacity-40 pointer-events-none"
+                  : "hover:bg-[#f1f1f1]"
+              }`}
               onClick={goToFirst}
               disabled={currentPage === 1}
             >
               First
             </button>
             <button
-              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === 1 ? "opacity-40 pointer-events-none" : "hover:bg-[#f1f1f1]"
-                }`}
+              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+                currentPage === 1
+                  ? "opacity-40 pointer-events-none"
+                  : "hover:bg-[#f1f1f1]"
+              }`}
               onClick={goToPrevious}
               disabled={currentPage === 1}
             >
@@ -277,46 +336,54 @@ export default function BetHistory() {
             </span>
 
             <button
-              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === totalPages
-                ? "opacity-40 pointer-events-none"
-                : "hover:bg-[#f1f1f1]"
-                }`}
+              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+                currentPage === totalPages
+                  ? "opacity-40 pointer-events-none"
+                  : "hover:bg-[#f1f1f1]"
+              }`}
               onClick={goToNext}
               disabled={currentPage === totalPages}
             >
               Next
             </button>
             <button
-              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === totalPages
-                ? "opacity-40 pointer-events-none"
-                : "hover:bg-[#f1f1f1]"
-                }`}
+              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+                currentPage === totalPages
+                  ? "opacity-40 pointer-events-none"
+                  : "hover:bg-[#f1f1f1]"
+              }`}
               onClick={goToLast}
               disabled={currentPage === totalPages}
             >
               Last
             </button>
-          </div> */}
+          </div>
 
           {/* Desktop Pagination */}
-          {/* <div className="flex flex-col md:flex-row justify-between items-center mt-3 gap-2 md:gap-3 text-sm">
+          <div className="flex flex-col md:flex-row justify-between items-center mt-3 gap-2 md:gap-3 text-sm">
             <div className="text-xs text-black md:text-sm">
               <span>
-                Showing {startIndex} to {endIndex} of {totalRecords} entries
+                Showing {startIndex} to {endIndex} of {betHistoryData?.length || 0} entries
               </span>
             </div>
             <div className="hidden md:flex items-center gap-2">
               <button
-                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === 1 ? "opacity-40 pointer-events-none" : "hover:bg-[#f1f1f1]"
-                  }`}
+                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+                  currentPage === 1
+                    ? "opacity-40 pointer-events-none"
+                    : "hover:bg-[#f1f1f1]"
+                }`}
                 onClick={goToFirst}
                 disabled={currentPage === 1}
               >
                 First
               </button>
               <button
-                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === 1 ? "opacity-40 pointer-events-none" : "hover:bg-[#f1f1f1]"
-                  }`}
+                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+                  currentPage === 1
+                    ? "opacity-40 pointer-events-none"
+                    : "hover:bg-[#f1f1f1]"
+                }`}
                 onClick={goToPrevious}
                 disabled={currentPage === 1}
               >
@@ -328,20 +395,22 @@ export default function BetHistory() {
               </span>
 
               <button
-                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === totalPages
-                  ? "opacity-40 pointer-events-none"
-                  : "hover:bg-[#f1f1f1]"
-                  }`}
+                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+                  currentPage === totalPages
+                    ? "opacity-40 pointer-events-none"
+                    : "hover:bg-[#f1f1f1]"
+                }`}
                 onClick={goToNext}
                 disabled={currentPage === totalPages}
               >
                 Next
               </button>
               <button
-                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === totalPages
-                  ? "opacity-40 pointer-events-none"
-                  : "hover:bg-[#f1f1f1]"
-                  }`}
+                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
+                  currentPage === totalPages
+                    ? "opacity-40 pointer-events-none"
+                    : "hover:bg-[#f1f1f1]"
+                }`}
                 onClick={goToLast}
                 disabled={currentPage === totalPages}
               >
@@ -351,7 +420,7 @@ export default function BetHistory() {
             <div className="flex items-center gap-2 text-xs md:text-sm">
               <span className="whitespace-nowrap text-black mr-1">Jump to page</span>
               <input
-                className="w-[90px] px-2 py-1 text-sm border border-[#ced4da] rounded"
+                className="w-[90px] h-[38px] px-2 py-1 text-sm border border-[#ced4da] rounded"
                 type="number"
                 min="1"
                 max={totalPages}
@@ -359,13 +428,13 @@ export default function BetHistory() {
                 onChange={(e) => setJumptoPage(e.target.value)}
               />
               <button
-                className="px-3.5 py-1 rounded-xl font-bold text-black heading-clr border border-black  cursor-pointer hover:opacity-90"
+                className="flex justify-center items-center w-[43.13px] h-7 rounded-xl font-bold text-black heading-clr border border-black  cursor-pointer hover:opacity-90"
                 onClick={jumpPage}
               >
                 Go
               </button>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>
