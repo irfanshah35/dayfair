@@ -36,7 +36,6 @@ const DGameList = ({
   useEffect(() => {
     if (allEventsList) {
       const sports = allEventsList[Number(sportId)];
-      console.log(sports, "sports");
       setSelectedSport(sports);
     }
   }, [allEventsList]);
@@ -101,9 +100,16 @@ const DGameList = ({
                               </a>
                             </div>
                             <div className="game-icons float-right w-auto flex items-center space-x-1 -mt-px">
-                              {item.inplay && (
+                              {item.inplay ? (
                                 <span className="game-icon w-[25px] flex justify-center items-center">
                                   <span className="w-3 h-3 bg-[#28a745] rounded-full inline-block"></span>
+                                </span>
+                              ) : (
+                                <span className="game-icon w-[25px] flex justify-center items-center">
+                                  <i
+                                    className="fas fa-clock text-sm"
+                                    style={{ color: "green" }}
+                                  ></i>
                                 </span>
                               )}
                             </div>

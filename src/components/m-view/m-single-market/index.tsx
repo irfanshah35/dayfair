@@ -36,7 +36,7 @@ const MSingleMarket = () => {
       {isMobile ? (
         <MSportsTab activeTab={activeTab} setActiveTab={setActiveTab} />
       ) : (
-        <DSportNav activeTab={activeTab} setActiveTab={setActiveTab}/>
+        <DSportNav activeTab={activeTab} setActiveTab={setActiveTab} />
       )}
       <div className="lg:px-[9px]">
         <div className="lg:hidden overflow-y-auto no-scrollbar max-h-[265px]">
@@ -154,18 +154,19 @@ const MSingleMarket = () => {
                             </a>
                           </div>
                           <div className="game-icons float-right w-auto flex items-center space-x-1 -mt-px">
-                            {item?.inplay && (
+                            {item?.inplay ? (
                               <span
                                 className="game-icon w-[25px] flex justify-center items-center
 "
                               >
                                 <span className="w-3 h-3 bg-[#28a745] rounded-full inline-block"></span>
                               </span>
-                            )}
-
-                            {!item?.inplay && (
-                              <span className="game-icon">
-                                <i className="fas fa-clock text-green-600 text-sm"></i>
+                            ) : (
+                              <span className="game-icon w-[25px] flex justify-center items-center">
+                                <i
+                                  className="fas fa-clock text-sm"
+                                  style={{ color: "green" }}
+                                ></i>
                               </span>
                             )}
                           </div>
