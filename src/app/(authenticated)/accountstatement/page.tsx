@@ -147,7 +147,7 @@ export default function AccountStatement() {
           {/* Filter Row */}
           <div className="flex flex-wrap items-center mt-[7px] -mx-[5px]">
             {/* Start Date */}
-            <div className="w-full md:w-1/6 pl-[5px] pr-[9px] mb-2 md:mb-0">
+            <div className="w-full md:w-1/6 px-[5px] md:pl-[5px] md:pr-[9px] mb-2 md:mb-0">
               <CustomCalendar
                 selected={startDate}
                 onChange={setStartDate}
@@ -157,7 +157,7 @@ export default function AccountStatement() {
             </div>
 
             {/* End Date */}
-            <div className="w-full md:w-1/6 pl-[5px]  pr-[9px] mb-2  md:mb-0">
+            <div className="w-full md:w-1/6 px-[5px] md:px-[9px] mb-2  md:mb-0">
               <CustomCalendar
                 selected={endDate}
                 onChange={setEndDate}
@@ -169,7 +169,7 @@ export default function AccountStatement() {
             </div>
 
             {/* Submit Button */}
-            <div className="w-full md:w-1/6 px-[9px] pr-[9px]">
+            <div className="w-full md:w-1/6 px-[5px] md:px-[9px] pr-[9px]">
               <button
                 className="w-full h-[38px] px-[9px] py-1.5 text-base font-normal text-black heading-clr  border border-black rounded cursor-pointer hover:opacity-90"
                 onClick={submitData}
@@ -185,19 +185,19 @@ export default function AccountStatement() {
               <table className="w-full border-collapse border border-black/12.5">
                 <thead>
                   <tr>
-                    <th className="p-0.5 md:px-3 md:py-2 text-center text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 md:px-3 md:py-2 text-center text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
                       Date / Time
                     </th>
-                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
                       Credit
                     </th>
-                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
                       Debit
                     </th>
-                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm md:text-base">
+                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border-x border-black/12.5 font-bold text-sm md:text-base">
                       Balance
                     </th>
-                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
                       Remark
                     </th>
                   </tr>
@@ -232,7 +232,7 @@ export default function AccountStatement() {
                     <tr>
                       <td
                         colSpan={5}
-                        className="px-2 py-1.5 md:px-3 md:py-3 text-center border text-black border-black/12.5 bg-transparent text-xs md:text-base"
+                        className="px-2 py-1.5 md:px-3 md:py-[9px] text-center border text-black border-black/12.5 bg-transparent text-xs md:text-base"
                       >
                         No data available in table
                       </td>
@@ -301,7 +301,7 @@ export default function AccountStatement() {
             {/* Left: Showing text */}
             <div className="text-xs text-black md:text-sm">
               <span>
-                Showing {startIndex} to {endIndex} of {accountStatement?.length||0} entries
+                Showing {startIndex} to -{endIndex} of {accountStatement?.length||0} entries
               </span>
             </div>
 
@@ -364,7 +364,7 @@ export default function AccountStatement() {
                 Jump to page
               </span>
               <input
-                className="w-[90px] h-[38px] px-2 py-1 text-sm border border-[#ced4da] rounded"
+                className="w-[90px] h-[38px] px-2 py-1 text-sm border border-[#dee2e6] rounded"
                 type="number"
                 min="1"
                 max={totalPages}

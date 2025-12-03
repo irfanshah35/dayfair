@@ -307,7 +307,7 @@ export default function BetHistory() {
           </div>
 
           {/* Mobile Pagination */}
-          <div className="flex md:hidden justify-between items-center gap-2 mt-2">
+          {/* <div className="flex md:hidden justify-between items-center gap-2 mt-2">
             <button
               className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
                 currentPage === 1
@@ -357,10 +357,10 @@ export default function BetHistory() {
             >
               Last
             </button>
-          </div>
+          </div> */}
 
           {/* Desktop Pagination */}
-          <div className="flex flex-col md:flex-row justify-between items-center mt-3 gap-2 md:gap-3 text-sm">
+          {/* <div className="flex flex-col md:flex-row justify-between items-center mt-3 gap-2 md:gap-3 text-sm">
             <div className="text-xs text-black md:text-sm">
               <span>
                 Showing {startIndex} to {endIndex} of {betHistoryData?.length || 0} entries
@@ -434,7 +434,7 @@ export default function BetHistory() {
                 Go
               </button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

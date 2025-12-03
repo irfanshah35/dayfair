@@ -53,6 +53,9 @@ const Header = () => {
       setAccountOpen(!isaccountopen);
     }
   };
+  const closeAccountDropdown = () => {
+    setAccountOpen(false);
+  };
 
   React.useEffect(() => {
     if (searchActive && inputRef.current) {
@@ -182,19 +185,20 @@ const Header = () => {
 
                 {/* Dropdown */}
                 {filteredMatches.length > 0 && open && (
-                  <ul className="absolute top-8.5 left-0 right-0 bg-white border border-gray-300  mt-1  overflow-y-auto z-10 shadow-[1px_0_10px_#000] w-[500px] h-[450px]">
+                  <ul className="absolute top-8.5 left-0 right-0 bg-white border border-gray-300  mt-1  overflow-y-auto z-10 shadow-[1px_0_10px_#000] w-[500px] h-[450px] px-[10px] py-[10px]">
                     {filteredMatches.map((match, index) => (
                       <li
                         key={index}
                         onClick={() => handleSelect(match)}
-                        className="p-2 hover:bg-gray-100 text-black cursor-pointer"
+                        className=" hover:bg-gray-100 text-black cursor-pointer border-b border-[#ccc] py-[5px] mb-[5px]"
                       >
-                        <div className="flex items-start">
-                          <div className="flex flex-col w-[50%]">
-                            <span className=" font-bold">{match.sport} | {match.market}</span>
-                            <span className="">{match.name}</span>
+                        <div className="flex flex-col leading-[14px]">
+                          <div className="flex">
+                            <div className="font-bold pb-[6px] max-w-[232.5px] w-full">{match.sport} | {match.market}</div>
+                            {/* <div className="">{match.name}</div> */}
+                            <div className="">{match.datetime}</div>
                           </div>
-                          <div className="w-[50%]">{match.datetime}</div>
+                          <div className="">{match.name}</div>
                         </div>
                       </li>
                     ))}
@@ -336,7 +340,7 @@ const Header = () => {
       </div>
       {isaccountopen && (
         <div ref={dropdownRef}>
-          <AccountDropDown />
+          <AccountDropDown closeDropdown={closeAccountDropdown} />
         </div>
       )}
       <RulesModal open={isrulesopen} onClose={() => setRulesOpen(false)} />
@@ -360,7 +364,7 @@ const Header = () => {
 export default Header;
 
 
-const AccountDropDown = () => {
+const AccountDropDown = ({ closeDropdown }:any) => {
 
   const router = useRouter();
   const accountMenuItems = [
@@ -413,6 +417,7 @@ const AccountDropDown = () => {
       >
         <li className="md:hidden py-1.5 md:py-0 h-9 md:h-[25px] ">
           <Link href="/"
+          onClick={closeDropdown}
             className="px-3 h-[25px] flex items-center hover:bg-gray-800 transition-colors"
           >
             Home
@@ -423,6 +428,7 @@ const AccountDropDown = () => {
           <li key={index}>
             <Link
               href={item.href}
+              onClick={closeDropdown}
               className="block px-3 py-1.5 md:py-0 h-9 md:h-[25px] items-center hover:bg-gray-800 transition-colors"
             >
               {item.label}
