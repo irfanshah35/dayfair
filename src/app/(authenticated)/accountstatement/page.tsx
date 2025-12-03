@@ -26,14 +26,14 @@ interface ApiResponse {
 export default function AccountStatement() {
   const [statementList, setStatementList] = useState<StatementItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize] = useState(25);
+  const [limit] = useState(25);
   const [totalRecords, setTotalRecords] = useState(0);
   const [jumptoPage, setJumptoPage] = useState<number | string>("");
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
-  const totalPages = Math.ceil(totalRecords / pageSize) || 1;
-  const startIndex = totalRecords > 0 ? (currentPage - 1) * pageSize + 1 : 0;
-  const endIndex = Math.min(currentPage * pageSize, totalRecords);
+  const totalPages = Math.ceil(totalRecords / limit) || 1;
+  const startIndex = totalRecords > 0 ? (currentPage - 1) * limit + 1 : 0;
+  const endIndex = Math.min(currentPage * limit, totalRecords);
   const [mounted,setMounted]=useState(false);
 
   useEffect(()=>{
@@ -59,7 +59,7 @@ export default function AccountStatement() {
 
     const payload = {
       page: currentPage,
-      pageSize: pageSize,
+      limit: limit,
       startDate: startDate.toISOString(),
       endDate: endDate.toISOString(),
       key: CONFIG.siteKey,

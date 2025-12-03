@@ -42,7 +42,7 @@ export const CONFIG = {
   getExchangeNews: "/api/navigation/exchangeNews", // done
   getExchangeNewsTime: 120,
   statement: "/app/exchange/users/userAccountStatement",
-  profitLoss: "/app/exchange/users/pl/userSportsProfitloss",
+  profitLoss: "/app/exchange/users/pl/userSportsProfitlossNew",
   newProfitLoss: "/app/exchange/users/pl/userSportsProfitlossNew",
   profitLossEvents: "/app/exchange/users/pl/userEventsProfitlossNew",
   betHistory: "/app/exchange/users/userBetList",
