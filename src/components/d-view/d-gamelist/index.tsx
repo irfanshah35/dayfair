@@ -86,7 +86,7 @@ const DGameList = ({
                         key={idx}
                         onClick={() =>
                           router.push(
-                            `/market-details/${item.eventType?.id}/${item.event?.id}`
+                            `/market-details/${item?.event?.id}/${item?.eventType?.id}`
                           )
                         }
                         className="cursor-pointer border-b border-[#d6d8d7]"

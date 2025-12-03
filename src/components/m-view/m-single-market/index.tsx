@@ -44,7 +44,7 @@ const MSingleMarket = () => {
             filteredEvents?.map((item, idx) => (
               <div
                 key={idx}
-                onClick={() => router.push("/market-details")}
+                onClick={() => router.push(`/market-details/${item.event?.id}/${item.eventType?.id}`)}
                 className="text-black block no-underline cursor-pointer hover:bg-[#e5eef3]"
               >
                 <div className="bg-[#f1f5f8] border-b border-[#d6d8d7] px-3 pt-[5px] pb-[3px]">
@@ -137,7 +137,7 @@ const MSingleMarket = () => {
                   filteredEvents?.map((item: any, idx: number) => (
                     <tr
                       key={idx}
-                      onClick={() => router.push("/market-details")}
+                      onClick={() => router.push(`/market-details/${item.event?.id}/${item.eventType?.id}`)}
                       className="cursor-pointer border-b border-[#d6d8d7]"
                     >
                       <td className="px-[15px] align-middle">
