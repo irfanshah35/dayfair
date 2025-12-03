@@ -1,35 +1,53 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import CustomCalendar from "../../../components/common/custom-calendar";
+import { CONFIG } from "@/lib/config";
+import { fetchData } from "@/lib/functions";
 
 interface StatementItem {
-  sportName: string;
-  Profit: number | null;
-  Commission: number;
-  totalPL: number;
+  pl: number;
+  commission: number;
+  eventType: {
+    id: string;
+    name: string;
+  };
+}
+
+interface ApiResponse {
+  data: StatementItem[];
+  total: number;
+  currentPage: number;
+  totalPages: number;
+  perPage: number;
+  nextPage: number;
+  prevPage: number;
+  meta: {
+    message: string;
+    status_code: number;
+    status: boolean;
+  };
 }
 
 export default function ProfitLoss() {
-  const [statementList] = useState<StatementItem[]>([
-    // {
-    //   sportName: "Cricket",
-    //   Profit: 2000,
-    //   Commission: 200,
-    //   totalPL: 1800,
-    // },
-  ]);
-
+  const [statementList, setStatementList] = useState<StatementItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(25);
-  const totalRecords = 1;
-  const totalPages = 1;
-  const startIndex = 1;
-  const endIndex = 1;
+  const [totalRecords, setTotalRecords] = useState(0);
+  const totalPages = Math.ceil(totalRecords / pageSize) || 1;
+  const startIndex = totalRecords > 0 ? (currentPage - 1) * pageSize + 1 : 0;
+  const endIndex = Math.min(currentPage * pageSize, totalRecords);
   const [jumptoPage, setJumptoPage] = useState<number | string>("");
 
   // Date states
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [profitLossData, setProfitLossData] = useState<any>();
+
+  useEffect(() => {
+    fetchProfitLoss();
+    setMounted(true);
+  }, [mounted]);
 
   useEffect(() => {
     const today = new Date();
@@ -40,9 +58,43 @@ export default function ProfitLoss() {
     setEndDate(today);
   }, []);
 
-  const submitData = () => {
-    console.log("Submit clicked", { startDate, endDate });
+  const fetchProfitLoss = async () => {
+    if (!startDate || !endDate) {
+      return;
+    }
+
+    const payload = {
+      page: currentPage,
+      limit: pageSize,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      key: CONFIG.siteKey,
+    };
+
+    try {
+      await fetchData({
+        url: CONFIG.profitLoss, // You'll need to add this endpoint to your CONFIG
+        payload: payload,
+        setFn: setProfitLossData,
+      });
+    } catch (error) {
+      console.error("Error fetching profit loss:", error);
+    }
   };
+
+  const submitData = () => {
+    setCurrentPage(1);
+    if (startDate && endDate) {
+      fetchProfitLoss();
+    }
+  };
+
+  // Pagination fetch
+  useEffect(() => {
+    if (startDate && endDate) {
+      fetchProfitLoss();
+    }
+  }, [currentPage]);
 
   const goToFirst = () => {
     if (currentPage !== 1) {
@@ -84,6 +136,11 @@ export default function ProfitLoss() {
     const minutes = String(date.getMinutes()).padStart(2, "0");
     const seconds = String(date.getSeconds()).padStart(2, "0");
     return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
+  };
+
+  // Calculate total P&L
+  const calculateTotalPL = (pl: number, commission: number) => {
+    return pl - commission;
   };
 
   return (
@@ -154,23 +211,23 @@ export default function ProfitLoss() {
                 </thead>
 
                 <tbody>
-                  {statementList.length > 0 ? (
-                    statementList.map((statement, index) => (
+                  {profitLossData?.length > 0 ? (
+                    profitLossData?.map((statement: any, index: number) => (
                       <tr key={index} className="grid grid-cols-4 w-full max-h-[43px]">
                         <td className="px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r text-black border-black/12.5 text-xs md:text-base">
-                          {statement.sportName}
+                          {statement.eventType.name}
                         </td>
                         <td className="px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r text-black border-black/12.5 text-xs md:text-base">
-                          {statement.Profit}
+                          {statement.pl.toFixed(2)}
                         </td>
                         <td className="px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r text-black border-black/12.5 text-xs md:text-base">
                           <span className="font-bold text-red-600">
-                            {statement.Commission}
+                            {statement.commission.toFixed(2)}
                           </span>
                         </td>
                         <td className="px-2 py-1.5 md:px-3 md:py-[9px] text-center text-black border-black/12.5 text-xs md:text-base">
                           <span className="font-bold">
-                            {statement.totalPL}
+                            {calculateTotalPL(statement.pl, statement.commission).toFixed(2)}
                           </span>
                         </td>
                       </tr>
