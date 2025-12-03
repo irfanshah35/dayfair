@@ -34,6 +34,12 @@ export default function AccountStatement() {
   const totalPages = Math.ceil(totalRecords / pageSize) || 1;
   const startIndex = totalRecords > 0 ? (currentPage - 1) * pageSize + 1 : 0;
   const endIndex = Math.min(currentPage * pageSize, totalRecords);
+  const [mounted,setMounted]=useState(false);
+
+  useEffect(()=>{
+    fetchAccountStatement()
+    setMounted(true);
+  },[mounted])
 
   useEffect(() => {
     const today = new Date();
@@ -83,6 +89,7 @@ export default function AccountStatement() {
     }
   };
 
+  // Pagination fetch
   useEffect(() => {
     if (startDate && endDate) {
       fetchAccountStatement();
@@ -198,7 +205,7 @@ export default function AccountStatement() {
 
                 <tbody>
                   {accountStatement?.length > 0 ? (
-                    accountStatement.map((statement, index) => (
+                    accountStatement?.map((statement:any, index:number) => (
                       <tr key={index}>
                         <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 text-xs md:text-base">
                           {formatDateTime(statement.createdAt)}
@@ -294,11 +301,11 @@ export default function AccountStatement() {
             {/* Left: Showing text */}
             <div className="text-xs text-black md:text-sm">
               <span>
-                Showing {startIndex} to {endIndex} of {totalRecords} entries
+                Showing {startIndex} to {endIndex} of {accountStatement?.length||0} entries
               </span>
             </div>
 
-            {/* Center: Pagination buttons */}
+            {/* Center */}
             <div className="hidden md:flex items-center gap-2">
               <button
                 className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
@@ -351,7 +358,7 @@ export default function AccountStatement() {
               </button>
             </div>
 
-            {/* Right: Jump to page */}
+            {/* Jump to page */}
             <div className="flex items-center gap-2 text-xs md:text-sm">
               <span className="whitespace-nowrap text-black mr-1">
                 Jump to page
