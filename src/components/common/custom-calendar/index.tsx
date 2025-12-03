@@ -384,7 +384,7 @@ const CustomCalendar = ({
           onClick={toggleCalendar}
           value={selectedDate ? formatDate(selectedDate) : ""}
           placeholder={placeholderText}
-          className="form-control my-date-picker h-[38px] text-[16px]! text-[#555] py-[6px]  pl-[5px]! w-full bg-white! placeholder:text-[#5c6873] border-2 border-gray-300! rounded-tr-none! rounded-br-none! focus:outline-none rounded-none"
+          className="form-control my-date-picker h-[38px] text-[18px]! leading-[18px] text-[#555] py-[6px]  pl-[5px]! w-full bg-white! placeholder:text-[#5c6873] border-2 border-gray-300! rounded-tr-none! rounded-br-none! focus:outline-none rounded-none"
           name="datepicker"
         />
 

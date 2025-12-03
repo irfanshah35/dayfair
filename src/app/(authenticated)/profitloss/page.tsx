@@ -188,10 +188,8 @@ export default function ProfitLoss() {
             </div>
           </div>
 
-          {/* Table */}
-          {/* Table */}
           <div className="flex flex-wrap -mx-[5px] mt-[11px]">
-            <div className="w-full px-[5px]">
+            <div className="w-full px-[5px] overflow-x-auto mr-4">
               <table className="w-full border-collapse border border-black/12.5">
                 <thead>
                   <tr className="grid grid-cols-4 w-full md:h-[43px]">
@@ -201,7 +199,7 @@ export default function ProfitLoss() {
                     <th className="p-0.5 md:px-3 md:py-[9px] text-center  text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
                       Profit/Loss
                     </th>
-                    <th className="p-0.5 md:px-3 md:py-[9px]md:py-[9px] text-center  text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
                       Commission
                     </th>
                     <th className="p-0.5 md:px-3 md:py-[9px] text-center  text-black bg-[#e9ecef] border-black/12.5 text-sm md:text-base">

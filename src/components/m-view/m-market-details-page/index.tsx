@@ -161,7 +161,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   }, [activeCategory]);
 
   return (
-    <div className="lg:m-[5px]">
+    <div className="lg:m-[5px] lg:mt-[6px]">
       {/* MOBILE TOP TAB BAR */}
       <div className="relative flex lg:hidden justify-between items-center bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]">
         {/* Tabs */}
@@ -236,8 +236,8 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
           {/* LEFT PART: MARKETS & ODDS */}
           <div className="left-part overflow-y-auto w-full lg:w-[70%]">
             {/* Game Header */}
-            <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[3.5px] pl-2 pr-2 lg:mb-[3px] text-white">
-              <span className="text-sm lg:text-[15px] lg:font-bold lg:uppercase font-medium lg:leading-normal">
+            <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[3.5px] pl-2 pr-2 lg:mb-[3px] lg:h-[32px] text-white">
+              <span className="text-sm lg:text-[15px] lg:uppercase font-medium lg:leading-normal">
                 {apiData?.matchOddsData[0]?.event?.name || "Team A vs Team B"}
               </span>
               {apiData?.matchOddsData[0]?.inplay ? (
@@ -254,7 +254,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
               ) : (
                 <span
                   className={`
-                    text-xs py-1 rounded-full font-bold inline-block
+                    text-xs py-1 rounded-full font-bold md:font-normal  inline-block
                   `}
                 >
                   {formatDateStamp(apiData?.matchOddsData[0]?.marketStartTime)}
@@ -273,10 +273,10 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
               <div className="">
                 <div className="flex flex-col justify-between items-center px-3 pt-1.5 h-[90px]">
                   <div className="flex justify-between w-full">
-                    <div className=" text-white text-[12px] font-bold [text-shadow:#fc0_1px_0_10px]">
+                    <div className=" text-white text-[12px] font-bold md:font-normal [text-shadow:#fc0_1px_0_10px]">
                       {apiData?.matchOddsData[0]?.status}
                     </div>
-                    <div className=" text-white text-[12px] tracking-[-0.2px] font-bold [text-shadow:#fc0_1px_0_10px]">
+                    <div className=" text-white text-[12px] tracking-[-0.2px] font-bold md:font-normal  [text-shadow:#fc0_1px_0_10px]">
                       <span className=" text-[#ffff55]">Game time</span>{" "}
                       {formatDateStamp(
                         apiData?.matchOddsData[0]?.marketStartTime
@@ -323,14 +323,14 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                   className="bg-[linear-gradient(180deg,#000000,#ccc1c1)]"
                 >
                   {/* Market Title Row */}
-                  <div className=" mt-0 py-1 pl-2 pr-1.5 flex justify-between items-center">
+                  <div className=" mt-0 py-1 pl-2 pr-1.5 lg:py-[3px] flex justify-between items-center">
                     <div className="flex gap-2 items-center">
-                      <span className="font-bold text-white text-[13px] lg:text-[14px]">
+                      <span className="font-bold md:font-normal text-white text-[13px] lg:text-[14px]">
                         {market?.marketName}
                       </span>
                       <div className="ml-3">
                         <div className="flex items-center">
-                          <span className="flex items-center relative top-px text-white text-[13px] lg:text-[14px] font-bold">
+                          <span className="flex items-center relative top-px text-white text-[13px] lg:text-[14px] font-bold md:font-normal">
                             <span className="relative w-[18px] h-[18px] mr-[5px] bg-yellow-500 rounded-xs">
                               <span className="w-3 h-3 bg-black rounded-full mr-1.5 absolute z-20 top-0.5 left-[3px]"></span>
                             </span>
@@ -357,7 +357,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                   {/* Mobile Header */}
                   <div className="text-[12px] border-b border-[#aaa] lg:hidden">
                     <div className="flex bg-gray-100">
-                      <div className="py-0.5 text-black px-[5px] flex justify-between items-center border-b border-[#aaa] w-[60%]">
+                      <div className="py-0.5 text-black px-[5px] flex justify-between items-center border-b border-[#aaa] w-[60%] md:font-normal">
                         <span>
                           Min: {market?.min} Max: {market?.max}
                         </span>
@@ -380,7 +380,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                   <div className="hidden lg:block text-[12px] border-b border-[#aaa] lg:border-none bg-white">
                     <div className="border-b border-white flex">
                       <div className="p-[5px] leading-[15px] w-[40%]">
-                        <b className="text-[14px] text-[#0dcaf0]">
+                        <b className="text-[14px] text-[#0dcaf0] md:font-normal">
                           <span>
                             Min: {market?.min} Max: {market?.max}
                           </span>
@@ -389,20 +389,20 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
 
                       <div className="leading-[15px] py-[5px] text-[16px] w-[10%]"></div>
                       <div className="leading-[15px] py-[5px] text-[16px] w-[10%]"></div>
-                      <div className="leading-[15px] py-[5px] text-[16px] w-[10%] cursor-pointer bg-[#72bbef] text-center text-black">
-                        <b>BACK</b>
+                      <div className="leading-[15px] py-[5px] text-[16px] w-[10%] cursor-pointer bg-[#72bbef] text-center text-[#212529]">
+                        <b className="md:font-normal">BACK</b>
                       </div>
-                      <div className="leading-[15px] py-[5px] text-[16px] w-[10%] cursor-pointer bg-[#faa9ba] text-center text-black">
-                        <b>LAY</b>
+                      <div className="leading-[15px] py-[5px] text-[16px] w-[10%] cursor-pointer bg-[#faa9ba] text-center text-[#212529]">
+                        <b className="md:font-normal">LAY</b>
                       </div>
-                      <div className="leading-[15px] py-[5px] pr-[5px] text-black text-center font-bold text-[14px] border-r border-white w-[20%]">
+                      <div className="leading-[15px] py-[5px] pr-[5px] text-[#212529] text-center font-bold text-[14px] border-r border-white w-[20%] md:font-normal">
                         Matched:{(market?.totalMatched / 1000)?.toFixed(2)}K
                       </div>
                     </div>
                   </div>
 
                   {/* RUNNERS */}
-                  <div>
+                  <div className="lg:mb-[2px]">
                     {market?.runners?.map((runner: any) => {
                       const isSuspended =
                         runner?.status === "SUSPENDED" ||
@@ -419,7 +419,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                               <div className="flex">
                                 <div className="w-full">
                                   <span className="flex justify-between">
-                                    <b className="font-semibold text-[12px] lg:text-[14px] text-gray-800">
+                                    <b className="font-semibold md:font-normal text-[12px] lg:text-[14px] text-[#212529]">
                                       {runnerName}
                                     </b>
                                   </span>
@@ -429,7 +429,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
 
                             {/* Odds Cells */}
                             <div
-                              className={`relative w-[40%] lg:text-black lg:w-[60%] flex 
+                              className={`relative w-[40%] lg:text-[#212529] lg:w-[60%] flex 
                               ${
                                 isSuspended
                                   ? "after:content-['SUSPENDED'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed"
@@ -458,10 +458,10 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                   })
                                 }
                               >
-                                <span className="odd block font-bold leading-[1.1]">
+                                <span className="odd block font-bold md:font-normal  leading-[1.1]">
                                   {runner?.ex?.availableToBack[0]?.price || "0"}
                                 </span>
-                                <span className="block text-xs lg:text-[10px]">
+                                <span className="block text-xs lg:text-[10px] md:font-normal">
                                   {(
                                     (runner?.ex?.availableToBack[0]?.size ||
                                       0) / 1000
@@ -491,7 +491,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                   })
                                 }
                               >
-                                <span className="odd block font-bold leading-[1.1]">
+                                <span className="odd block font-bold md:font-normal leading-[1.1]">
                                   {runner?.ex?.availableToBack[2]?.price || "0"}
                                 </span>
                                 <span className="block text-xs lg:text-[10px]">
@@ -522,7 +522,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                   })
                                 }
                               >
-                                <span className="odd block font-bold leading-[1.1]">
+                                <span className="odd block font-bold md:font-normal leading-[1.1]">
                                   {runner?.ex?.availableToBack[1]?.price || "0"}
                                 </span>
                                 <span className="block text-xs lg:text-[10px]">
@@ -554,7 +554,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                   })
                                 }
                               >
-                                <span className="odd block font-bold leading-[1.1]">
+                                <span className="odd block font-bold md:font-normal leading-[1.1]">
                                   {runner?.ex?.availableToLay[0]?.price || "0"}
                                 </span>
                                 <span className="block text-xs lg:text-[10px]">
@@ -584,7 +584,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                   })
                                 }
                               >
-                                <span className="odd block font-bold leading-[1.1]">
+                                <span className="odd block font-bold md:font-normal leading-[1.1]">
                                   {runner?.ex?.availableToLay[2]?.price || "0"}
                                 </span>
                                 <span className="block text-xs lg:text-[10px]">
@@ -614,7 +614,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                   })
                                 }
                               >
-                                <span className="odd block font-bold leading-[1.1]">
+                                <span className="odd block font-bold md:font-normal leading-[1.1]">
                                   {runner?.ex?.availableToLay[1]?.price || "0"}
                                 </span>
                                 <span className="block text-xs lg:text-[10px]">

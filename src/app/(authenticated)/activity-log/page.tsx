@@ -81,7 +81,7 @@ export default function ActivityLog() {
         <button
           onClick={switchTab("password")}
           className={
-            `w-full  my-[9px] px-3.5 py-2.5 border-0 rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black` +
+            `w-full  my-[9px] px-3.5 py-2.5 border rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black` +
             (activeTab === "password"
               ? " bg-linear-to-b from-[#f4b501] to-[#f68700]"
               : "")
@@ -103,22 +103,22 @@ export default function ActivityLog() {
           {/* Table Wrapper */}
           <div className="py-3 md:py-5.5 px-2 md:px-2">
             <div className="overflow-x-auto">
-              <table className="w-full border border-[#C8CED3]">
+              <table className="w-full table-fixed border border-[#C8CED3]">
                 <thead>
-                  <tr className="bg-linear-to-b from-[#030a12] via-[#444647] to-[#58595a] md:[background:white]">
-                    <th className="max-w-48 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                  <tr className="bg-linear-to-b from-[#030a12] via-[#444647] to-[#58595a] md:[background:white] leading-[16px]">
+                    <th className="w-[124.5px] p-[9px] md:break-words text-center text-[16px] text-white md:text-black border border-[#C8CED3]">
                       Login Date & Time
                     </th>
-                    <th className="max-w-32 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                    <th className="w-[127.5px] p-[9px] text-center text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
                       Login Status
                     </th>
-                    <th className="max-w-32 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                    <th className="w-[130.8px] p-[9px] text-center text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
                       IP Address
                     </th>
-                    <th className="min-w-48 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                    <th className="w-[266.69px] p-[9px] text-center text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
                       ISP
                     </th>
-                    <th className="min-w-56 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                    <th className="w-[263.5px] p-[9px] text-center text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
                       City/State/Country
                     </th>
                   </tr>
