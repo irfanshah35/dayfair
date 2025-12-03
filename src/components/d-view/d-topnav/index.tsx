@@ -1,19 +1,31 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAppStore } from "@/lib/store/store";
 
 const DTopnav = () => {
   const pathname = usePathname();
-
-  const navItems = [
+  const { menuList } = useAppStore();
+  const [navItems, setNavItems] = useState([
     { href: "/", label: "HOME" },
     { href: "/inplay", label: "In-Play" },
-    { href: "/cricket", label: "CRICKET" },
-    { href: "/soccer", label: "SOCCER" },
-    { href: "/tennis", label: "TENNIS" },
-    { href: "/volleyball", label: "VOLLEYBALL" },
-  ];
+  ]);
+
+  useEffect(() => {
+    const eventsType = menuList?.eventTypes;
+
+    if (!eventsType) return;
+
+    // Create new items from eventTypes
+    const newItems = eventsType.map((item: any) => ({
+      href: `/game-list/${item?.eventType?.name}/${item?.eventType?.id}`,
+      label: item?.eventType?.name?.toUpperCase(),
+    }));
+
+    // Set new state by merging old + new
+    setNavItems((prev) => [...prev, ...newItems]);
+  }, [menuList]);
 
   const isActive = (href: string) => {
     return pathname === href;
@@ -32,7 +44,7 @@ const DTopnav = () => {
             <Link
               key={item.href}
               href={item.href}
-              className="nav-link px-[15px] uppercase tracking-[-0.1] py-0 h-text flex items-center text-black text-[14px] transition-opacity relative group font-bold"
+              className="nav-link px-[15px] uppercase tracking-[-0.1] py-0 h-text flex items-center text-black text-[14px] transition-opacity relative group"
             >
               {item.label}
               {isActive(item.href) && (
