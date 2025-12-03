@@ -1,6 +1,7 @@
 "use client";
 import { useAppStore } from "@/lib/store/store";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaChevronDown, FaCaretRight } from "react-icons/fa";
 import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
@@ -55,6 +56,7 @@ export default function Sidebar() {
   const [eventList, setEventList] = useState<any>();
   const [popularSportsList, setPopularSportList] = useState<any>();
   const [tournamentList, setTournamentList] = useState<any>();
+  const router = useRouter();
 
   const { menuList, allEventsList } = useAppStore();
 
@@ -101,6 +103,8 @@ export default function Sidebar() {
     tournament: null,
   });
 
+  const pathName = usePathname();
+
   const toggleSport = (key: string) => {
     setOpen((prev) => ({
       sport: prev.sport === key ? "0" : key, // open one, close others
@@ -112,6 +116,9 @@ export default function Sidebar() {
   };
 
   const toggleTournament = (key: string) => {
+    if (pathName?.includes("/market-details") && open.tournament !== key) {
+      router.push("/"); // navigate to home on sport change
+    }
     setOpen((prev) => ({
       ...prev,
       tournament: prev.tournament === key ? "0" : key, // close all tournaments when switching sport
@@ -245,6 +252,11 @@ export default function Sidebar() {
                                 <li
                                   key={idx}
                                   className="list-none py-1 pl-4 pr-0"
+                                  onClick={() =>
+                                    router.push(
+                                      `/market-details/${event?.eventId}/${event?.sportId}`
+                                    )
+                                  }
                                 >
                                   <div className="cursor-pointer flex items-start">
                                     <FaCaretRight
