@@ -214,19 +214,34 @@ export default function ProfitLoss() {
                   {profitLossData?.length > 0 ? (
                     profitLossData?.map((statement: any, index: number) => (
                       <tr key={index} className="grid grid-cols-4 w-full max-h-[43px]">
-                        <td className="px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r text-black border-black/12.5 text-xs md:text-base">
+                        <td
+                          className="cursor-pointer px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r border-black/12.5 text-xs md:text-base text-[rgb(13,110,253)] hover:text-[rgb(10,88,202)]"
+                        >
                           {statement.eventType.name}
                         </td>
-                        <td className="px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r text-black border-black/12.5 text-xs md:text-base">
+
+                        <td
+                          className={`
+    px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r border-black/12.5 text-xs md:text-base
+    ${statement.pl < 0 ? 'text-red-500' : 'text-green-500'}
+  `}
+                        >
                           {statement.pl.toFixed(2)}
                         </td>
+
+
                         <td className="px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r text-black border-black/12.5 text-xs md:text-base">
-                          <span className="font-bold text-red-600">
+                          <span className="text-black">
                             {statement.commission.toFixed(2)}
                           </span>
                         </td>
-                        <td className="px-2 py-1.5 md:px-3 md:py-[9px] text-center text-black border-black/12.5 text-xs md:text-base">
-                          <span className="font-bold">
+                        <td className="px-2 py-1.5 md:px-3 md:py-[9px] text-center border-black/12.5 text-xs md:text-base">
+                          <span
+                            className={`font-bold ${calculateTotalPL(statement.pl, statement.commission) < 0
+                              ? 'text-red-500'
+                              : 'text-green-500'
+                              }`}
+                          >
                             {calculateTotalPL(statement.pl, statement.commission).toFixed(2)}
                           </span>
                         </td>

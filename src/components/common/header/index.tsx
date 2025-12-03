@@ -211,7 +211,7 @@ const Header = () => {
 
           {isLoggedIn && (
             <>
-              <div className="absolute top-2 right-[3px] flex gap-[2px] justify-end md:hidden text-[13px] font-bold  right-[-3px]">
+              <div className="absolute top-[9px] right-[3px] flex gap-0.5 justify-end md:hidden text-[13px]">
                 {/* BALANCE */}
                 <div className="">
                   <span className="text-white">
@@ -237,8 +237,8 @@ const Header = () => {
                     <b>BALANCE&nbsp;:&nbsp;</b>
                   </span>
                   <b>
-                    <span className="userTotalBalance">
-                      {userBalance?.bankBalance || "0.00"}
+                    <span className="userTotalBalance relative left-[3px]">
+                      {userBalance?.bankBalance || " 0.00"}
                     </span>
                   </b>
                 </div>
@@ -260,11 +260,11 @@ const Header = () => {
           )}
           <div className="w-[110%] gap-1 flex items-center md:flex">
             <div className="flex-1 md:hidden"></div>
-            <div className={`md:pe-4 md:p-[3px] md:flex-[0_0_auto]
+            <div className={`md:pe-3 md:p-[3px] md:flex-[0_0_auto]
               ${!isLoggedIn ? "flex md:flex absolute right-[5px] md:relative md:right-0" : "hidden md:flex"}`}>
               <button
                 onClick={goToLogin}
-                className="h-[30px] border w-[101.5px] border-black rounded-[3.875px] text-sm font-semibold text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px] md:w-[108px] md:font-bold"
+                className="h-[30.5px] border w-[101.5px] border-black rounded-[3.875px] text-sm text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px] md:w-[99.91px]"
                 style={{
                   background:
                     "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
@@ -324,7 +324,7 @@ const Header = () => {
         {isLoggedIn && (
           <button
             onClick={goToLogin}
-            className="cursor-pointer text-black border border-white font-semibold text-sm md:text-base hover:opacity-90 transition-opacity rounded-[3.875px] absolute right-[1px] top-[-4px]  h-[31px] w-[67.92px]"
+            className="cursor-pointer text-black border border-white text-sm md:text-base hover:opacity-90 transition-opacity rounded-[3.875px] absolute right-px -top-1  h-[31px] w-[67.92px]"
             style={{
               background:
                 "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
@@ -409,11 +409,11 @@ const AccountDropDown = () => {
     <>
       <ul
         id="collapseForAccount"
-        className="absolute top-{100px} md:top-[82px] w-[172px] md:w-[170px] z-[99999] text-[16px] md:text-[14px] right-0 overflow-hidden transition-all duration-300 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] rounded-[4px]"
+        className="absolute top-{100px} md:top-[82px] w-[172px] md:w-[170px] z-99999 text-[16px] md:text-[14px] right-0 overflow-hidden transition-all duration-300 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] rounded-sm"
       >
-        <li className="md:hidden py-[6px] md:py-0 h-[36px] md:h-[25px] ">
+        <li className="md:hidden py-1.5 md:py-0 h-9 md:h-[25px] ">
           <Link href="/"
-            className="block px-3 h-[25px] flex items-center hover:bg-gray-800 transition-colors"
+            className="px-3 h-[25px] flex items-center hover:bg-gray-800 transition-colors"
           >
             Home
           </Link>
@@ -423,7 +423,7 @@ const AccountDropDown = () => {
           <li key={index}>
             <Link
               href={item.href}
-              className="block px-3 py-[6px] md:py-0 h-[36px] md:h-[25px]  flex items-center hover:bg-gray-800 transition-colors"
+              className="block px-3 py-1.5 md:py-0 h-9 md:h-[25px] items-center hover:bg-gray-800 transition-colors"
             >
               {item.label}
             </Link>
@@ -431,7 +431,7 @@ const AccountDropDown = () => {
         ))}
 
         {/* Balance Switch */}
-        <li className="flex items-center py-[6px] md:py-0 h-[36px] md:h-[25px]  justify-between pl-3 pr-[4px] md:pr-[18px] cursor-pointer">
+        <li className="flex items-center py-1.5 md:py-0 h-9 md:h-[25px]  justify-between pl-3 pr-1 md:pr-[18px] cursor-pointer">
           <label htmlFor="checkBalance" className="cursor-pointer">
             Balance
           </label>
@@ -439,12 +439,12 @@ const AccountDropDown = () => {
           <input
             id="checkBalance"
             type="checkbox"
-            className="h-[13px] w-[13px] accent-[#4D4E4F] cursor-pointer bg-[#4D4E4F] relative top-[-2px]"
+            className="h-[13px] w-[13px] accent-[#4D4E4F] cursor-pointer bg-[#4D4E4F] relative -top-0.5"
           />
         </li>
 
         {/* Exposure Switch */}
-        <li className="flex items-center justify-between pl-3 pr-[4px] md:pr-[18px] py-[6px] md:py-0 h-[36px] md:h-[25px] cursor-pointer">
+        <li className="flex items-center justify-between pl-3 pr-1 md:pr-[18px] py-1.5 md:py-0 h-9 md:h-[25px] cursor-pointer">
           <label htmlFor="checkExposure" className="cursor-pointer">
             Exposure
           </label>
@@ -452,12 +452,12 @@ const AccountDropDown = () => {
           <input
             id="checkExposure"
             type="checkbox"
-            className="h-[13px] w-[13px] accent-[#4D4E4F] cursor-pointer bg-[#4D4E4F] relative top-[-2px]"
+            className="h-[13px] w-[13px] accent-[#4D4E4F] cursor-pointer bg-[#4D4E4F] relative -top-0.5"
           />
         </li>
         <li className="md:hidden">
           <Link href="/"
-            className="block px-3 py-[6px] md:py-0 h-[36px] md:h-[25px]  h-[25px] flex items-center hover:bg-gray-800 transition-colors"
+            className="px-3 py-1.5 md:py-0 md:h-[25px]  h-[25px] flex items-center hover:bg-gray-800 transition-colors"
           >
             Rules
           </Link>
