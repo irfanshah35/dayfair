@@ -40,9 +40,9 @@ const DTopnav = () => {
         }}
       >
         <div className="flex items-center h-full">
-          {navItems.map((item) => (
+          {navItems.map((item,idx) => (
             <Link
-              key={item.href}
+              key={idx}
               href={item.href}
               className="nav-link px-[15px] uppercase tracking-[-0.1] py-0 h-text flex items-center text-black text-[14px] transition-opacity relative group"
             >

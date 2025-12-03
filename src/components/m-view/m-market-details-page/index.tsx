@@ -4,11 +4,12 @@ import React, { useEffect, useState, useRef } from "react";
 import MBetSlip from "../m-betslip";
 import DBetSlip from "@/components/d-view/d-betslip";
 import RulesModal from "@/components/modals/rules-modal";
-import { MARKETS_DATA } from "@/lib/projectData";
+import { formatDateStamp } from "@/lib/functions";
 
-export default function MMarketDetailsPage() {
+export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   const [activeTab, setActiveTab] = useState("odds");
   const [activeCategory, setActiveCategory] = useState("Popular");
+  const [filteredMarketData, setFilteredMarketData] = useState<any[]>([]);
   // const [active, setActive] = useState(false);
   const betslipRef = useRef<HTMLDivElement>(null);
 
@@ -23,6 +24,7 @@ export default function MMarketDetailsPage() {
   } | null>(null);
 
   // Shared betslip data (used by both mobile + desktop)
+  const [isMobile, setIsMobile] = useState(false);
   const [betSlipData, setBetSlipData] = useState<{
     marketId: string;
     selectionId: number;
@@ -36,13 +38,11 @@ export default function MMarketDetailsPage() {
 
   const [isrulesopen, setRulesOpen] = useState(false);
 
-  const categories = [
-    "Popular",
-    "Match Odds",
-    "Bookmaker",
-    "Tied Match",
-    "All Market",
+  const dynamicCategories = [
+    ...new Set(apiData?.matchOddsData?.map((item: any) => item.marketName)),
   ];
+
+  const categories = ["Popular", ...dynamicCategories, "All Market"];
 
   // useEffect(() => {
   //   // Toggle active after 1s for demo
@@ -99,7 +99,9 @@ export default function MMarketDetailsPage() {
     const bg = cls === "slip-back" ? "betbg--back" : "betbg--lay";
 
     const minStake = Number.isFinite(min as number) ? (min as number) : 1;
-    const maxStake = Number.isFinite(max as number) ? (max as number) : 99999999;
+    const maxStake = Number.isFinite(max as number)
+      ? (max as number)
+      : 99999999;
 
     // Shared betslip data (mobile + desktop)
     setBetSlipData({
@@ -132,6 +134,31 @@ export default function MMarketDetailsPage() {
       openSlip.selectionId === selectionId
     );
   };
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 992);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  useEffect(() => {
+    const allMarkets = apiData?.matchOddsData || [];
+    let filterdData = [];
+
+    // Popular
+    if (activeCategory === "Popular") {
+      filterdData = allMarkets?.filter((market: any) => market?.popular);
+    } else if (activeCategory === "All Market") {
+      filterdData = allMarkets;
+    } else {
+      filterdData = allMarkets?.filter(
+        (market: any) => market?.marketName === activeCategory
+      );
+    }
+
+    setFilteredMarketData(filterdData);
+  }, [activeCategory]);
 
   return (
     <div className="lg:m-[5px]">
@@ -211,38 +238,49 @@ export default function MMarketDetailsPage() {
             {/* Game Header */}
             <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[3.5px] pl-2 pr-2 lg:mb-[3px] text-white">
               <span className="text-sm lg:text-[15px] lg:font-bold lg:uppercase font-medium lg:leading-normal">
-                Titans W v South Western Districts W
+                {apiData?.matchOddsData[0]?.event?.name || "Team A vs Team B"}
               </span>
-              <span className=" game-iconinplay">
-                <span
-                  className={`
+              {apiData?.matchOddsData[0]?.inplay ? (
+                <span className=" game-iconinplay">
+                  <span
+                    className={`
                     text-xs py-1 rounded-full font-bold inline-block transition-all duration-300
                     heartbeat-anim
                   `}
-                >
-                  INPLAY
+                  >
+                    INPLAY
+                  </span>
                 </span>
-              </span>
+              ) : (
+                <span
+                  className={`
+                    text-xs py-1 rounded-full font-bold inline-block
+                  `}
+                >
+                  {formatDateStamp(apiData?.matchOddsData[0]?.marketStartTime)}
+                </span>
+              )}
             </div>
 
             {/* Game Status Banner */}
-           <div
-  className="p-0 mb-[3px] bg-no-repeat bg-cover bg-center w-full h-[90px]"
-  style={{
-    backgroundImage:
-      "linear-gradient(0deg, #0000001a, #00000073), url('/market/market.jpg')",
-  }}
->
-
+            <div
+              className="p-0 mb-[3px] bg-no-repeat bg-cover bg-center w-full h-[90px]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(0deg, #0000001a, #00000073), url('/market/market.jpg')",
+              }}
+            >
               <div className="">
                 <div className="flex flex-col justify-between items-center px-3 pt-1.5 h-[90px]">
                   <div className="flex justify-between w-full">
                     <div className=" text-white text-[12px] font-bold [text-shadow:#fc0_1px_0_10px]">
-                      SUSPENDED
+                      {apiData?.matchOddsData[0]?.status}
                     </div>
                     <div className=" text-white text-[12px] tracking-[-0.2px] font-bold [text-shadow:#fc0_1px_0_10px]">
                       <span className=" text-[#ffff55]">Game time</span>{" "}
-                      23-11-2025 01:00:00 PM
+                      {formatDateStamp(
+                        apiData?.matchOddsData[0]?.marketStartTime
+                      )}
                     </div>
                   </div>
                   <div className="flex justify-center items-center flex-col [text-shadow:#fc0_1px_0_10px]">
@@ -260,9 +298,9 @@ export default function MMarketDetailsPage() {
             {/* Market Categories (MOBILE) */}
             <div className="md:hidden">
               <ul className="flex overflow-x-auto no-scrollbar p-[5px] bg-[linear-gradient(180deg,#000000,#000000_42%,#000000)] text-white">
-                {categories.map((category) => (
+                {categories?.map((category: any, idx: number) => (
                   <li
-                    key={category}
+                    key={idx}
                     className={`px-2.5 py-[5px] whitespace-nowrap rounded-full ml-[5px] text-[12px] font-medium border border-white cursor-pointer ${
                       activeCategory === category
                         ? "bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)] text-black"
@@ -278,331 +316,363 @@ export default function MMarketDetailsPage() {
             </div>
 
             {/* Dynamic Markets */}
-            {MARKETS_DATA.map((market) => (
-              <div
-                key={market.marketId}
-                className="bg-[linear-gradient(180deg,#000000,#ccc1c1)]"
-              >
-                {/* Market Title Row */}
-                <div className=" mt-0 py-1 pl-2 pr-1.5 flex justify-between items-center">
-                  <div className="flex gap-2 items-center">
-                    <span className="font-bold text-white text-[13px] lg:text-[14px]">
-                      {market.marketName}
-                    </span>
-                    <div className="ml-3">
-                      <div className="flex items-center">
-                        <span className="flex items-center relative top-px text-white text-[13px] lg:text-[14px] font-bold">
-                          <span className="relative w-[18px] h-[18px] mr-[5px] bg-yellow-500 rounded-xs">
-                            <span className="w-3 h-3 bg-black rounded-full mr-1.5 absolute z-20 top-0.5 left-[3px]"></span>
+            {(isMobile ? filteredMarketData : apiData?.matchOddsData)?.map(
+              (market: any) => (
+                <div
+                  key={market?.marketId}
+                  className="bg-[linear-gradient(180deg,#000000,#ccc1c1)]"
+                >
+                  {/* Market Title Row */}
+                  <div className=" mt-0 py-1 pl-2 pr-1.5 flex justify-between items-center">
+                    <div className="flex gap-2 items-center">
+                      <span className="font-bold text-white text-[13px] lg:text-[14px]">
+                        {market?.marketName}
+                      </span>
+                      <div className="ml-3">
+                        <div className="flex items-center">
+                          <span className="flex items-center relative top-px text-white text-[13px] lg:text-[14px] font-bold">
+                            <span className="relative w-[18px] h-[18px] mr-[5px] bg-yellow-500 rounded-xs">
+                              <span className="w-3 h-3 bg-black rounded-full mr-1.5 absolute z-20 top-0.5 left-[3px]"></span>
+                            </span>
+                            Cash Out
                           </span>
-                          Cash Out
-                        </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <button
-                    onClick={() => setRulesOpen(true)}
-                    className="text-white"
-                  >
-                    <svg
-                      className="w-4 h-[15px] relative "
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
+                    <button
+                      onClick={() => setRulesOpen(true)}
+                      className="text-white"
                     >
-                      <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 9.5C12.8284 9.5 13.5 8.82843 13.5 8C13.5 7.17157 12.8284 6.5 12 6.5C11.1716 6.5 10.5 7.17157 10.5 8C10.5 8.82843 11.1716 9.5 12 9.5ZM14 15H13V10.5H10V12.5H11V15H10V17H14V15Z"></path>
-                    </svg>
-                  </button>
-                </div>
-
-                {/* Mobile Header */}
-                <div className="text-[12px] border-b border-[#aaa] lg:hidden">
-                  <div className="flex bg-gray-100">
-                    <div className="py-0.5 px-[5px] flex justify-between items-center border-b border-[#aaa] w-[60%] font-semibold">
-                      <span>
-                        Min: {market.min} Max: {market.max}
-                      </span>
-                      <span className=" ml-2">
-                        M:{(market.totalMatched / 1000).toFixed(2)}K
-                      </span>
-                    </div>
-                    <div className="w-[40%] flex">
-                      <div className="back flex justify-center items-center text-center w-[50%] text-[12px] font-semibold bg-[#72bbef]">
-                        BACK
-                      </div>
-                      <div className="lay flex justify-center items-center text-center w-[50%] text-[12px] font-semibold bg-[#faa9ba]">
-                        LAY
-                      </div>
-                    </div>
+                      <svg
+                        className="w-4 h-[15px] relative "
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 9.5C12.8284 9.5 13.5 8.82843 13.5 8C13.5 7.17157 12.8284 6.5 12 6.5C11.1716 6.5 10.5 7.17157 10.5 8C10.5 8.82843 11.1716 9.5 12 9.5ZM14 15H13V10.5H10V12.5H11V15H10V17H14V15Z"></path>
+                      </svg>
+                    </button>
                   </div>
-                </div>
 
-                {/* Desktop Header */}
-                <div className="hidden lg:block text-[12px] border-b border-[#aaa] lg:border-none bg-white">
-                  <div className="border-b border-white flex">
-                    <div className="p-[5px] leading-[15px] w-[40%]">
-                      <b className="text-[14px] text-[#0dcaf0]">
+                  {/* Mobile Header */}
+                  <div className="text-[12px] border-b border-[#aaa] lg:hidden">
+                    <div className="flex bg-gray-100">
+                      <div className="py-0.5 text-black px-[5px] flex justify-between items-center border-b border-[#aaa] w-[60%]">
                         <span>
-                          Min: {market.min} Max: {market.max}
+                          Min: {market?.min} Max: {market?.max}
                         </span>
-                      </b>
-                    </div>
-
-                    <div className="leading-[15px] py-[5px] text-[16px] w-[10%]"></div>
-                    <div className="leading-[15px] py-[5px] text-[16px] w-[10%]"></div>
-                    <div className="leading-[15px] py-[5px] text-[16px] w-[10%] cursor-pointer bg-[#72bbef] text-center text-black">
-                      <b>BACK</b>
-                    </div>
-                    <div className="leading-[15px] py-[5px] text-[16px] w-[10%] cursor-pointer bg-[#faa9ba] text-center text-black">
-                      <b>LAY</b>
-                    </div>
-                    <div className="leading-[15px] py-[5px] pr-[5px] text-black text-center font-bold text-[14px] border-r border-white w-[20%]">
-                      Matched:{(market.totalMatched / 1000).toFixed(2)}K
+                        <span className=" ml-2">
+                          M:{(market?.totalMatched / 1000).toFixed(2)}K
+                        </span>
+                      </div>
+                      <div className="w-[40%] flex">
+                        <div className="back flex justify-center items-center text-center w-[50%] text-[12px] font-semibold bg-[#72bbef]">
+                          BACK
+                        </div>
+                        <div className="lay flex justify-center items-center text-center w-[50%] text-[12px] font-semibold bg-[#faa9ba]">
+                          LAY
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* RUNNERS */}
-                <div>
-                  {market.runners.map((runner) => {
-                    const isSuspended =
-                      runner.status === "SUSPENDED" ||
-                      market.status === "SUSPENDED";
+                  {/* Desktop Header */}
+                  <div className="hidden lg:block text-[12px] border-b border-[#aaa] lg:border-none bg-white">
+                    <div className="border-b border-white flex">
+                      <div className="p-[5px] leading-[15px] w-[40%]">
+                        <b className="text-[14px] text-[#0dcaf0]">
+                          <span>
+                            Min: {market?.min} Max: {market?.max}
+                          </span>
+                        </b>
+                      </div>
 
-                    return (
-                      <React.Fragment key={runner.selectionId}>
-                        {/* Runner Row */}
-                        <div className="flex border-b border-[#aaa] lg:border-white bg-gray-50 h-[41px] lg:h-10 lg:bg-[#f2f2f2]">
-                          <div className="col-span-3 py-0.5 px-[5px] lg:border-l lg:border-white md:col-span-1 w-[60%] lg:w-[40%]">
-                            <div className="flex">
-                              <div className="w-full">
-                                <span className="flex justify-between">
-                                  <b className="font-semibold text-[12px] lg:text-[14px] text-gray-800">
-                                    {runner.runnerName}
-                                  </b>
-                                </span>
+                      <div className="leading-[15px] py-[5px] text-[16px] w-[10%]"></div>
+                      <div className="leading-[15px] py-[5px] text-[16px] w-[10%]"></div>
+                      <div className="leading-[15px] py-[5px] text-[16px] w-[10%] cursor-pointer bg-[#72bbef] text-center text-black">
+                        <b>BACK</b>
+                      </div>
+                      <div className="leading-[15px] py-[5px] text-[16px] w-[10%] cursor-pointer bg-[#faa9ba] text-center text-black">
+                        <b>LAY</b>
+                      </div>
+                      <div className="leading-[15px] py-[5px] pr-[5px] text-black text-center font-bold text-[14px] border-r border-white w-[20%]">
+                        Matched:{(market?.totalMatched / 1000)?.toFixed(2)}K
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* RUNNERS */}
+                  <div>
+                    {market?.runners?.map((runner: any) => {
+                      const isSuspended =
+                        runner?.status === "SUSPENDED" ||
+                        market?.status === "SUSPENDED";
+                      const runnerName = market?.runnersName?.find(
+                        (item: any) => item?.selectionId === runner?.selectionId
+                      )?.runnerName;
+
+                      return (
+                        <React.Fragment key={runner?.selectionId}>
+                          {/* Runner Row */}
+                          <div className="flex border-b border-[#aaa] lg:border-white bg-gray-50 h-[41px] lg:h-10 lg:bg-[#f2f2f2]">
+                            <div className="col-span-3 py-0.5 px-[5px] lg:border-l lg:border-white md:col-span-1 w-[60%] lg:w-[40%]">
+                              <div className="flex">
+                                <div className="w-full">
+                                  <span className="flex justify-between">
+                                    <b className="font-semibold text-[12px] lg:text-[14px] text-gray-800">
+                                      {runnerName}
+                                    </b>
+                                  </span>
+                                </div>
                               </div>
                             </div>
-                          </div>
 
-                          {/* Odds Cells */}
-                          <div
-                            className={`relative w-[40%] lg:text-black lg:w-[60%] flex 
+                            {/* Odds Cells */}
+                            <div
+                              className={`relative w-[40%] lg:text-black lg:w-[60%] flex 
                               ${
                                 isSuspended
                                   ? "after:content-['SUSPENDED'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed"
                                   : ""
                               }`}
-                          >
-                            {/* BACK (mobile visible, desktop: first cell) */}
-                            <div
-                              className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${
-                                !isSuspended
-                                  ? "cursor-pointer"
-                                  : "cursor-not-allowed"
-                              }`}
-                              onClick={() =>
-                                !isSuspended &&
-                                onPriceClick({
-                                  marketId: market.marketId,
-                                  min: market.min,
-                                  max: market.max,
-                                  selectionId: runner.selectionId,
-                                  runnerName: runner.runnerName,
-                                  price: runner.backOdds[0].price,
-                                  column: "BACK",
-                                })
-                              }
                             >
-                              <span className="odd block font-bold leading-[1.1]">
-                                {runner.backOdds[0].price}
-                              </span>
-                              <span className="block text-xs lg:text-[10px]">
-                                {(runner.backOdds[0].size / 1000).toFixed(2)}
-                              </span>
-                            </div>
+                              {/* BACK (mobile visible, desktop: first cell) */}
+                              <div
+                                className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${
+                                  !isSuspended
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                }`}
+                                onClick={() =>
+                                  !isSuspended &&
+                                  onPriceClick({
+                                    marketId: market?.marketId,
+                                    min: market?.min,
+                                    max: market?.max,
+                                    selectionId: runner?.selectionId,
+                                    runnerName: runnerName,
+                                    price:
+                                      runner?.ex?.availableToBack[0]?.price ||
+                                      0,
+                                    column: "BACK",
+                                  })
+                                }
+                              >
+                                <span className="odd block font-bold leading-[1.1]">
+                                  {runner?.ex?.availableToBack[0]?.price || "0"}
+                                </span>
+                                <span className="block text-xs lg:text-[10px]">
+                                  {(
+                                    (runner?.ex?.availableToBack[0]?.size ||
+                                      0) / 1000
+                                  )?.toFixed(2)}
+                                </span>
+                              </div>
 
-                            {/* Extra BACK cells for desktop layout (hidden on mobile) */}
-                            <div
-                              className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
-                                !isSuspended
-                                  ? "cursor-pointer"
-                                  : "cursor-not-allowed"
-                              }`}
-                              onClick={() =>
-                                !isSuspended &&
-                                onPriceClick({
-                                  marketId: market.marketId,
-                                  min: market.min,
-                                  max: market.max,
-                                  selectionId: runner.selectionId,
-                                  runnerName: runner.runnerName,
-                                  price: runner.backOdds[0].price,
-                                  column: "BACK",
-                                })
-                              }
-                            >
-                              <span className="odd block font-bold leading-[1.1]">
-                                {runner.backOdds[0].price}
-                              </span>
-                              <span className="block text-xs lg:text-[10px]">
-                                {(runner.backOdds[0].size / 1000).toFixed(2)}
-                              </span>
-                            </div>
-                            <div
-                              className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
-                                !isSuspended
-                                  ? "cursor-pointer"
-                                  : "cursor-not-allowed"
-                              }`}
-                              onClick={() =>
-                                !isSuspended &&
-                                onPriceClick({
-                                  marketId: market.marketId,
-                                  min: market.min,
-                                  max: market.max,
-                                  selectionId: runner.selectionId,
-                                  runnerName: runner.runnerName,
-                                  price: runner.backOdds[0].price,
-                                  column: "BACK",
-                                })
-                              }
-                            >
-                              <span className="odd block font-bold leading-[1.1]">
-                                {runner.backOdds[0].price}
-                              </span>
-                              <span className="block text-xs lg:text-[10px]">
-                                {(runner.backOdds[0].size / 1000).toFixed(2)}
-                              </span>
-                            </div>
+                              {/* Extra BACK cells for desktop layout (hidden on mobile) */}
+                              <div
+                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
+                                  !isSuspended
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                }`}
+                                onClick={() =>
+                                  !isSuspended &&
+                                  onPriceClick({
+                                    marketId: market?.marketId,
+                                    min: market?.min,
+                                    max: market?.max,
+                                    selectionId: runner?.selectionId,
+                                    runnerName: runnerName,
+                                    price:
+                                      runner?.ex?.availableToBack[2]?.price ||
+                                      0,
+                                    column: "BACK",
+                                  })
+                                }
+                              >
+                                <span className="odd block font-bold leading-[1.1]">
+                                  {runner?.ex?.availableToBack[2]?.price || "0"}
+                                </span>
+                                <span className="block text-xs lg:text-[10px]">
+                                  {(
+                                    (runner?.ex?.availableToBack[2]?.size ||
+                                      0) / 1000
+                                  )?.toFixed(2)}
+                                </span>
+                              </div>
+                              <div
+                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
+                                  !isSuspended
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                }`}
+                                onClick={() =>
+                                  !isSuspended &&
+                                  onPriceClick({
+                                    marketId: market?.marketId,
+                                    min: market?.min,
+                                    max: market?.max,
+                                    selectionId: runner?.selectionId,
+                                    runnerName: runnerName,
+                                    price:
+                                      runner?.ex?.availableToBack[1]?.price ||
+                                      0,
+                                    column: "BACK",
+                                  })
+                                }
+                              >
+                                <span className="odd block font-bold leading-[1.1]">
+                                  {runner?.ex?.availableToBack[1]?.price || "0"}
+                                </span>
+                                <span className="block text-xs lg:text-[10px]">
+                                  {(
+                                    (runner?.ex?.availableToBack[1]?.size ||
+                                      0) / 1000
+                                  )?.toFixed(2)}
+                                </span>
+                              </div>
 
-                            {/* LAY */}
-                            <div
-                              className={`text-center lg:border-l lg:border-white flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
-                                !isSuspended
-                                  ? "cursor-pointer"
-                                  : "cursor-not-allowed"
-                              }`}
-                              onClick={() =>
-                                !isSuspended &&
-                                onPriceClick({
-                                  marketId: market.marketId,
-                                  min: market.min,
-                                  max: market.max,
-                                  selectionId: runner.selectionId,
-                                  runnerName: runner.runnerName,
-                                  price: runner.layOdds[0].price,
-                                  column: "LAY",
-                                })
-                              }
-                            >
-                              <span className="odd block font-bold leading-[1.1]">
-                                {runner.layOdds[0].price}
-                              </span>
-                              <span className="block text-xs lg:text-[10px]">
-                                {(runner.layOdds[0].size / 1000).toFixed(2)}
-                              </span>
-                            </div>
-                            <div
-                              className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
-                                !isSuspended
-                                  ? "cursor-pointer"
-                                  : "cursor-not-allowed"
-                              }`}
-                              onClick={() =>
-                                !isSuspended &&
-                                onPriceClick({
-                                  marketId: market.marketId,
-                                  min: market.min,
-                                  max: market.max,
-                                  selectionId: runner.selectionId,
-                                  runnerName: runner.runnerName,
-                                  price: runner.layOdds[0].price,
-                                  column: "LAY",
-                                })
-                              }
-                            >
-                              <span className="odd block font-bold leading-[1.1]">
-                                {runner.layOdds[0].price}
-                              </span>
-                              <span className="block text-xs lg:text-[10px]">
-                                {(runner.layOdds[0].size / 1000).toFixed(2)}
-                              </span>
-                            </div>
-                            <div
-                              className={`text-center lg:border-l lg:border-white border-r hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
-                                !isSuspended
-                                  ? "cursor-pointer"
-                                  : "cursor-not-allowed"
-                              }`}
-                              onClick={() =>
-                                !isSuspended &&
-                                onPriceClick({
-                                  marketId: market.marketId,
-                                  min: market.min,
-                                  max: market.max,
-                                  selectionId: runner.selectionId,
-                                  runnerName: runner.runnerName,
-                                  price: runner.layOdds[0].price,
-                                  column: "LAY",
-                                })
-                              }
-                            >
-                              <span className="odd block font-bold leading-[1.1]">
-                                {runner.layOdds[0].price}
-                              </span>
-                              <span className="block text-xs lg:text-[10px]">
-                                {(runner.layOdds[0].size / 1000).toFixed(2)}
-                              </span>
+                              {/* LAY */}
+                              <div
+                                className={`text-center lg:border-l lg:border-white flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
+                                  !isSuspended
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                }`}
+                                onClick={() =>
+                                  !isSuspended &&
+                                  onPriceClick({
+                                    marketId: market?.marketId,
+                                    min: market?.min,
+                                    max: market?.max,
+                                    selectionId: runner?.selectionId,
+                                    runnerName: runnerName,
+                                    price:
+                                      runner?.ex?.availableToLay[0]?.price || 0,
+                                    column: "LAY",
+                                  })
+                                }
+                              >
+                                <span className="odd block font-bold leading-[1.1]">
+                                  {runner?.ex?.availableToLay[0]?.price || "0"}
+                                </span>
+                                <span className="block text-xs lg:text-[10px]">
+                                  {(
+                                    (runner?.ex?.availableToLay[0]?.size || 0) /
+                                    1000
+                                  )?.toFixed(2)}
+                                </span>
+                              </div>
+                              <div
+                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
+                                  !isSuspended
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                }`}
+                                onClick={() =>
+                                  !isSuspended &&
+                                  onPriceClick({
+                                    marketId: market?.marketId,
+                                    min: market?.min,
+                                    max: market?.max,
+                                    selectionId: runner?.selectionId,
+                                    runnerName: runnerName,
+                                    price:
+                                      runner?.ex?.availableToLay[2]?.price || 0,
+                                    column: "LAY",
+                                  })
+                                }
+                              >
+                                <span className="odd block font-bold leading-[1.1]">
+                                  {runner?.ex?.availableToLay[2]?.price || "0"}
+                                </span>
+                                <span className="block text-xs lg:text-[10px]">
+                                  {(
+                                    (runner?.ex?.availableToLay[2]?.size || 0) /
+                                    1000
+                                  )?.toFixed(2)}
+                                </span>
+                              </div>
+                              <div
+                                className={`text-center lg:border-l lg:border-white border-r hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
+                                  !isSuspended
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                }`}
+                                onClick={() =>
+                                  !isSuspended &&
+                                  onPriceClick({
+                                    marketId: market?.marketId,
+                                    min: market?.min,
+                                    max: market?.max,
+                                    selectionId: runner?.selectionId,
+                                    runnerName: runnerName,
+                                    price:
+                                      runner?.ex?.availableToLay[1]?.price || 0,
+                                    column: "LAY",
+                                  })
+                                }
+                              >
+                                <span className="odd block font-bold leading-[1.1]">
+                                  {runner?.ex?.availableToLay[1]?.price || "0"}
+                                </span>
+                                <span className="block text-xs lg:text-[10px]">
+                                  {(
+                                    (runner?.ex?.availableToLay[1]?.size || 0) /
+                                    1000
+                                  )?.toFixed(2)}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
 
-                        {/* INLINE MOBILE BETSLIP UNDER ROW */}
-                        {isRowSlipOpen(market.marketId, runner.selectionId) && (
-                          <div ref={betslipRef} className="lg:hidden">
-                            {betSlipData && (
-                              <MBetSlip
-                                visible={isSlipOpen}
-                                backLayClsModal={betSlipData.slipCls}
-                                extraBgClass={betSlipData.slipBgClass}
-                                odds={betSlipData.odds}
-                                marketId={betSlipData.marketId}
-                                selectionId={betSlipData.selectionId}
-                                eventId="event123"
-                                marketType={market.marketType}
-                                runnerName={betSlipData.runnerName}
-                                minStake={betSlipData.min}
-                                maxStake={betSlipData.max}
-                                onClose={closeInlineSlip}
-                                onPlaced={closeInlineSlip}
-                              />
-                            )}
-                          </div>
-                        )}
-                      </React.Fragment>
-                    );
-                  })}
+                          {/* INLINE MOBILE BETSLIP UNDER ROW */}
+                          {isRowSlipOpen(
+                            market?.marketId,
+                            runner?.selectionId
+                          ) && (
+                            <div ref={betslipRef} className="lg:hidden">
+                              {betSlipData && (
+                                <MBetSlip
+                                  visible={isSlipOpen}
+                                  backLayClsModal={betSlipData?.slipCls}
+                                  extraBgClass={betSlipData?.slipBgClass}
+                                  odds={betSlipData?.odds}
+                                  marketId={betSlipData?.marketId}
+                                  selectionId={betSlipData?.selectionId}
+                                  eventId="event123"
+                                  marketType={market?.marketType}
+                                  runnerName={betSlipData?.runnerName}
+                                  minStake={betSlipData?.min}
+                                  maxStake={betSlipData?.max}
+                                  onClose={closeInlineSlip}
+                                  onPlaced={closeInlineSlip}
+                                />
+                              )}
+                            </div>
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            )}
           </div>
 
-     <div className="right-part hidden lg:block lg:w-[30%] ml-[5px]">
-
-  <DBetSlip
-    visible={!!betSlipData}  
-    odds={betSlipData?.odds}
-    selectionId={betSlipData?.selectionId}
-    runnerName={betSlipData?.runnerName}
-    minStake={betSlipData?.min}
-    maxStake={betSlipData?.max}
-    backLayClsModal={betSlipData?.slipCls}
-    onClose={() => setBetSlipData(null)}
-  />
-
-</div>
-
+          <div className="right-part hidden lg:block lg:w-[30%] ml-[5px]">
+            <DBetSlip
+              visible={!!betSlipData}
+              odds={betSlipData?.odds}
+              selectionId={betSlipData?.selectionId}
+              runnerName={betSlipData?.runnerName}
+              minStake={betSlipData?.min}
+              maxStake={betSlipData?.max}
+              backLayClsModal={betSlipData?.slipCls}
+              onClose={() => setBetSlipData(null)}
+            />
+          </div>
         </div>
       )}
 

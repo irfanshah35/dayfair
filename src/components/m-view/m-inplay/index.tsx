@@ -81,7 +81,7 @@ const MInplay = () => {
     <div
       key={idx}
       onClick={() =>
-        router.push(`/market-details/${item.eventType?.id}/${item.event?.id}`)
+        router.push(`/market-details/${item.event?.id}/${item.eventType?.id}`)
       }
       className="text-black block no-underline cursor-pointer hover:bg-[#e5eef3]"
     >
@@ -212,7 +212,7 @@ const MInplay = () => {
                               key={idx}
                               onClick={() =>
                                 router.push(
-                                  `/market-details/${item.eventType?.id}/${item.event?.id}`
+                                  `/market-details/${item.event?.id}/${item.eventType?.id}`
                                 )
                               }
                               className="cursor-pointer border-b border-[#d6d8d7]"

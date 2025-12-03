@@ -91,7 +91,7 @@ export default function ResponsiveLayout({
     );
   }
 
-  const hideMenuAndSports = pathname === "/market-details";
+  const hideMenuAndSports = pathname?.includes("/market-details");
 
   if (pathname === "/login") {
     return children;
