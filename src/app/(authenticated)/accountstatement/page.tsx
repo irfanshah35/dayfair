@@ -372,7 +372,7 @@ export default function AccountStatement() {
                 onChange={(e) => setJumptoPage(e.target.value)}
               />
               <button
-                className="flex justify-center items-center w-[43.13px] h-[28px] rounded-xl font-bold text-black heading-clr border border-black  cursor-pointer hover:opacity-90"
+                className="flex justify-center items-center w-[43.13px] h-7 rounded-xl font-bold text-black heading-clr border border-black  cursor-pointer hover:opacity-90"
                 onClick={jumpPage}
               >
                 Go
