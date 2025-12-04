@@ -192,17 +192,17 @@ export default function ProfitLoss() {
             <div className="w-full px-[5px] overflow-x-auto mr-4">
               <table className="w-full border-collapse border border-black/12.5">
                 <thead>
-                  <tr className="grid grid-cols-4 w-full md:h-[43px]">
-                    <th className="p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
+                  <tr className="flex w-full md:h-[43px]">
+                    <th className="w-[309.03px] p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
                       Sport Name
                     </th>
-                    <th className="p-0.5 md:px-3 md:py-[9px] text-center  text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
+                    <th className="w-[293.76px] p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
                       Profit/Loss
                     </th>
-                    <th className="p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
+                    <th className="w-[321.85px] p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
                       Commission
                     </th>
-                    <th className="p-0.5 md:px-3 md:py-[9px] text-center  text-black bg-[#e9ecef] border-black/12.5 text-sm md:text-base">
+                    <th className="w-[261.36px] p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-black/12.5 text-sm md:text-base">
                       Total P&L
                     </th>
                   </tr>
@@ -211,29 +211,25 @@ export default function ProfitLoss() {
                 <tbody>
                   {profitLossData?.length > 0 ? (
                     profitLossData?.map((statement: any, index: number) => (
-                      <tr key={index} className="grid grid-cols-4 w-full max-h-[43px]">
-                        <td
-                          className="cursor-pointer px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r border-black/12.5 text-xs md:text-base text-[rgb(13,110,253)] hover:text-[rgb(10,88,202)]"
-                        >
+                      <tr key={index} className="flex w-full max-h-[43px]">
+                        <td className="w-[309.03px] cursor-pointer px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r border-black/12.5 text-xs md:text-base text-[rgb(13,110,253)] hover:text-[rgb(10,88,202)]">
                           {statement.eventType.name}
                         </td>
 
                         <td
                           className={`
-    px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r border-black/12.5 text-xs md:text-base
-    ${statement.pl < 0 ? 'text-red-500' : 'text-green-500'}
-  `}
+              w-[293.76px] px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r border-black/12.5 text-xs md:text-base
+              ${statement.pl < 0 ? 'text-red-500' : 'text-green-500'}
+            `}
                         >
                           {statement.pl.toFixed(2)}
                         </td>
 
-
-                        <td className="px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r text-black border-black/12.5 text-xs md:text-base">
-                          <span className="text-black">
-                            {statement.commission.toFixed(2)}
-                          </span>
+                        <td className="w-[321.85px] px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r text-black border-black/12.5 text-xs md:text-base">
+                          <span className="text-black">{statement.commission.toFixed(2)}</span>
                         </td>
-                        <td className="px-2 py-1.5 md:px-3 md:py-[9px] text-center border-black/12.5 text-xs md:text-base">
+
+                        <td className="w-[261.36px] px-2 py-1.5 md:px-3 md:py-[9px] text-center border-black/12.5 text-xs md:text-base">
                           <span
                             className={`font-bold ${calculateTotalPL(statement.pl, statement.commission) < 0
                               ? 'text-red-500'
@@ -257,6 +253,7 @@ export default function ProfitLoss() {
                   )}
                 </tbody>
               </table>
+
             </div>
           </div>
 
