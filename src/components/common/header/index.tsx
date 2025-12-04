@@ -162,7 +162,7 @@ const Header = () => {
         {/* Login Button */}
         <div className="flex flex-col md:flex-row justify-end w-full md:h-[66px] flex-1">
           <div className="hidden md:flex md:ml-[17px] p-1 items-center justify-end flex-[0_0_auto] w-[83.33333333%] max-w-full">
-            <ul className="hidden md:flex list-none mt-2.5 mb-3 items-center pl-8">
+            <ul className="hidden md:flex list-none mt-2.5 mb-3 items-center ">
               <li ref={wrapperRef} className="mr-5 relative float-left flex items-start">
                 <input
                   type="text"
@@ -170,7 +170,7 @@ const Header = () => {
                   value={query}
                   onChange={handleInputChange}
                   className={`
-          h-[38px] border-0 p-0 outline-0 placeholder:text-black
+          h-[38px] relative left-2 top-px border-0 p-0 outline-0 placeholder:text-black
           bg-[linear-gradient(180deg,#fff_0%,#fff_100%)] text-black
           transition-[width] duration-400 ease-linear
           ${open ? "w-[300px] px-2.5" : "w-0 px-0"}
@@ -178,23 +178,23 @@ const Header = () => {
                 />
 
                 <FaSearchPlus
-                  className="text-white ml-2.5 mt-[5px] cursor-pointer"
+                  className="text-white ml-[17px] mt-1.5 cursor-pointer relative left-px"
                   size={24}
                   onClick={() => setOpen(!open)}
                 />
 
                 {/* Dropdown */}
                 {filteredMatches.length > 0 && open && (
-                  <ul className="absolute top-8.5 left-0 right-0 bg-white border border-gray-300  mt-1  overflow-y-auto z-10 shadow-[1px_0_10px_#000] w-[500px] h-[450px] px-[10px] py-[10px]">
+                  <ul className="absolute top-8.5 left-0 right-0 bg-white border border-gray-300  mt-1  overflow-y-auto z-10 shadow-[1px_0_10px_#000] w-[500px] h-[450px] px-2.5 py-2.5">
                     {filteredMatches.map((match, index) => (
                       <li
                         key={index}
                         onClick={() => handleSelect(match)}
                         className=" hover:bg-gray-100 text-black cursor-pointer border-b border-[#ccc] py-[5px] mb-[5px]"
                       >
-                        <div className="flex flex-col leading-[14px]">
+                        <div className="flex flex-col leading-3.5">
                           <div className="flex">
-                            <div className="font-bold pb-[6px] max-w-[232.5px] w-full">{match.sport} | {match.market}</div>
+                            <div className="font-bold pb-1.5 max-w-[232.5px] w-full">{match.sport} | {match.market}</div>
                             {/* <div className="">{match.name}</div> */}
                             <div className="">{match.datetime}</div>
                           </div>
@@ -205,8 +205,8 @@ const Header = () => {
                   </ul>
                 )}
               </li>
-              <li className="mr-[17px] ml-[15px] float-left cursor-pointer hover:underline">
-                <b className="text-[16px]" onClick={() => setRulesOpen(true)}>
+              <li className="mr-3 ml-[15px] float-left cursor-pointer hover:underline">
+                <b className="text-[14px]" onClick={() => setRulesOpen(true)}>
                   Rules
                 </b>
               </li>
