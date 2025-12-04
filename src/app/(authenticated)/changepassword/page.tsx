@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { CryptoService } from "../../../lib/crypto-service";
-import { CONFIG } from "../../../lib/config";
+import { BASE_URL, CONFIG } from "../../../lib/config";
 import { useRouter } from "next/navigation";
 import { fetchData } from "@/lib/functions";
 import { useToast } from "@/components/common/toast/toast-context";
@@ -97,18 +97,23 @@ export default function ChangePassword() {
     };
 
     try {
-      // Encrypt payload
+      console.log("🔐 Encrypting payload...", payload);
+
       const encrypted = await CryptoService.encryptJSON1(payload);
+
       const finalPayload = {
         data: encrypted.iv + "###" + encrypted.payload,
       };
 
-      // Fetch API (POST)
+      console.log("🚀 Final encrypted payload:", finalPayload);
 
-      fetchData({
-        url: CONFIG.changeUserPassword,
-        payload: finalPayload,
-        showToast: showToast,
+      const response = await fetch(BASE_URL + CONFIG.changeUserPassword, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
+        },
+        body: JSON.stringify(finalPayload),
       });
 
       const encryptedRes = await response.json();
@@ -116,10 +121,16 @@ export default function ChangePassword() {
       // Decrypt backend response
       const res = await CryptoService.decryptApiResponse(encryptedRes);
 
-      // Parse message
-      const parts = res?.meta?.message
-        ?.split(/',\s*'/)
-        .map((p: any) => p.replace(/^'+|'+$/g, "").trim());
+      console.log("🔓 Decrypted API response:", res);
+
+      // Safe message parsing
+      let parts = [];
+
+      if (res?.meta?.message) {
+        parts = res.meta.message
+          .split(/',\s*'/)
+          .map((p: any) => p?.replace(/^'+|'+$/g, "").trim());
+      }
 
       const msg = {
         status: parts?.[0] || "",
@@ -127,22 +138,29 @@ export default function ChangePassword() {
         desc: parts?.[2] || "",
       };
 
+      showToast(msg.status, msg.title, msg.desc);
+
       if (res?.meta?.status_code === 200) {
-        // Clear session + redirect (same logic)
+
         try {
           if (typeof window !== "undefined") {
             localStorage.clear();
             sessionStorage.clear();
           }
-        } catch {}
+        } catch (clearErr) {
+          console.error("Storage clear error:", clearErr);
+        }
 
         router.push("/");
         return;
       } else {
+        console.warn("❌ API returned non-200:", res);
       }
     } catch (err) {
+      console.error("🔥 ERROR in changePassword:", err);
     } finally {
       setIsLoading(false);
+      console.log("⏳ Loading stopped");
     }
   };
 
