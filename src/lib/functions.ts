@@ -27,7 +27,7 @@ export async function fetchData({
   url: string;
   payload: any;
   setFn?: (value: any) => void;
-  showToast?: (status: string, title: string, desc: string) => void;
+  showToast?: (status: "error" | "info" | "success" | "warning", title: string, desc: string) => void;
   expireIn?: number; // cache expiry in seconds
 }) {
   if (cachedKey) {
