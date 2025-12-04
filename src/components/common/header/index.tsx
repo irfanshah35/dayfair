@@ -243,7 +243,7 @@ const Header = () => {
                       >
                         <div className="flex flex-col leading-3.5">
                           <div className="flex">
-                            <div className="font-bold pb-[6px] max-w-[232.5px] w-full">
+                            <div className="font-bold pb-1.5 max-w-[232.5px] w-full">
                               {match.sport} | {match.market}
                             </div>
                             {/* <div className="">{match.name}</div> */}
