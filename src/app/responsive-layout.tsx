@@ -91,7 +91,18 @@ export default function ResponsiveLayout({
     );
   }
 
-  const hideMenuAndSports = pathname?.includes("/market-details");
+  const hideMenuAndSports =
+    pathname?.includes("/market-details") ||
+    pathname === "/accountstatement" ||
+    pathname === "/activity-log" ||
+    pathname === "/bethistory" ||
+    pathname === "/changepassword" ||
+    pathname === "/password-history" ||
+    pathname === "/profitloss" ||
+    pathname === "/profitloss-event" ||
+    pathname === "/profitloss-market" ||
+    pathname === "/settings" ||
+    pathname === "/userBetHistory";
 
   if (pathname === "/login") {
     return children;
