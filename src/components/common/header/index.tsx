@@ -18,15 +18,60 @@ interface Match {
 }
 
 const matches: Match[] = [
-  { sport: "Cricket", market: "MATCH_ODDS", name: "New Zealand v West Indies", datetime: "3/12/2025 02:09 AM" },
-  { sport: "Cricket", market: "MATCH_ODDS", name: "Australia v England", datetime: "3/12/2025 02:09 AM" },
-  { sport: "Cricket", market: "MATCH_ODDS", name: "Australia v England", datetime: "3/12/2025 02:09 AM" },
-  { sport: "Cricket", market: "MATCH_ODDS", name: "Australia v England", datetime: "3/12/2025 02:09 AM" },
-  { sport: "Cricket", market: "MATCH_ODDS", name: "Australia v England", datetime: "3/12/2025 02:09 AM" },
-  { sport: "Cricket", market: "MATCH_ODDS", name: "Australia v England", datetime: "3/12/2025 02:09 AM" },
-  { sport: "Cricket", market: "MATCH_ODDS", name: "India v South Africa", datetime: "3/12/2025 02:09 AM" },
-  { sport: "Soccer", market: "MATCH_ODDS", name: "Sporting Cristal v Alianza Lima", datetime: "3/12/2025 02:09 AM" },
-  { sport: "Cricket", market: "MATCH_ODDS", name: "Nigeria v Zambia", datetime: "3/12/2025 02:09 AM" },
+  {
+    sport: "Cricket",
+    market: "MATCH_ODDS",
+    name: "New Zealand v West Indies",
+    datetime: "3/12/2025 02:09 AM",
+  },
+  {
+    sport: "Cricket",
+    market: "MATCH_ODDS",
+    name: "Australia v England",
+    datetime: "3/12/2025 02:09 AM",
+  },
+  {
+    sport: "Cricket",
+    market: "MATCH_ODDS",
+    name: "Australia v England",
+    datetime: "3/12/2025 02:09 AM",
+  },
+  {
+    sport: "Cricket",
+    market: "MATCH_ODDS",
+    name: "Australia v England",
+    datetime: "3/12/2025 02:09 AM",
+  },
+  {
+    sport: "Cricket",
+    market: "MATCH_ODDS",
+    name: "Australia v England",
+    datetime: "3/12/2025 02:09 AM",
+  },
+  {
+    sport: "Cricket",
+    market: "MATCH_ODDS",
+    name: "Australia v England",
+    datetime: "3/12/2025 02:09 AM",
+  },
+  {
+    sport: "Cricket",
+    market: "MATCH_ODDS",
+    name: "India v South Africa",
+    datetime: "3/12/2025 02:09 AM",
+  },
+  {
+    sport: "Soccer",
+    market: "MATCH_ODDS",
+    name: "Sporting Cristal v Alianza Lima",
+    datetime: "3/12/2025 02:09 AM",
+  },
+  {
+    sport: "Cricket",
+    market: "MATCH_ODDS",
+    name: "Nigeria v Zambia",
+    datetime: "3/12/2025 02:09 AM",
+  },
 ];
 
 const Header = () => {
@@ -43,7 +88,6 @@ const Header = () => {
   const [isexposureopen, setExposureOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
-
 
   const goToLogin = () => {
     if (!isLoggedIn) {
@@ -102,8 +146,7 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-
-  // filtering 
+  // filtering
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -128,7 +171,10 @@ const Header = () => {
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
         setFilteredMatches([]);
       }
     };
@@ -162,8 +208,11 @@ const Header = () => {
         {/* Login Button */}
         <div className="flex flex-col md:flex-row justify-end w-full md:h-[66px] flex-1">
           <div className="hidden md:flex md:ml-[17px] p-1 items-center justify-end flex-[0_0_auto] w-[83.33333333%] max-w-full">
-            <ul className="hidden md:flex list-none mt-2.5 mb-3 items-center ">
-              <li ref={wrapperRef} className="mr-5 relative float-left flex items-start">
+            <ul className="hidden md:flex list-none mt-2.5 mb-3 items-center pl-8">
+              <li
+                ref={wrapperRef}
+                className="mr-5 relative float-left flex items-start"
+              >
                 <input
                   type="text"
                   placeholder="All Events"
@@ -194,7 +243,9 @@ const Header = () => {
                       >
                         <div className="flex flex-col leading-3.5">
                           <div className="flex">
-                            <div className="font-bold pb-1.5 max-w-[232.5px] w-full">{match.sport} | {match.market}</div>
+                            <div className="font-bold pb-[6px] max-w-[232.5px] w-full">
+                              {match.sport} | {match.market}
+                            </div>
                             {/* <div className="">{match.name}</div> */}
                             <div className="">{match.datetime}</div>
                           </div>
@@ -226,9 +277,7 @@ const Header = () => {
                 {/* EXPOSURE */}
                 <div className="">
                   <span className="text-white">
-                    <button
-                      className="underline-offset-2"
-                    >
+                    <button className="underline-offset-2">
                       (EXP : <b className="userTotalExposure">0.00</b>)
                     </button>
                   </span>
@@ -247,7 +296,11 @@ const Header = () => {
                   </b>
                 </div>
                 <div className="text-start leading-[23px]">
-                  <button onClick={() => setExposureOpen(!isexposureopen)} type="button" className="cursor-pointer">
+                  <button
+                    onClick={() => setExposureOpen(!isexposureopen)}
+                    type="button"
+                    className="cursor-pointer"
+                  >
                     <span>
                       <b>EXPOSURE&nbsp;:&nbsp;</b>
                     </span>
@@ -264,8 +317,14 @@ const Header = () => {
           )}
           <div className="w-[110%] gap-1 flex items-center md:flex">
             <div className="flex-1 md:hidden"></div>
-            <div className={`md:pe-3 md:p-[3px] md:flex-[0_0_auto]
-              ${!isLoggedIn ? "flex md:flex absolute right-[5px] md:relative md:right-0" : "hidden md:flex"}`}>
+            <div
+              className={`md:pe-3 md:p-[3px] md:flex-[0_0_auto]
+              ${
+                !isLoggedIn
+                  ? "flex md:flex absolute right-[5px] md:relative md:right-0"
+                  : "hidden md:flex"
+              }`}
+            >
               <button
                 onClick={goToLogin}
                 className="h-[30.5px] border w-[101.5px] border-black rounded-[3.875px] text-sm text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px] md:w-[99.91px]"
@@ -303,10 +362,11 @@ const Header = () => {
                 className={`
             bg-transparent text-black border-0 outline-0 h-[25px]
             transition-all duration-500 ease-linear text-[12px]  
-            ${searchActive
-                    ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
-                    : "w-0 opacity-0 pl-0 pr-0"
-                  }
+            ${
+              searchActive
+                ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
+                : "w-0 opacity-0 pl-0 pr-0"
+            }
           `}
               />
 
@@ -330,8 +390,7 @@ const Header = () => {
             onClick={goToLogin}
             className="cursor-pointer text-black border border-white text-sm md:text-base hover:opacity-90 transition-opacity rounded-[3.875px] absolute right-px -top-1  h-[31px] w-[67.92px]"
             style={{
-              background:
-                "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
+              background: "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
             }}
           >
             ACCOUNT
@@ -344,7 +403,11 @@ const Header = () => {
         </div>
       )}
       <RulesModal open={isrulesopen} onClose={() => setRulesOpen(false)} />
-      <ExposureModal open={isexposureopen} onClose={() => setExposureOpen(false)} />
+      <ExposureModal
+        open={isexposureopen}
+        onClose={() => setExposureOpen(false)}
+
+      />
       <style jsx>{`
         @keyframes fadeIn {
           from {
@@ -363,9 +426,7 @@ const Header = () => {
 
 export default Header;
 
-
-const AccountDropDown = ({ closeDropdown }:any) => {
-
+const AccountDropDown = ({ closeDropdown }: any) => {
   const router = useRouter();
   const accountMenuItems = [
     {
@@ -416,8 +477,9 @@ const AccountDropDown = ({ closeDropdown }:any) => {
         className="absolute top-{100px} md:top-[82px] w-[172px] md:w-[170px] z-99999 text-[16px] md:text-[14px] right-0 overflow-hidden transition-all duration-300 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] rounded-sm"
       >
         <li className="md:hidden py-1.5 md:py-0 h-9 md:h-[25px] ">
-          <Link href="/"
-          onClick={closeDropdown}
+          <Link
+            href="/"
+            onClick={closeDropdown}
             className="px-3 h-[25px] flex items-center hover:bg-gray-800 transition-colors"
           >
             Home
@@ -462,7 +524,8 @@ const AccountDropDown = ({ closeDropdown }:any) => {
           />
         </li>
         <li className="md:hidden">
-          <Link href="/"
+          <Link
+            href="/"
             className="px-3 py-1.5 md:py-0 md:h-[25px]  h-[25px] flex items-center hover:bg-gray-800 transition-colors"
           >
             Rules
@@ -475,12 +538,14 @@ const AccountDropDown = ({ closeDropdown }:any) => {
 
         {/* Signout */}
         <li className="bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)] text-[16px] font-black">
-          <button onClick={SignOut} className="w-full text-left px-3 py-2 cursor-pointer text-[#ff2828] transition rounded">
+          <button
+            onClick={SignOut}
+            className="w-full text-left px-3 py-2 cursor-pointer text-[#ff2828] transition rounded"
+          >
             Signout <span className="opacity-80 text-white">()</span>
           </button>
         </li>
       </ul>
     </>
-  )
-
-}
+  );
+};
