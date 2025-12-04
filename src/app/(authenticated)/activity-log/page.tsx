@@ -1,241 +1,208 @@
 "use client";
 
+import React, { useState } from "react";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { CryptoService } from "../../../lib/crypto-service";
+import { CONFIG } from "../../../lib/config";
 import { useRouter } from "next/navigation";
-import React, { useState, useEffect } from "react";
-import { CONFIG } from "@/lib/config";
-import { fetchData } from "@/lib/functions";
+import { fetchData } from "../../../lib/functions";
 
-interface ActivityLogItem {
-  createdAt: string;
-  logMessage: string;
-  ip: string;
-  isp: string;
-  city: string;
-  state: string;
-  country: string;
-}
+/* ---------------------- PASSWORD RULES ---------------------- */
+const passwordPattern = /^(?=.?[A-Z])(?=.?[a-z])(?=.*?[0-9]).{8,}$/;
 
-interface PasswordHistoryItem {
-  remark: string;
-  createdAt: string;
-}
-
-export default function ActivityLog() {
-  const fmtDate = (iso?: string) => {
-    if (!iso) return "";
-    const d = new Date(iso);
-    const dd = d
-      .toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      })
-      .split("/")
-      .join("-");
-    const time = d
-      .toLocaleTimeString("en-GB", {
-        hour: "numeric",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-      })
-      .replace(/^0/, "");
-    return `${dd} ${time}`;
-  };
-
-  const [activeTab, setActiveTab] = useState("activity");
-  const [activityData, setActivityData] = useState<any>();
-  const [passwordData, setPasswordData] = useState<any>();
-
+export default function ChangePassword() {
   const router = useRouter();
 
-  // default load activity logs
-  useEffect(() => {
-    loadActivityLogs();
-  }, []);
+  const [showCurrent, setShowCurrent] = useState(false);
+  const [showNew, setShowNew] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-  const loadActivityLogs = () => {
-    fetchData({
-      url: CONFIG.activityList,
-      payload: { type: "ACTIVITY_LOGS", key: CONFIG.siteKey },
-      setFn: setActivityData,
-    });
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [form, setForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
+  });
+
+  const [errors, setErrors] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
+    mismatch: "",
+  });
+
+  /* ---------------------- HANDLE INPUT CHANGE ---------------------- */
+  const handleInput = (e: any) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const loadPasswordHistory = () => {
-    fetchData({
-      url: CONFIG.activityList,
-      payload: { type: "PASSWORD_HISTORY_LOGS", key: CONFIG.siteKey },
-      setFn: setPasswordData,
-    });
+  /* ---------------------- FORM VALIDATION ---------------------- */
+  const validate = () => {
+    let ok = true;
+    const err = {
+      currentPassword: "",
+      newPassword: "",
+      confirmNewPassword: "",
+      mismatch: "",
+    };
+
+    if (!form.currentPassword) {
+      err.currentPassword = "Current Password is required.";
+      ok = false;
+    }
+
+    if (!form.newPassword) {
+      err.newPassword = "New Password is required.";
+      ok = false;
+    } else if (!passwordPattern.test(form.newPassword)) {
+      err.newPassword = "Password must be 8+ chars with letters & numbers.";
+      ok = false;
+    }
+
+    if (!form.confirmNewPassword) {
+      err.confirmNewPassword = "Confirm Password is required.";
+      ok = false;
+    } else if (form.newPassword !== form.confirmNewPassword) {
+      err.mismatch = "Passwords do not match.";
+      ok = false;
+    }
+
+    if (
+      form.currentPassword &&
+      form.newPassword &&
+      form.currentPassword === form.newPassword
+    ) {
+      err.newPassword = "New password cannot be same as old password.";
+      err.currentPassword = "New password cannot be same as old password.";
+      ok = false;
+    }
+
+    setErrors(err);
+    return ok;
   };
 
-  const switchTab = (tab: string) => () => {
-    if (tab === "activity") {
-      setActiveTab("activity");
-      router.push("/activity-log");
-      loadActivityLogs();
-    } else {
-      setActiveTab("password");
-      router.push("/password-history");
-      loadPasswordHistory();
+  /* ---------------------- CHANGE PASSWORD API USING fetchData() ---------------------- */
+  const changePassword = async () => {
+    if (!validate()) return;
+
+    setIsLoading(true);
+
+    const payload = {
+      newPassword: form.newPassword,
+      oldPassword: form.currentPassword,
+    };
+
+    try {
+      // Encrypt payload like your old project
+      const encrypted = await CryptoService.encryptJSON1(payload);
+      const finalPayload = {
+        data: encrypted.iv + "###" + encrypted.payload,
+      };
+
+      // Use your global fetchData()
+      await fetchData({
+        url: CONFIG.changeUserPassword,
+        payload: finalPayload,
+        
+      });
+    } catch (err) {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  /* ---------------------- UI ---------------------- */
   return (
-    <>
-      <div className="flex items-center gap-2 mx-2">
-        <button
-          onClick={switchTab("activity")}
-          className={`w-full my-[9px] px-3.5 py-2.5 rounded-[30px] text-black text-[16px] font-semibold border cursor-pointer border-black ${
-            activeTab === "activity"
-              ? "bg-linear-to-b from-[#f4b501] to-[#f68700]"
-              : ""
-          }`}
-        >
-          Activity Log
-        </button>
-
-        <button
-          onClick={switchTab("password")}
-          className={`w-full my-[9px] px-3.5 py-2.5 border-0 rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black ${
-            activeTab === "password"
-              ? "bg-linear-to-b from-[#f4b501] to-[#f68700]"
-              : ""
-          }`}
-        >
-          Password History
-        </button>
+    <div className="w-full min-h-screen flex flex-col items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]">
+      <div className="bg-linear-to-b from-[#f4b501] to-[#f68700] w-full flex justify-center items-center p-[5px]">
+        <a className="font-semibold uppercase relative top-[1px]">
+          Change Password
+        </a>
       </div>
 
-      <div className="mx-1 my-1">
-        <div className="border border-gray-200 rounded-md text-white">
-          {/* Header */}
-          <div className="px-4 py-[0.218px] border-b border-[rgba(0,0,0,0.175)] rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] h-[37.8px]">
-            <span className="text-[24px] font-semibold font-roboto ">
-              {activeTab === "activity" ? "Activity Log" : "Password History"}
-            </span>
+      <div className="w-full flex justify-center items-center mt-[1px] md:mt-18 md:ml-6 mb-10 px-[6px]">
+        <div className="mt-4 w-full md:w-[323.75px] p-[22px] px-[17px]">
+          {/* Current Password */}
+          <div className="mt-2 relative">
+            <input
+              type={showCurrent ? "text" : "password"}
+              name="currentPassword"
+              value={form.currentPassword}
+              onChange={handleInput}
+              placeholder="Current Password"
+              className="w-full px-6 outline-none h-[51.81px] py-3 rounded-[4px] text-[16px] font-semibold border border-white text-white placeholder-white"
+            />
+            <button
+              type="button"
+              onClick={() => setShowCurrent(!showCurrent)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white"
+            >
+              {showCurrent ? <FaEye /> : <FaEyeSlash />}
+            </button>
+            <p className="text-red-300 text-sm mt-1">
+              {errors.currentPassword}
+            </p>
           </div>
 
-          {/* Table Wrapper */}
-          <div className="py-3 md:py-5.5 px-2 md:px-2">
-            <div className="overflow-x-auto">
-              <table className="w-full border border-[#C8CED3]">
-                <thead>
-                  <tr className="bg-linear-to-b from-[#030a12] via-[#444647] to-[#58595a] md:[background:white]">
+          {/* New Password */}
+          <div className="mt-[18px] relative">
+            <input
+              type={showNew ? "text" : "password"}
+              name="newPassword"
+              value={form.newPassword}
+              onChange={handleInput}
+              placeholder="New Password"
+              className="w-full px-6 outline-none py-3 h-[51.81px] rounded-[4px] text-[16px] font-semibold border border-white text-white placeholder-white"
+            />
+            <button
+              type="button"
+              onClick={() => setShowNew(!showNew)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white"
+            >
+              {showNew ? <FaEye /> : <FaEyeSlash />}
+            </button>
+            <p className="text-red-300 text-sm mt-1">{errors.newPassword}</p>
+          </div>
 
-                    {activeTab === "activity" ? (
-                      <>
-                        <th className="max-w-48 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
-                          Login Date & Time
-                        </th>
-                        <th className="max-w-32 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
-                          Login Status
-                        </th>
-                        <th className="max-w-32 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
-                          IP Address
-                        </th>
-                        <th className="min-w-48 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
-                          ISP
-                        </th>
-                        <th className="min-w-56 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
-                          City/State/Country
-                        </th>
-                      </>
-                    ) : (
-                      <>
-                        <th className="max-w-48 p-[9px] text-left text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
-                          Date & Time
-                        </th>
-                        <th className="max-w-48 p-[9px] text-left text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
-                          Remark
-                        </th>
-                      </>
-                    )}
-                  </tr>
-                </thead>
+          {/* Confirm Password */}
+          <div className="mt-[18px] relative">
+            <input
+              type={showConfirm ? "text" : "password"}
+              name="confirmNewPassword"
+              value={form.confirmNewPassword}
+              onChange={handleInput}
+              placeholder="Confirm Password"
+              className="w-full px-6 outline-none py-3 h-[51.81px] rounded-[4px] text-[16px] font-semibold border border-white text-white placeholder-white"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirm(!showConfirm)}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-white"
+            >
+              {showConfirm ? <FaEye /> : <FaEyeSlash />}
+            </button>
+            <p className="text-red-300 text-sm mt-1">
+              {errors.confirmNewPassword}
+            </p>
+            <p className="text-red-300 text-sm">{errors.mismatch}</p>
+          </div>
 
-                <tbody>
-                  {/* ACTIVITY LOG TABLE */}
-                  {activeTab === "activity" &&
-                  activityData?.activityLogs?.length > 0 ? (
-                    activityData.activityLogs.map(
-                      (row: ActivityLogItem, idx: number) => (
-                        <tr key={idx} className="odd:bg-white">
-                          <td className="p-[9px] text-[16px] text-gray-800 border border-[#C8CED3]">
-                            {fmtDate(row?.createdAt)}
-                          </td>
-
-                          <td className="p-[9px] text-[16px] border border-[#C8CED3] whitespace-nowrap">
-                            <span
-                              className={
-                                row.logMessage === "Login Successful"
-                                  ? "text-green-600"
-                                  : "text-red-600"
-                              }
-                            >
-                              {row.logMessage}
-                            </span>
-                          </td>
-
-                          <td className="p-[9px] text-[16px] text-gray-800 border border-[#C8CED3] whitespace-nowrap">
-                            {row.ip}
-                          </td>
-
-                          <td className="p-[9px] text-[16px] text-gray-800 border border-[#C8CED3] whitespace-nowrap">
-                            {row.isp}
-                          </td>
-
-                          <td className="p-[9px] text-[16px] text-gray-800 border border-[#C8CED3] whitespace-nowrap">
-                            {[row.city, row.state, row.country]
-                              .filter(Boolean)
-                              .join(" / ")}
-                          </td>
-                        </tr>
-                      )
-                    )
-                  ) : activeTab === "activity" ? (
-                    <tr>
-                      <td
-                        colSpan={5}
-                        className="p-[9px] text-[16px] text-center text-gray-800 border border-[#C8CED3]"
-                      >
-                        No data available in table
-                      </td>
-                    </tr>
-                  ) : null}
-
-                  {/* PASSWORD HISTORY TABLE */}
-                  {activeTab === "password" &&
-                  passwordData?.passwordHistoryLogs?.length > 0 ? (
-                    passwordData.passwordHistoryLogs.map(
-                      (row: PasswordHistoryItem, idx: number) => (
-                        <tr key={idx} className="odd:bg-white">
-                          <td className="p-[9px] text-[16px] text-gray-800 border border-[#C8CED3]">
-                            {fmtDate(row.createdAt)}
-                          </td>
-                          <td className="p-[9px] text-[16px] text-gray-800 border border-[#C8CED3]">
-                            {row.remark}
-                          </td>
-                        </tr>
-                      )
-                    )
-                  ) : activeTab === "password" ? (
-                    <tr>
-                      <td
-                        colSpan={2}
-                        className="p-[9px] text-[16px] text-center text-gray-800 border border-[#C8CED3]"
-                      >
-                        No data available in table
-                      </td>
-                    </tr>
-                  ) : null}
-                </tbody>
-              </table>
-            </div>
+          {/* Submit */}
+          <div className="mt-[18px]">
+            <button
+              type="button"
+              onClick={changePassword}
+              disabled={isLoading}
+              className="bg-linear-to-b from-[#f4b501] to-[#f68700] w-full block my-2 px-[14px] py-[10px] rounded-[4px] text-[17px] font-semibold uppercase tracking-[1px] text-black"
+            >
+              {isLoading ? "Processing..." : "Change Password"}
+            </button>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }
