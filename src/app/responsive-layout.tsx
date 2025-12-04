@@ -25,6 +25,7 @@ export default function ResponsiveLayout({
     setMenuList,
     setExchangeNews,
     setUserBalance,
+    setStakeValue
   } = useAppStore();
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
@@ -80,6 +81,14 @@ export default function ResponsiveLayout({
       setFn: setExchangeNews,
       expireIn: CONFIG.getExchangeNewsTime,
     });
+    fetchData({
+      url: CONFIG.getUserBetStake,
+      payload: { key: CONFIG.siteKey },
+      cachedKey: "betStake",
+      setFn: setStakeValue,
+      expireIn: CONFIG.getUserBetStakeTime,
+    });
+
   }, []);
 
   // 🔥 FIX: No empty white screen + no footer/header flicker
