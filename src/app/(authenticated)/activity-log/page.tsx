@@ -15,8 +15,12 @@ interface ActivityLogItem {
   country: string;
 }
 
+interface PasswordHistoryItem {
+  remark: string;
+  createdAt: string;
+}
+
 export default function ActivityLog() {
-  // just for date display
   const fmtDate = (iso?: string) => {
     if (!iso) return "";
     const d = new Date(iso);
@@ -40,27 +44,41 @@ export default function ActivityLog() {
   };
 
   const [activeTab, setActiveTab] = useState("activity");
-  const router = useRouter();
   const [activityData, setActivityData] = useState<any>();
+  const [passwordData, setPasswordData] = useState<any>();
 
+  const router = useRouter();
+
+  // default load activity logs
   useEffect(() => {
-    fetchData({
-      url: CONFIG.activityList,
-      payload: {
-        type: "ACTIVITY_LOGS",
-        key: CONFIG.siteKey,
-      },
-      setFn: setActivityData,
-    });
+    loadActivityLogs();
   }, []);
 
+  const loadActivityLogs = () => {
+    fetchData({
+      url: CONFIG.activityList,
+      payload: { type: "ACTIVITY_LOGS", key: CONFIG.siteKey },
+      setFn: setActivityData,
+    });
+  };
+
+  const loadPasswordHistory = () => {
+    fetchData({
+      url: CONFIG.activityList,
+      payload: { type: "PASSWORD_HISTORY_LOGS", key: CONFIG.siteKey },
+      setFn: setPasswordData,
+    });
+  };
+
   const switchTab = (tab: string) => () => {
-    if (tab == "activity") {
+    if (tab === "activity") {
       setActiveTab("activity");
       router.push("/activity-log");
-    } else if (tab == "password") {
+      loadActivityLogs();
+    } else {
       setActiveTab("password");
       router.push("/password-history");
+      loadPasswordHistory();
     }
   };
 
@@ -80,12 +98,11 @@ export default function ActivityLog() {
 
         <button
           onClick={switchTab("password")}
-          className={
-            `w-full  my-[9px] px-3.5 py-2.5 border rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black` +
-            (activeTab === "password"
-              ? " bg-linear-to-b from-[#f4b501] to-[#f68700]"
-              : "")
-          }
+          className={`w-full my-[9px] px-3.5 py-2.5 border-0 rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black ${
+            activeTab === "password"
+              ? "bg-linear-to-b from-[#f4b501] to-[#f68700]"
+              : ""
+          }`}
         >
           Password History
         </button>
@@ -94,42 +111,58 @@ export default function ActivityLog() {
       <div className="mx-1 my-1">
         <div className="border border-gray-200 rounded-md text-white">
           {/* Header */}
-          <div className="px-4 py-[0.218px] border-b border-[rgba(0,0,0,0.175)]  rounded-t  bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] h-[37.8px]">
+          <div className="px-4 py-[0.218px] border-b border-[rgba(0,0,0,0.175)] rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] h-[37.8px]">
             <span className="text-[24px] font-semibold font-roboto ">
-              Activity Log
+              {activeTab === "activity" ? "Activity Log" : "Password History"}
             </span>
           </div>
 
           {/* Table Wrapper */}
           <div className="py-3 md:py-5.5 px-2 md:px-2">
             <div className="overflow-x-auto">
-              <table className="w-full table-fixed border border-[#C8CED3]">
+              <table className="w-full border border-[#C8CED3]">
                 <thead>
-                  <tr className="bg-linear-to-b from-[#030a12] via-[#444647] to-[#58595a] md:[background:white] leading-[16px]">
-                    <th className="w-[124.5px] p-[9px] md:break-words text-center text-[16px] text-white md:text-black border border-[#C8CED3]">
-                      Login Date & Time
-                    </th>
-                    <th className="w-[127.5px] p-[9px] text-center text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
-                      Login Status
-                    </th>
-                    <th className="w-[130.8px] p-[9px] text-center text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
-                      IP Address
-                    </th>
-                    <th className="w-[266.69px] p-[9px] text-center text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
-                      ISP
-                    </th>
-                    <th className="w-[263.5px] p-[9px] text-center text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
-                      City/State/Country
-                    </th>
+                  <tr className="bg-linear-to-b from-[#030a12] via-[#444647] to-[#58595a] md:[background:white]">
+
+                    {activeTab === "activity" ? (
+                      <>
+                        <th className="max-w-48 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                          Login Date & Time
+                        </th>
+                        <th className="max-w-32 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                          Login Status
+                        </th>
+                        <th className="max-w-32 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                          IP Address
+                        </th>
+                        <th className="min-w-48 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                          ISP
+                        </th>
+                        <th className="min-w-56 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                          City/State/Country
+                        </th>
+                      </>
+                    ) : (
+                      <>
+                        <th className="max-w-48 p-[9px] text-left text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                          Date & Time
+                        </th>
+                        <th className="max-w-48 p-[9px] text-left text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                          Remark
+                        </th>
+                      </>
+                    )}
                   </tr>
                 </thead>
 
                 <tbody>
-                  {activityData?.activityLogs?.length > 0 ? (
-                    activityData?.activityLogs?.map(
+                  {/* ACTIVITY LOG TABLE */}
+                  {activeTab === "activity" &&
+                  activityData?.activityLogs?.length > 0 ? (
+                    activityData.activityLogs.map(
                       (row: ActivityLogItem, idx: number) => (
                         <tr key={idx} className="odd:bg-white">
-                          <td className="p-[9px] text-[16px] text-gray-800 border border-[#C8CED3] whitespace-nowrap">
+                          <td className="p-[9px] text-[16px] text-gray-800 border border-[#C8CED3]">
                             {fmtDate(row?.createdAt)}
                           </td>
 
@@ -161,7 +194,7 @@ export default function ActivityLog() {
                         </tr>
                       )
                     )
-                  ) : (
+                  ) : activeTab === "activity" ? (
                     <tr>
                       <td
                         colSpan={5}
@@ -170,7 +203,33 @@ export default function ActivityLog() {
                         No data available in table
                       </td>
                     </tr>
-                  )}
+                  ) : null}
+
+                  {/* PASSWORD HISTORY TABLE */}
+                  {activeTab === "password" &&
+                  passwordData?.passwordHistoryLogs?.length > 0 ? (
+                    passwordData.passwordHistoryLogs.map(
+                      (row: PasswordHistoryItem, idx: number) => (
+                        <tr key={idx} className="odd:bg-white">
+                          <td className="p-[9px] text-[16px] text-gray-800 border border-[#C8CED3]">
+                            {fmtDate(row.createdAt)}
+                          </td>
+                          <td className="p-[9px] text-[16px] text-gray-800 border border-[#C8CED3]">
+                            {row.remark}
+                          </td>
+                        </tr>
+                      )
+                    )
+                  ) : activeTab === "password" ? (
+                    <tr>
+                      <td
+                        colSpan={2}
+                        className="p-[9px] text-[16px] text-center text-gray-800 border border-[#C8CED3]"
+                      >
+                        No data available in table
+                      </td>
+                    </tr>
+                  ) : null}
                 </tbody>
               </table>
             </div>
