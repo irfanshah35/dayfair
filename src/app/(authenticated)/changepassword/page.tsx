@@ -248,7 +248,7 @@ export default function ChangePassword() {
               disabled={isLoading}
               className="bg-linear-to-b from-[#f4b501] to-[#f68700] w-full block my-2 px-3.5 py-2.5 rounded-sm text-[17px] font-semibold uppercase tracking-[1px] text-black"
             >
-              {isLoading ? "Processing..." : "Change Password"}
+              Change Password
             </button>
           </div>
         </div>
