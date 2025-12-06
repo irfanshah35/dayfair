@@ -12,16 +12,22 @@ const DTopnav = () => {
     { href: "/inplay", label: "In-Play" },
   ]);
 
+  const navData = ["cricket", "soccer", "tennis"];
+
   useEffect(() => {
     const eventsType = menuList?.eventTypes;
 
     if (!eventsType) return;
 
     // Create new items from eventTypes
-    const newItems = eventsType.map((item: any) => ({
-      href: `/game-list/${item?.eventType?.name}/${item?.eventType?.id}`,
-      label: item?.eventType?.name?.toUpperCase(),
-    }));
+    const newItems = eventsType
+      .filter((item: any) =>
+        navData?.includes(item?.eventType?.name?.toLowerCase())
+      )
+      .map((item: any) => ({
+        href: `/game-list/${item?.eventType?.name}/${item?.eventType?.id}`,
+        label: item?.eventType?.name?.toUpperCase(),
+      }));
 
     // Set new state by merging old + new
     setNavItems((prev) => [...prev, ...newItems]);
@@ -40,7 +46,7 @@ const DTopnav = () => {
         }}
       >
         <div className="flex items-center h-full">
-          {navItems.map((item,idx) => (
+          {navItems.map((item, idx) => (
             <Link
               key={idx}
               href={item.href}

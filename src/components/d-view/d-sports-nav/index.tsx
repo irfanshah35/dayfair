@@ -11,6 +11,7 @@ const DSportNav = ({
 }) => {
   const menuList = useAppStore((state) => state.menuList);
   const [eventTypes, setEventTypes] = useState<any[]>([]);
+  const navData = ["cricket", "soccer", "tennis"];
 
   useEffect(() => {
     const types = menuList?.eventTypes || [];
@@ -34,11 +35,13 @@ const DSportNav = ({
         no-scrollbar
       "
       >
-        {eventTypes?.map((sport: any) => (
-          <li
-            key={sport?.eventType?.id}
-            onClick={() => setActiveTab(sport?.eventType?.id)}
-            className={`
+        {eventTypes?.map((sport: any) => {
+          if (navData?.includes(sport?.eventType?.name?.toLowerCase())) {
+            return (
+              <li
+                key={sport?.eventType?.id}
+                onClick={() => setActiveTab(sport?.eventType?.id)}
+                className={`
               px-[15px] py-1
               cursor-pointer
               border-r border-white
@@ -51,10 +54,12 @@ const DSportNav = ({
                   : "text-white"
               }
             `}
-          >
-            <a>{sport?.eventType?.name}</a>
-          </li>
-        ))}
+              >
+                <a>{sport?.eventType?.name}</a>
+              </li>
+            );
+          }
+        })}
       </ul>
     </div>
   );
