@@ -7,8 +7,9 @@ import Link from "next/link";
 import RulesModal from "@/components/modals/rules-modal";
 import { useAuthStore } from "@/lib/store/authStore";
 import { CONFIG } from "@/lib/config";
-import { fetchData } from "@/lib/functions";
+import { fetchData, formatDateStamp } from "@/lib/functions";
 import ExposureModal from "@/components/modals/exposure-modal";
+import { useAppStore } from "@/lib/store/store";
 
 interface Match {
   sport: string;
@@ -88,6 +89,8 @@ const Header = () => {
   const [isexposureopen, setExposureOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
+  const { allEventsList } = useAppStore();
+  const [results, setResults] = useState<any[]>([]);
 
   const goToLogin = () => {
     if (!isLoggedIn) {
@@ -149,23 +152,59 @@ const Header = () => {
   // filtering
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setQuery(value);
+    setQuery(e.target.value);
+  };
 
-    if (!value.trim()) {
-      setFilteredMatches([]);
+  const mkText = (it: any) => {
+    const parts: string[] = [
+      it?.event?.name,
+      it?.competition?.name,
+      it?.eventType?.name,
+      it?.eventName,
+      it?.competitionName,
+      it?.sportName,
+      it?.marketType,
+    ];
+    if (Array.isArray(it?.runnersName)) {
+      parts.push(...it.runnersName.map((r: any) => r?.runnerName));
+    }
+    return parts.filter(Boolean).join(" ").toLowerCase();
+  };
+
+  const normalizeData = (data: any) => {
+    if (!data) return [];
+    if (Array.isArray(data)) return data;
+    if (typeof data === "object") return Object.values(data).flat();
+    return [];
+  };
+  // filtering
+  useEffect(() => {
+    const src = normalizeData(allEventsList);
+    const q = query.trim().toLowerCase();
+
+    // Agar query empty ho to full list dikhao
+    if (!q) {
+      setResults([]);
       return;
     }
 
-    const filtered = matches.filter((m) =>
-      m.name.toLowerCase().includes(value.toLowerCase())
-    );
-    setFilteredMatches(filtered);
-  };
+    // Agar query ki length 3 se kam hai to kuch mat karo, bas empty results (ya full list) dikhao
+    if (q.length < 3) {
+      setResults([]); // ya [] agar blank dikhana ho
+      return;
+    }
 
-  const handleSelect = (match: Match) => {
-    setQuery(match.name);
-    setFilteredMatches([]);
+    // Query length ≥ 3 → filter chalao
+    const filtered = src.filter((it) => mkText(it).includes(q));
+
+    console.log(filtered)
+
+    setResults(filtered);
+  }, [query, allEventsList]);
+
+  const handleSelect = (match: any) => {
+    setQuery('')
+    router.push(`/market-details/${match?.event?.id}/${match?.eventType?.id}`)
     setOpen(false);
   };
 
@@ -233,26 +272,30 @@ const Header = () => {
                 />
 
                 {/* Dropdown */}
-                {filteredMatches.length > 0 && open && (
-                  <ul className="absolute top-[35px] left-2 right-0 bg-white border border-gray-300  mt-1  overflow-y-auto z-10 shadow-[1px_0_10px_#000] w-[500px] h-[450px] px-[9px] py-2">
-                    {filteredMatches.map((match, index) => (
-                      <li
-                        key={index}
-                        onClick={() => handleSelect(match)}
-                        className=" hover:bg-gray-100 text-black cursor-pointer border-b border-[#ccc] pt-1.5 pb-[5px] mb-[5px]"
-                      >
-                        <div className="flex flex-col leading-3.5">
-                          <div className="flex">
-                            <div className="pb-1.5 max-w-60 w-full">
-                              {match.sport} | {match.market}
+                {open&&query && (
+                  <ul className="absolute top-8.5 text-black left-2 right-0 bg-white border border-gray-300  mt-1  overflow-y-auto z-10 shadow-[1px_0_10px_#000] w-[500px] max-h-[450px] px-2.5 py-2.5">
+                    {results?.length > 0 ? (
+                      results?.map((match, index) => (
+                        <li
+                          key={index}
+                          onClick={() => handleSelect(match)}
+                          className=" hover:bg-gray-100 text-black cursor-pointer border-b border-[#ccc] py-[5px] mb-[5px]"
+                        >
+                          <div className="flex flex-col leading-3.5">
+                            <div className="flex">
+                              <div className="font-bold pb-1.5 max-w-[232.5px] w-full">
+                                {match?.eventType?.name} | {match?.marketType}
+                              </div>
+                              {/* <div className="">{match.name}</div> */}
+                              <div className="">{formatDateStamp(match?.marketStartTime)}</div>
                             </div>
-                            {/* <div className="">{match.name}</div> */}
-                            <div className="">{match.datetime}</div>
+                            <div className="">{match?.event?.name}</div>
                           </div>
-                          <div className="">{match.name}</div>
-                        </div>
-                      </li>
-                    ))}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-black cursor-pointer py-[5px] mb-[5px]">No real-time records found</li>
+                    )}
                   </ul>
                 )}
               </li>
@@ -270,15 +313,26 @@ const Header = () => {
                 {/* BALANCE */}
                 <div className="">
                   <span className="text-white">
-                    (BAL : <b className="userTotalBalance">{userBalance?.bankBalance?.toFixed(2) || " 0.00"}</b>)
+                    (BAL :{" "}
+                    <b className="userTotalBalance">
+                      {userBalance?.bankBalance?.toFixed(2) || " 0.00"}
+                    </b>
+                    )
                   </span>
                 </div>
 
                 {/* EXPOSURE */}
-                <div className="" onClick={() => setExposureOpen(!isexposureopen)}>
+                <div
+                  className=""
+                  onClick={() => setExposureOpen(!isexposureopen)}
+                >
                   <span className="text-white">
                     <button className="underline-offset-2">
-                      (EXP : <b className="userTotalExposure">{userBalance?.exposure?.toFixed(2) || "0.00"}</b>)
+                      (EXP :{" "}
+                      <b className="userTotalExposure">
+                        {userBalance?.exposure?.toFixed(2) || "0.00"}
+                      </b>
+                      )
                     </button>
                   </span>
                 </div>
@@ -404,7 +458,6 @@ const Header = () => {
       <ExposureModal
         open={isexposureopen}
         onClose={() => setExposureOpen(false)}
-
       />
       <style jsx>{`
         @keyframes fadeIn {
