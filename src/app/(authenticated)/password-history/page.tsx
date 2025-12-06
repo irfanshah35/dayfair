@@ -66,11 +66,10 @@ export default function PasswordHistory() {
       <div className="flex items-center gap-2 mx-2">
         <button
           onClick={switchTab("activity")}
-          className={`w-full my-[9px] px-[14px] py-[10px] border-0 rounded-[30px] text-black text-[16px] font-semibold border-[1px] cursor-pointer border-black ${
-            activeTab === "activity"
+          className={`w-full my-[9px] px-3.5 py-2.5 border-0 rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black ${activeTab === "activity"
               ? "bg-linear-to-b from-[#f4b501] to-[#f68700]"
               : ""
-          }`}
+            }`}
         >
           Activity Log
         </button>
@@ -78,7 +77,7 @@ export default function PasswordHistory() {
         <button
           onClick={switchTab("password")}
           className={
-            `w-full my-[9px] px-[14px] py-[10px] border-0 rounded-[30px] text-black text-[16px] font-semibold border-[1px] cursor-pointer border-black` +
+            `w-full my-[9px] px-3.5 py-2.5 border-0 rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black` +
             (activeTab === "password"
               ? " bg-linear-to-b from-[#f4b501] to-[#f68700]"
               : "")
@@ -92,7 +91,7 @@ export default function PasswordHistory() {
         <div className="border border-gray-200 rounded-md text-white">
           {/* Header */}
           <div className="px-4 py-[0.218px] border-b border-[rgba(0,0,0,0.175)] rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] h-[37.8px] flex items-center">
-            <span className="mb-0 text-base !text-white md:text-[24px]">
+            <span className="mb-0 text-base text-white! md:text-[24px]">
               Password History
             </span>
           </div>
@@ -103,10 +102,10 @@ export default function PasswordHistory() {
               <table className="w-full border border-[#C8CED3]">
                 <thead>
                   <tr>
-                    <th className="p-[2px] w-[36.4%] py-1 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm md:text-base">
+                    <th className="p-0.5 w-[36.4%] py-1 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm md:text-base">
                       Date
                     </th>
-                    <th className="p-[2px] py-1 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm md:text-base">
+                    <th className="p-0.5 py-1 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm md:text-base">
                       Remarks
                     </th>
                   </tr>

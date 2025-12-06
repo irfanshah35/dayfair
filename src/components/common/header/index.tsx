@@ -21,8 +21,8 @@ const matches: Match[] = [
   {
     sport: "Cricket",
     market: "MATCH_ODDS",
-    name: "New Zealand v West Indies",
-    datetime: "3/12/2025 02:09 AM",
+    name: "India v South Africa",
+    datetime: " 6/12/2025 01:10 PM ",
   },
   {
     sport: "Cricket",
@@ -234,16 +234,16 @@ const Header = () => {
 
                 {/* Dropdown */}
                 {filteredMatches.length > 0 && open && (
-                  <ul className="absolute top-8.5 left-0 right-0 bg-white border border-gray-300  mt-1  overflow-y-auto z-10 shadow-[1px_0_10px_#000] w-[500px] h-[450px] px-2.5 py-2.5">
+                  <ul className="absolute top-[35px] left-2 right-0 bg-white border border-gray-300  mt-1  overflow-y-auto z-10 shadow-[1px_0_10px_#000] w-[500px] h-[450px] px-[9px] py-2">
                     {filteredMatches.map((match, index) => (
                       <li
                         key={index}
                         onClick={() => handleSelect(match)}
-                        className=" hover:bg-gray-100 text-black cursor-pointer border-b border-[#ccc] py-[5px] mb-[5px]"
+                        className=" hover:bg-gray-100 text-black cursor-pointer border-b border-[#ccc] pt-1.5 pb-[5px] mb-[5px]"
                       >
                         <div className="flex flex-col leading-3.5">
                           <div className="flex">
-                            <div className="font-bold pb-1.5 max-w-[232.5px] w-full">
+                            <div className="pb-1.5 max-w-60 w-full">
                               {match.sport} | {match.market}
                             </div>
                             {/* <div className="">{match.name}</div> */}
@@ -319,11 +319,10 @@ const Header = () => {
             <div className="flex-1 md:hidden"></div>
             <div
               className={`md:pe-3 md:p-[3px] md:flex-[0_0_auto]
-              ${
-                !isLoggedIn
+              ${!isLoggedIn
                   ? "flex md:flex absolute right-[5px] md:relative md:right-0"
                   : "hidden md:flex"
-              }`}
+                }`}
             >
               <button
                 onClick={goToLogin}
@@ -362,11 +361,10 @@ const Header = () => {
                 className={`
             bg-transparent text-black border-0 outline-0 h-[25px]
             transition-all duration-500 ease-linear text-[12px]  
-            ${
-              searchActive
-                ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
-                : "w-0 opacity-0 pl-0 pr-0"
-            }
+            ${searchActive
+                    ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
+                    : "w-0 opacity-0 pl-0 pr-0"
+                  }
           `}
               />
 

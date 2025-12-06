@@ -168,12 +168,12 @@ export default function ChangePassword() {
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]">
       <div className="bg-linear-to-b from-[#f4b501] to-[#f68700] w-full flex justify-center items-center p-[5px]">
-        <a className="font-semibold uppercase relative top-[1px]">
+        <a className="font-semibold uppercase relative top-px">
           Change Password
         </a>
       </div>
 
-      <div className="w-full flex justify-center items-center mt-[1px] md:mt-18 md:ml-6 mb-10 px-[6px]">
+      <div className="w-full flex justify-center items-center mt-px md:mt-18 md:ml-6 mb-10 px-1.5">
         <div className="mt-4 w-full md:w-[323.75px] p-[22px] px-[17px]">
           {/* Current Password */}
           <div className="mt-2 relative">
@@ -183,7 +183,7 @@ export default function ChangePassword() {
               value={form.currentPassword}
               onChange={handleInput}
               placeholder="Current Password"
-              className="w-full px-6 outline-none h-[51.81px] py-3 rounded-[4px] text-[16px] font-semibold border border-white text-white placeholder-white"
+              className="w-full px-6 outline-none h-[51.81px] py-3 rounded-sm text-[16px] font-semibold border border-white text-white placeholder-white"
             />
             <button
               type="button"
@@ -205,7 +205,7 @@ export default function ChangePassword() {
               value={form.newPassword}
               onChange={handleInput}
               placeholder="New Password"
-              className="w-full px-6 outline-none py-3 h-[51.81px] rounded-[4px] text-[16px] font-semibold border border-white text-white placeholder-white"
+              className="w-full px-6 outline-none py-3 h-[51.81px] rounded-sm text-[16px] font-semibold border border-white text-white placeholder-white"
             />
             <button
               type="button"
@@ -225,7 +225,7 @@ export default function ChangePassword() {
               value={form.confirmNewPassword}
               onChange={handleInput}
               placeholder="Confirm Password"
-              className="w-full px-6 outline-none py-3 h-[51.81px] rounded-[4px] text-[16px] font-semibold border border-white text-white placeholder-white"
+              className="w-full px-6 outline-none py-3 h-[51.81px] rounded-sm text-[16px] font-semibold border border-white text-white placeholder-white"
             />
             <button
               type="button"
@@ -246,7 +246,7 @@ export default function ChangePassword() {
               type="button"
               onClick={changePassword}
               disabled={isLoading}
-              className="bg-linear-to-b from-[#f4b501] to-[#f68700] w-full block my-2 px-[14px] py-[10px] rounded-[4px] text-[17px] font-semibold uppercase tracking-[1px] text-black"
+              className="bg-linear-to-b from-[#f4b501] to-[#f68700] w-full block my-2 px-3.5 py-2.5 rounded-sm text-[17px] font-semibold uppercase tracking-[1px] text-black"
             >
               {isLoading ? "Processing..." : "Change Password"}
             </button>

@@ -169,7 +169,7 @@ export default function AccountStatement() {
             </div>
 
             {/* Submit Button */}
-            <div className="w-full md:w-1/6 px-[5px] md:px-[9px] pr-[9px]">
+            <div className="w-full md:w-[16.5%] px-[5px] md:px-[7px] pr-[9px] relative md:bottom-px">
               <button
                 className="w-full h-[38px] px-[9px] py-1.5 text-base font-normal text-black heading-clr  border border-black rounded cursor-pointer hover:opacity-90"
                 onClick={submitData}
