@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import CustomCalendar from "../../../components/common/custom-calendar";
 import { CONFIG } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
@@ -29,6 +30,7 @@ interface ApiResponse {
 }
 
 export default function ProfitLoss() {
+  const router = useRouter();
   const [statementList, setStatementList] = useState<StatementItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(25);
@@ -73,7 +75,7 @@ export default function ProfitLoss() {
 
     try {
       await fetchData({
-        url: CONFIG.profitLoss, // You'll need to add this endpoint to your CONFIG
+        url: CONFIG.profitLoss,
         payload: payload,
         setFn: setProfitLossData,
       });
@@ -138,9 +140,23 @@ export default function ProfitLoss() {
     return `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`;
   };
 
-  // Calculate total P&L
   const calculateTotalPL = (pl: number, commission: number) => {
     return pl - commission;
+  };
+
+  const handleSportClick = (sportId: string) => {
+    if (!startDate || !endDate) return;
+
+    const formattedStartDate = new Date(startDate);
+    formattedStartDate.setHours(0, 0, 0, 0);
+    
+    const formattedEndDate = new Date(endDate);
+    formattedEndDate.setHours(23, 59, 0, 0);
+
+    const startDateISO = encodeURIComponent(formattedStartDate.toISOString());
+    const endDateISO = encodeURIComponent(formattedEndDate.toISOString());
+
+    router.push(`/profitloss-event/${sportId}/${startDateISO}/${endDateISO}`);
   };
 
   return (
@@ -212,7 +228,10 @@ export default function ProfitLoss() {
                   {profitLossData?.length > 0 ? (
                     profitLossData?.map((statement: any, index: number) => (
                       <tr key={index} className="flex w-full max-h-[43px]">
-                        <td className="w-[309.03px] cursor-pointer px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r border-black/12.5 text-xs md:text-base text-[rgb(13,110,253)] hover:text-[rgb(10,88,202)]">
+                        <td 
+                          className="w-[309.03px] cursor-pointer px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r border-black/12.5 text-xs md:text-base text-[rgb(13,110,253)] hover:text-[rgb(10,88,202)] hover:underline"
+                          onClick={() => handleSportClick(statement.eventType.id)}
+                        >
                           {statement.eventType.name}
                         </td>
 

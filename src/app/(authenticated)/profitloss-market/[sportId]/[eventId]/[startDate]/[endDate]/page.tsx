@@ -1,22 +1,38 @@
 "use client";
 import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { CONFIG } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
 
-interface ProfitLossItem {
+interface EventType {
     id: string;
-    sportName: string;
-    eventName: string;
-    profitLoss: number;
+    name: string;
+}
+
+interface Event {
+    id: string;
+    name: string;
+}
+
+interface MarketItem {
+    eventType: EventType;
+    event: Event;
+    marketId: string;
+    marketName: string;
+    pl: number;
     commission: number;
-    totalPL: number;
-    eventDate?: string;
+    result: string;
+    createdAt: string;
 }
 
 interface ApiResponse {
-    data: ProfitLossItem[];
+    data: MarketItem[];
     total: number;
     currentPage: number;
+    totalPages: number;
+    perPage: number;
+    nextPage: number;
+    prevPage: number;
     meta: {
         message: string;
         status_code: number;
@@ -24,7 +40,14 @@ interface ApiResponse {
     };
 }
 
-export default function ProfitLossEvent() {
+export default function ProfitLossMarket() {
+    const router = useRouter();
+    const params = useParams();
+    const sportId = params?.sportId as string;
+    const eventId = params?.eventId as string;
+    const startDateParam = params?.startDate as string;
+    const endDateParam = params?.endDate as string;
+
     const [currentPage, setCurrentPage] = useState(1);
     const [limit] = useState(25);
     const [totalRecords, setTotalRecords] = useState(0);
@@ -35,72 +58,79 @@ export default function ProfitLossEvent() {
     const startIndex = totalRecords > 0 ? (currentPage - 1) * limit + 1 : 0;
     const endIndex = Math.min(currentPage * limit, totalRecords);
     const [mounted, setMounted] = useState(false);
+    const [profitLossMarketData, setProfitLossMarketData] = useState<MarketItem[]>([]);
 
-    const sampleProfitLossData: ProfitLossItem[] = [
-        { id: "1", sportName: "Cricket", eventName: "IND vs AUS - 1st ODI", profitLoss: 1500.50, commission: 150.05, totalPL: 1350.45 },
-        { id: "2", sportName: "Football", eventName: "Manchester United vs Chelsea", profitLoss: -500.75, commission: 0, totalPL: -500.75 },
-        { id: "3", sportName: "Tennis", eventName: "Wimbledon Final", profitLoss: 2500.00, commission: 250.00, totalPL: 2250.00 },
-        { id: "4", sportName: "Basketball", eventName: "NBA: Lakers vs Celtics", profitLoss: 800.25, commission: 80.03, totalPL: 720.22 },
-        { id: "5", sportName: "Cricket", eventName: "IPL: MI vs CSK", profitLoss: -1200.00, commission: 0, totalPL: -1200.00 },
-        { id: "6", sportName: "Football", eventName: "UEFA Champions League Final", profitLoss: 3000.00, commission: 300.00, totalPL: 2700.00 },
-        { id: "7", sportName: "Cricket", eventName: "PAK vs ENG - Test Match", profitLoss: 1750.80, commission: 175.08, totalPL: 1575.72 },
-        { id: "8", sportName: "Tennis", eventName: "US Open Semi-Final", profitLoss: 950.40, commission: 95.04, totalPL: 855.36 },
-        { id: "9", sportName: "Football", eventName: "La Liga: Barcelona vs Real Madrid", profitLoss: -750.30, commission: 0, totalPL: -750.30 },
-        { id: "10", sportName: "Basketball", eventName: "NBA Finals Game 7", profitLoss: 2200.00, commission: 220.00, totalPL: 1980.00 },
-        { id: "11", sportName: "Cricket", eventName: "T20 World Cup Final", profitLoss: 4200.50, commission: 420.05, totalPL: 3780.45 },
-        { id: "12", sportName: "Football", eventName: "Premier League: Arsenal vs Liverpool", profitLoss: 1250.75, commission: 125.08, totalPL: 1125.67 },
-        { id: "13", sportName: "Tennis", eventName: "Australian Open Quarter Final", profitLoss: -300.25, commission: 0, totalPL: -300.25 },
-        { id: "14", sportName: "Cricket", eventName: "Bangladesh vs Sri Lanka ODI", profitLoss: 680.90, commission: 68.09, totalPL: 612.81 },
-        { id: "15", sportName: "Football", eventName: "Serie A: Juventus vs AC Milan", profitLoss: 1550.00, commission: 155.00, totalPL: 1395.00 },
-    ];
-    // const [profitLossData, setProfitLossData] = useState<ProfitLossItem[]>([]);
-
-    const [profitLossData, setProfitLossData] = useState<ProfitLossItem[]>(sampleProfitLossData);
+    // Parse dates from URL params on component mount
+    useEffect(() => {
+        if (startDateParam && endDateParam) {
+            try {
+                const decodedStartDate = decodeURIComponent(startDateParam);
+                const decodedEndDate = decodeURIComponent(endDateParam);
+                
+                setStartDate(new Date(decodedStartDate));
+                setEndDate(new Date(decodedEndDate));
+            } catch (error) {
+                console.error("Error parsing dates from URL:", error);
+                const today = new Date();
+                const tenDaysAgo = new Date(today);
+                tenDaysAgo.setDate(today.getDate() - 10);
+                setStartDate(tenDaysAgo);
+                setEndDate(today);
+            }
+        } else {
+            const today = new Date();
+            const tenDaysAgo = new Date(today);
+            tenDaysAgo.setDate(today.getDate() - 10);
+            setStartDate(tenDaysAgo);
+            setEndDate(today);
+        }
+    }, [startDateParam, endDateParam]);
 
     useEffect(() => {
-        const today = new Date();
-        const tenDaysAgo = new Date(today);
-        tenDaysAgo.setDate(today.getDate() - 10);
-
-        setStartDate(tenDaysAgo);
-        setEndDate(today);
-    }, []);
-
-    useEffect(() => {
-        if (startDate && endDate) {
-            fetchProfitLossData();
+        if (startDate && endDate && eventId) {
+            fetchProfitLossMarketData();
             setMounted(true);
         }
-    }, [startDate, endDate]);
+    }, [startDate, endDate, eventId]);
 
-    const fetchProfitLossData = async () => {
-        if (!startDate || !endDate) {
+    // Pagination fetch
+    useEffect(() => {
+        if (startDate && endDate && eventId && mounted) {
+            fetchProfitLossMarketData();
+        }
+    }, [currentPage]);
+
+    const fetchProfitLossMarketData = async () => {
+        if (!startDate || !endDate || !eventId) {
             return;
         }
 
         const payload = {
             page: currentPage,
             limit: limit,
-            startDate: startDate.toISOString(),
-            endDate: endDate.toISOString(),
+            eventId: eventId,
             key: CONFIG.siteKey,
         };
 
+        console.log("Fetching with payload:", payload);
+
         try {
-            await fetchData({
-                url: CONFIG.profitLoss, // You need to add this to your CONFIG
+            const result = await fetchData({
+                url: CONFIG.profitLossMarket,
                 payload: payload,
-                setFn: setProfitLossData,
+                setFn: (data: any) => {
+                    console.log("Received data:", data);
+                    if (data && data.data) {
+                        setProfitLossMarketData(data.data);
+                        setTotalRecords(data.total || 0);
+                    } else if (Array.isArray(data)) {
+                        setProfitLossMarketData(data);
+                        setTotalRecords(data.length);
+                    }
+                },
             });
         } catch (error) {
-            console.error("Error fetching profit/loss data:", error);
-        }
-    };
-
-    const submitData = () => {
-        setCurrentPage(1);
-        if (startDate && endDate) {
-            fetchProfitLossData();
+            console.error("Error fetching profit/loss market data:", error);
         }
     };
 
@@ -109,13 +139,6 @@ export default function ProfitLossEvent() {
             setCurrentPage(1);
         }
     };
-
-    // Pagination fetch
-    useEffect(() => {
-        if (startDate && endDate) {
-            fetchProfitLossData();
-        }
-    }, [currentPage]);
 
     const goToPrevious = () => {
         if (currentPage > 1) {
@@ -142,11 +165,41 @@ export default function ProfitLossEvent() {
         }
     };
 
+    // Calculate total P&L
+    const calculateTotalPL = (pl: number, commission: number) => {
+        return pl - commission;
+    };
+
+    // Handle market name click - navigate to userBetHistory with sportId and marketId
+    const handleMarketClick = (marketId: string) => {
+        if (!sportId) return;
+
+        // Navigate to userBetHistory/sportId/marketId
+        router.push(`/userBetHistory/${sportId}/${marketId}`);
+    };
+
     const formatCurrency = (amount: number): string => {
         return new Intl.NumberFormat('en-IN', {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
         }).format(amount);
+    };
+
+    const formatDateTime = (dateStr: string): string => {
+        try {
+            const date = new Date(dateStr);
+            return date.toLocaleString('en-IN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+        } catch (error) {
+            return dateStr;
+        }
     };
 
     const getProfitLossClass = (amount: number): string => {
@@ -161,7 +214,7 @@ export default function ProfitLossEvent() {
                 {/* Card Header */}
                 <div className="px-4 py-1 md:py-0 h-[37.8px] md:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5 flex items-center">
                     <h4 className="mb-0 text-[16.5px] md:text-[24px] text-white! md:text-[24px]">
-                        Profit Loss Event
+                        Profit Loss Markets
                     </h4>
                 </div>
 
@@ -179,6 +232,12 @@ export default function ProfitLossEvent() {
                                             Event Name
                                         </th>
                                         <th className="py-0.5 px-[6px] whitespace-nowrap md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
+                                            Market Name
+                                        </th>
+                                        <th className="py-0.5 px-[6px] whitespace-nowrap md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
+                                            Result
+                                        </th>
+                                        <th className="py-0.5 px-[6px] whitespace-nowrap md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
                                             Profit/Loss
                                         </th>
                                         <th className="py-0.5 px-[6px] whitespace-nowrap md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
@@ -187,22 +246,36 @@ export default function ProfitLossEvent() {
                                         <th className="py-0.5 px-[6px] whitespace-nowrap md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
                                             Total P&L
                                         </th>
+                                        <th className="py-0.5 px-[6px] whitespace-nowrap md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
+                                            Settle Time
+                                        </th>
                                     </tr>
                                 </thead>
 
                                 <tbody>
-                                    {profitLossData && profitLossData.length > 0 ? (
-                                        profitLossData.map((item, index) => (
-                                            <tr key={item.id || index}>
+                                    {profitLossMarketData && profitLossMarketData.length > 0 ? (
+                                        profitLossMarketData.map((item, index) => (
+                                            <tr key={item.marketId || index}>
                                                 <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 md:text-base whitespace-nowrap">
-                                                    {item.sportName || "N/A"}
-                                                </td>
-                                                <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-[#0D6EFD] border-black/12.5 md:text-base whitespace-nowrap">
-                                                    {item.eventName || "N/A"}
+                                                    {item.eventType?.name || "N/A"}
                                                 </td>
                                                 <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 md:text-base whitespace-nowrap">
-                                                    <span className={getProfitLossClass(item.profitLoss)}>
-                                                        {formatCurrency(item.profitLoss)}
+                                                    {item.event?.name || "N/A"}
+                                                </td>
+                                                <td 
+                                                    className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-[#0D6EFD] border-black/12.5 md:text-base whitespace-nowrap cursor-pointer hover:underline"
+                                                    onClick={() => item.marketId && handleMarketClick(item.marketId)}
+                                                >
+                                                    {item.marketName || "N/A"}
+                                                </td>
+                                                <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 md:text-base whitespace-nowrap">
+                                                    <span>
+                                                        {item.result || "N/A"}
+                                                    </span>
+                                                </td>
+                                                <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 md:text-base whitespace-nowrap">
+                                                    <span className={getProfitLossClass(item.pl)}>
+                                                        {formatCurrency(item.pl)}
                                                     </span>
                                                 </td>
                                                 <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 md:text-base whitespace-nowrap">
@@ -211,16 +284,19 @@ export default function ProfitLossEvent() {
                                                     </span>
                                                 </td>
                                                 <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 md:text-base whitespace-nowrap">
-                                                    <span className={getProfitLossClass(item.totalPL)}>
-                                                        {formatCurrency(item.totalPL)}
+                                                    <span className={getProfitLossClass(calculateTotalPL(item.pl, item.commission))}>
+                                                        {formatCurrency(calculateTotalPL(item.pl, item.commission))}
                                                     </span>
+                                                </td>
+                                                <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 md:text-base whitespace-nowrap">
+                                                    {item.createdAt ? formatDateTime(item.createdAt) : "N/A"}
                                                 </td>
                                             </tr>
                                         ))
                                     ) : (
                                         <tr>
                                             <td
-                                                colSpan={5}
+                                                colSpan={8}
                                                 className="px-2 py-1.5 md:px-3 md:py-[9px] text-center border text-black border-black/12.5 bg-transparent text-xs md:text-base"
                                             >
                                                 No data available in table
@@ -260,14 +336,14 @@ export default function ProfitLossEvent() {
                         </span>
 
                         <button
-                            className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer `}
+                            className="px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer"
                             onClick={goToNext}
                             disabled={currentPage === totalPages}
                         >
                             Next
                         </button>
                         <button
-                            className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer `}
+                            className="px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer"
                             onClick={goToLast}
                             disabled={currentPage === totalPages}
                         >
@@ -312,14 +388,14 @@ export default function ProfitLossEvent() {
                             </span>
 
                             <button
-                                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer`}
+                                className="px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer"
                                 onClick={goToNext}
                                 disabled={currentPage === totalPages}
                             >
                                 Next
                             </button>
                             <button
-                                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer `}
+                                className="px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer"
                                 onClick={goToLast}
                                 disabled={currentPage === totalPages}
                             >
