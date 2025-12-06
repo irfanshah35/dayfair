@@ -270,15 +270,15 @@ const Header = () => {
                 {/* BALANCE */}
                 <div className="">
                   <span className="text-white">
-                    (BAL : <b className="userTotalBalance">827.13</b>)
+                    (BAL : <b className="userTotalBalance">{userBalance?.bankBalance?.toFixed(2) || " 0.00"}</b>)
                   </span>
                 </div>
 
                 {/* EXPOSURE */}
-                <div className="">
+                <div className="" onClick={() => setExposureOpen(!isexposureopen)}>
                   <span className="text-white">
                     <button className="underline-offset-2">
-                      (EXP : <b className="userTotalExposure">0.00</b>)
+                      (EXP : <b className="userTotalExposure">{userBalance?.exposure?.toFixed(2) || "0.00"}</b>)
                     </button>
                   </span>
                 </div>
@@ -291,7 +291,7 @@ const Header = () => {
                   </span>
                   <b>
                     <span className="userTotalBalance relative left-[3px]">
-                      {userBalance?.bankBalance || " 0.00"}
+                      {userBalance?.bankBalance?.toFixed(2) || " 0.00"}
                     </span>
                   </b>
                 </div>
@@ -306,7 +306,7 @@ const Header = () => {
                     </span>
                     <b>
                       <span className="">
-                        {userBalance?.exposure || "0.00"}
+                        {userBalance?.exposure?.toFixed(2) || "0.00"}
                         {/* {userExposure?.toFixed(2) ?? "0.00"} */}
                       </span>
                     </b>

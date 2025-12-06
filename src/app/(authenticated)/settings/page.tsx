@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { CONFIG, BASE_URL } from "@/lib/config";
 import { useToast } from "@/components/common/toast/toast-context";
 import { useRouter } from "next/navigation";
-
+import { fetchData } from "@/lib/functions";
 
 interface StakeItem {
   stakeName: string;
@@ -20,8 +20,7 @@ export default function Settings() {
   const { showToast } = useToast();
   const { stakeValue, setStakeValue } = useAppStore();
   const [stakeitems, setStakeItems] = useState<StakeData | null>(null);
-  const router = useRouter()
-
+  const router = useRouter();
 
   useEffect(() => {
     console.log(stakeValue, "hello");
@@ -36,12 +35,12 @@ export default function Settings() {
     const updatedStakes = [...stakeitems.stake];
     updatedStakes[index] = {
       ...updatedStakes[index],
-      stakeAmount: newValue
+      stakeAmount: newValue,
     };
 
     setStakeItems({
       ...stakeitems,
-      stake: updatedStakes
+      stake: updatedStakes,
     });
   };
 
@@ -49,56 +48,48 @@ export default function Settings() {
     if (!stakeitems) return;
 
     try {
-      const token = localStorage.getItem("token");
-      const fullURL = `${BASE_URL}${CONFIG.userUpdateStackValueURL}`;
       const payloadObject: any = {};
 
       stakeitems.stake.forEach((item) => {
-        console.log("first", item)
+        console.log("first", item);
         payloadObject[item.stakeAmount] = item.stakeAmount.toString();
       });
-      console.log("stake payload ", payloadObject)
       const stakeString = JSON.stringify(payloadObject);
 
       console.log("Sending Payload:", stakeString);
 
-      const response = await fetch(fullURL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          stake: stakeString,
-        }),
+      fetchData({
+        url: CONFIG.userUpdateStackValueURL,
+        payload: JSON.stringify({ stake: stakeString }),
+        showToast: showToast,
       });
 
-      const data = await response.json();
+      fetchData({
+        url: CONFIG.getUserBetStake,
+        payload: { key: CONFIG.siteKey },
+        cachedKey: "betStake",
+        setFn: setStakeValue,
+        expireIn: CONFIG.getUserBetStakeTime,
+        forceApiCall: true,
+      });
 
-      if (response.ok && !data.error && data?.meta?.status !== false) {
-        setStakeValue(stakeitems);
-        showToast("success", "Success", "Stake Updated Successfully!");
-        router.push('/')
-      } else {
-        showToast(
-          "error",
-          "Error",
-          data?.meta?.message || data?.message || "Failed to update stake"
-        );
-      }
+      router.push("/");
     } catch (error) {
       console.error("Error updating stake:", error);
       showToast("error", "Network Error", "Unable to update stake");
     }
   };
 
-
   return (
     <div className="md:mx-[5px] md:my-[6px]">
       <div className="bg-white shadow rounded ">
-        <div className="bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]
-                        text-white h-[33px] flex items-center px-3.5 rounded-t">
-          <h4 className="text-[20px] font-bold font-roboto bottom-0.5">Update Stake</h4>
+        <div
+          className="bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]
+                        text-white h-[33px] flex items-center px-3.5 rounded-t"
+        >
+          <h4 className="text-[20px] font-bold font-roboto bottom-0.5">
+            Update Stake
+          </h4>
         </div>
         <div className="px-1 py-4">
           <div className="mb-[9px] pl-1">

@@ -21,19 +21,25 @@ export async function fetchData({
   payload,
   setFn,
   showToast,
-  expireIn = 60 * 5, // default 5 minutes (in seconds)
+  expireIn = 60 * 5, // default 5 minutes (in seconds),
+  forceApiCall,
 }: {
   cachedKey?: string | null | undefined;
   url: string;
   payload: any;
   setFn?: (value: any) => void;
-  showToast?: (status: "error" | "info" | "success" | "warning", title: string, desc: string) => void;
+  showToast?: (
+    status: "error" | "info" | "success" | "warning",
+    title: string,
+    desc: string
+  ) => void;
   expireIn?: number; // cache expiry in seconds
+  forceApiCall?: boolean;
 }) {
   if (cachedKey) {
     const cached = await getData(cachedKey);
 
-    if (cached) {
+    if (!forceApiCall&&cached) {
       const now = Date.now();
       const diff = (now - cached.timestamp) / 1000; // seconds
 
@@ -55,9 +61,15 @@ export async function fetchData({
     setFn && setFn(apiData);
 
     // SHOW TOAST
+
     if (showToast) {
-      if (typeof response.meta.message === "string") {
-        const msg = splitMsg(response.meta.message);
+      if (
+        typeof response?.meta?.message === "string" ||
+        typeof response?.data?.meta?.message === "string"
+      ) {
+        const msg = splitMsg(
+          response?.meta?.message || response?.data?.meta?.message
+        );
         showToast(msg.status, msg.title, msg.desc);
       } else {
         showToast("success", "Successfully", response?.meta?.message);
@@ -234,4 +246,3 @@ export function formatDateStamp(isoString: string) {
 
   return `${day}/${month}/${year} ${time}`;
 }
-
