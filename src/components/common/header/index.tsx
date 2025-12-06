@@ -150,6 +150,7 @@ const Header = () => {
       ) {
         setSearchActive(false);
         setMobileQuery("");
+        setQuery("");
       }
     }
 
@@ -210,7 +211,19 @@ const Header = () => {
     if (typeof data === "object") return Object.values(data).flat();
     return [];
   };
-  
+
+  const isToday = (dateStr: string) => {
+    if (!dateStr) return false;
+    const d = new Date(dateStr);
+    const today = new Date();
+
+    return (
+      d.getFullYear() === today.getFullYear() &&
+      d.getMonth() === today.getMonth() &&
+      d.getDate() === today.getDate()
+    );
+  };
+
   // Desktop filtering
   useEffect(() => {
     const src = normalizeData(allEventsList);
@@ -226,10 +239,12 @@ const Header = () => {
       return;
     }
 
-    const filtered = src.filter((it) => mkText(it).includes(q));
-
-    console.log(filtered)
-
+    // Filtering: search + only today's events
+    const filtered = src.filter((it) => {
+      const textMatch = mkText(it).includes(q);
+      const todayMatch = isToday(it?.marketStartTime);
+      return textMatch && todayMatch;
+    });
     setResults(filtered);
   }, [query, allEventsList]);
 
@@ -248,22 +263,24 @@ const Header = () => {
       return;
     }
 
-    const filtered = src.filter((it) => mkText(it).includes(q));
-
-    console.log(filtered)
+    const filtered = src.filter((it) => {
+      const textMatch = mkText(it).includes(q);
+      const todayMatch = isToday(it?.marketStartTime);
+      return textMatch && todayMatch;
+    });
 
     setMobileResults(filtered);
   }, [mobileQuery, allEventsList]);
 
   const handleSelect = (match: any) => {
-    setQuery('')
-    router.push(`/market-details/${match?.event?.id}/${match?.eventType?.id}`)
+    setQuery("");
+    router.push(`/market-details/${match?.event?.id}/${match?.eventType?.id}`);
     setOpen(false);
   };
 
   const handleMobileSelect = (match: any) => {
-    setMobileQuery('')
-    router.push(`/market-details/${match?.event?.id}/${match?.eventType?.id}`)
+    setMobileQuery("");
+    router.push(`/market-details/${match?.event?.id}/${match?.eventType?.id}`);
     setSearchActive(false);
   };
 
@@ -274,6 +291,7 @@ const Header = () => {
         !wrapperRef.current.contains(event.target as Node)
       ) {
         setFilteredMatches([]);
+        setQuery("");
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -346,14 +364,18 @@ const Header = () => {
                               <div className="font-bold pb-1.5 max-w-[232.5px] w-full">
                                 {match?.eventType?.name} | {match?.marketType}
                               </div>
-                              <div className="">{formatDateStamp(match?.marketStartTime)}</div>
+                              <div className="">
+                                {formatDateStamp(match?.marketStartTime)}
+                              </div>
                             </div>
                             <div className="">{match?.event?.name}</div>
                           </div>
                         </li>
                       ))
                     ) : (
-                      <li className="text-black cursor-pointer py-[5px] mb-[5px]">No real-time records found</li>
+                      <li className="text-black cursor-pointer py-[5px] mb-[5px]">
+                        No real-time records found
+                      </li>
                     )}
                   </ul>
                 )}
@@ -431,10 +453,11 @@ const Header = () => {
             <div className="flex-1 md:hidden"></div>
             <div
               className={`md:pe-3 md:p-[3px] md:flex-[0_0_auto]
-              ${!isLoggedIn
+              ${
+                !isLoggedIn
                   ? "flex md:flex absolute right-[5px] md:relative md:right-0"
                   : "hidden md:flex"
-                }`}
+              }`}
             >
               <button
                 onClick={goToLogin}
@@ -474,10 +497,11 @@ const Header = () => {
                 className={`
             bg-transparent text-black border-0 outline-0 h-[25px]
             transition-all duration-500 ease-linear text-[12px]  
-            ${searchActive
-                    ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
-                    : "w-0 opacity-0 pl-0 pr-0"
-                  }
+            ${
+              searchActive
+                ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
+                : "w-0 opacity-0 pl-0 pr-0"
+            }
           `}
               />
 
@@ -505,22 +529,24 @@ const Header = () => {
                       className="hover:bg-gray-100 text-black cursor-pointer border-b border-[#ccc] px-2 py-1.5"
                     >
                       <div className="flex flex-col text-[12px] leading-[14px]">
-                       <div className="flex justify-between items-center w-full">
-  <div className="font-bold pb-1">
-    {match?.eventType?.name} | {match?.marketType}
-  </div>
+                        <div className="flex justify-between items-center w-full">
+                          <div className="font-bold pb-1">
+                            {match?.eventType?.name} | {match?.marketType}
+                          </div>
 
-  <div className="text-[12px] pb-0.5">
-    {formatDateStamp(match?.marketStartTime)}
-  </div>
-</div>
+                          <div className="text-[12px] pb-0.5">
+                            {formatDateStamp(match?.marketStartTime)}
+                          </div>
+                        </div>
 
                         <div className="">{match?.event?.name}</div>
                       </div>
                     </li>
                   ))
                 ) : (
-                  <li className="text-black px-2 py-1.5 text-[11px]">No real-time records found</li>
+                  <li className="text-black px-2 py-1.5 text-[11px]">
+                    No real-time records found
+                  </li>
                 )}
               </ul>
             )}
