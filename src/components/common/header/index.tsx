@@ -81,6 +81,8 @@ const Header = () => {
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLLIElement | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const mobileInputRef = React.useRef<HTMLInputElement>(null);
+  const mobileSearchRef = useRef<HTMLDivElement | null>(null);
   const [isrulesopen, setRulesOpen] = useState(false);
   const [isaccountopen, setAccountOpen] = useState(false);
   const router = useRouter();
@@ -88,9 +90,11 @@ const Header = () => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [isexposureopen, setExposureOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [mobileQuery, setMobileQuery] = useState("");
   const [filteredMatches, setFilteredMatches] = useState<Match[]>([]);
   const { allEventsList } = useAppStore();
   const [results, setResults] = useState<any[]>([]);
+  const [mobileResults, setMobileResults] = useState<any[]>([]);
 
   const goToLogin = () => {
     if (!isLoggedIn) {
@@ -105,12 +109,20 @@ const Header = () => {
   };
 
   React.useEffect(() => {
-    if (searchActive && inputRef.current) {
+    if (searchActive && mobileInputRef.current) {
+      setTimeout(() => {
+        mobileInputRef.current?.focus();
+      }, 100);
+    }
+  }, [searchActive]);
+
+  React.useEffect(() => {
+    if (open && inputRef.current) {
       setTimeout(() => {
         inputRef.current?.focus();
       }, 100);
     }
-  }, [searchActive]);
+  }, [open]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -121,6 +133,23 @@ const Header = () => {
         !wrapperRef.current.contains(target)
       ) {
         setOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      const target = e.target as Node | null;
+      if (
+        mobileSearchRef.current &&
+        target &&
+        !mobileSearchRef.current.contains(target)
+      ) {
+        setSearchActive(false);
+        setMobileQuery("");
       }
     }
 
@@ -155,6 +184,10 @@ const Header = () => {
     setQuery(e.target.value);
   };
 
+  const handleMobileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMobileQuery(e.target.value);
+  };
+
   const mkText = (it: any) => {
     const parts: string[] = [
       it?.event?.name,
@@ -177,24 +210,22 @@ const Header = () => {
     if (typeof data === "object") return Object.values(data).flat();
     return [];
   };
-  // filtering
+  
+  // Desktop filtering
   useEffect(() => {
     const src = normalizeData(allEventsList);
     const q = query.trim().toLowerCase();
 
-    // Agar query empty ho to full list dikhao
     if (!q) {
       setResults([]);
       return;
     }
 
-    // Agar query ki length 3 se kam hai to kuch mat karo, bas empty results (ya full list) dikhao
     if (q.length < 3) {
-      setResults([]); // ya [] agar blank dikhana ho
+      setResults([]);
       return;
     }
 
-    // Query length ≥ 3 → filter chalao
     const filtered = src.filter((it) => mkText(it).includes(q));
 
     console.log(filtered)
@@ -202,10 +233,38 @@ const Header = () => {
     setResults(filtered);
   }, [query, allEventsList]);
 
+  // Mobile filtering
+  useEffect(() => {
+    const src = normalizeData(allEventsList);
+    const q = mobileQuery.trim().toLowerCase();
+
+    if (!q) {
+      setMobileResults([]);
+      return;
+    }
+
+    if (q.length < 3) {
+      setMobileResults([]);
+      return;
+    }
+
+    const filtered = src.filter((it) => mkText(it).includes(q));
+
+    console.log(filtered)
+
+    setMobileResults(filtered);
+  }, [mobileQuery, allEventsList]);
+
   const handleSelect = (match: any) => {
     setQuery('')
     router.push(`/market-details/${match?.event?.id}/${match?.eventType?.id}`)
     setOpen(false);
+  };
+
+  const handleMobileSelect = (match: any) => {
+    setMobileQuery('')
+    router.push(`/market-details/${match?.event?.id}/${match?.eventType?.id}`)
+    setSearchActive(false);
   };
 
   useEffect(() => {
@@ -257,6 +316,7 @@ const Header = () => {
                   placeholder="All Events"
                   value={query}
                   onChange={handleInputChange}
+                  ref={inputRef}
                   className={`
           h-[38px] relative left-2 top-px border-0 p-0 outline-0 placeholder:text-black
           bg-[linear-gradient(180deg,#fff_0%,#fff_100%)] text-black
@@ -272,7 +332,7 @@ const Header = () => {
                 />
 
                 {/* Dropdown */}
-                {open&&query && (
+                {open && query && (
                   <ul className="absolute top-8.5 text-black left-2 right-0 bg-white border border-gray-300  mt-1  overflow-y-auto z-10 shadow-[1px_0_10px_#000] w-[500px] max-h-[450px] px-2.5 py-2.5">
                     {results?.length > 0 ? (
                       results?.map((match, index) => (
@@ -286,7 +346,6 @@ const Header = () => {
                               <div className="font-bold pb-1.5 max-w-[232.5px] w-full">
                                 {match?.eventType?.name} | {match?.marketType}
                               </div>
-                              {/* <div className="">{match.name}</div> */}
                               <div className="">{formatDateStamp(match?.marketStartTime)}</div>
                             </div>
                             <div className="">{match?.event?.name}</div>
@@ -361,7 +420,6 @@ const Header = () => {
                     <b>
                       <span className="">
                         {userBalance?.exposure?.toFixed(2) || "0.00"}
-                        {/* {userExposure?.toFixed(2) ?? "0.00"} */}
                       </span>
                     </b>
                   </button>
@@ -387,7 +445,6 @@ const Header = () => {
                 }}
                 tabIndex={0}
               >
-                {/* { isLoggedIn ? `Balance: $${userBalance.toFixed(2)}` : "Login" } */}
                 {isLoggedIn ? `ACCOUNT` : "LOGIN"}
               </button>
             </div>
@@ -395,9 +452,9 @@ const Header = () => {
         </div>
       </div>
 
-      <div className="relative flex min-h-[35px]  ml-1 pb-2 md:hidden">
+      <div className="relative flex min-h-[35px] ml-1 pb-2 md:hidden">
         {/* LEFT SIDE (50%) */}
-        <div className="relative ">
+        <div className="relative" ref={mobileSearchRef}>
           <div className="absolute left-0 top-[5px] z-10 w-[184px]">
             <div
               className={`
@@ -408,10 +465,12 @@ const Header = () => {
             >
               {/* SEARCH INPUT */}
               <input
-                ref={inputRef}
+                ref={mobileInputRef}
                 id="searchEventmobile"
                 type="text"
                 autoComplete="off"
+                value={mobileQuery}
+                onChange={handleMobileInputChange}
                 className={`
             bg-transparent text-black border-0 outline-0 h-[25px]
             transition-all duration-500 ease-linear text-[12px]  
@@ -434,6 +493,37 @@ const Header = () => {
                 )}
               </button>
             </div>
+
+            {/* Mobile Dropdown */}
+            {searchActive && mobileQuery && (
+              <ul className="absolute top-[30px] max-h-[190px] left-0 w-[150%] bg-white border border-gray-300 mt-1  overflow-y-auto z-[9999] shadow-[1px_0_10px_#000]">
+                {mobileResults?.length > 0 ? (
+                  mobileResults?.map((match, index) => (
+                    <li
+                      key={index}
+                      onClick={() => handleMobileSelect(match)}
+                      className="hover:bg-gray-100 text-black cursor-pointer border-b border-[#ccc] px-2 py-1.5"
+                    >
+                      <div className="flex flex-col text-[12px] leading-[14px]">
+                       <div className="flex justify-between items-center w-full">
+  <div className="font-bold pb-1">
+    {match?.eventType?.name} | {match?.marketType}
+  </div>
+
+  <div className="text-[12px] pb-0.5">
+    {formatDateStamp(match?.marketStartTime)}
+  </div>
+</div>
+
+                        <div className="">{match?.event?.name}</div>
+                      </div>
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-black px-2 py-1.5 text-[11px]">No real-time records found</li>
+                )}
+              </ul>
+            )}
           </div>
           <div className="flex-[0_0_50%] max-w-[50%] text-left"></div>
         </div>
