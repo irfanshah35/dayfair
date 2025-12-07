@@ -669,6 +669,7 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
             <DBetSlip
               visible={!!betSlipData}
               odds={betSlipData?.odds}
+              marketId={betSlipData?.marketId} 
               selectionId={betSlipData?.selectionId}
               runnerName={betSlipData?.runnerName}
               minStake={betSlipData?.min}
