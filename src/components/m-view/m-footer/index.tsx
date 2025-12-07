@@ -2,8 +2,10 @@
 const MFooter = () => {
   return (
     <footer className="w-full bg-transparent">
-      <div className="w-full bg-black text-white px-2.5 py-1.5">
-        <p className="max-md:text-[12px] text-base text-center">
+      <div className="w-full h-[32px] md:h-[38px] bg-black text-white px-2.5 py-1.5"
+      style={{ fontFamily: "var(--font-roboto)" }}>
+        <p className="max-md:text-[12px] text-base text-center"
+        >
           © Copyright 2024. All Rights Reserved. Powered by EXCHANGE
         </p>
       </div>

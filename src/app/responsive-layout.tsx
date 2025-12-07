@@ -135,7 +135,9 @@ export default function ResponsiveLayout({
               className={`${hideMenuAndSports ? "h-[100px]" : "h-[142px]"}`}
             ></div>
             {children}
+            <div className="fixed bottom-0 left-0 w-full z-50 bg-white shadow">
             <MFooter />
+          </div>
           </div>
         </div>
       ) : (
