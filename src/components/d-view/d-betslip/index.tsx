@@ -1,11 +1,9 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-/* eslint-disable react-hooks/set-state-in-effect */
-"use client";
 import React, { useState, useEffect } from "react";
 import { FaAngleUp, FaAngleDown, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useParams } from "next/navigation";
 import { CONFIG } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
+import { useToast } from "@/components/common/toast/toast-context";
 
 interface DBetSlipProps {
   visible?: boolean;
@@ -13,6 +11,9 @@ interface DBetSlipProps {
   odds?: number;
   marketId?: string;
   selectionId?: number;
+  eventId?: string;
+  sportId?: string;
+  marketType?: string;
   runnerName?: string;
   minStake?: number;
   maxStake?: number;
@@ -26,14 +27,20 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
   odds = 2.26,
   marketId = "",
   selectionId = 0,
+  eventId: propEventId = "",
+  sportId: propSportId = "",
+  marketType = "MATCH_ODDS",
   runnerName = "West Indies",
   minStake = 1,
   maxStake = 99999999,
   onClose,
   onPlaced,
 }) => {
+  const { showToast } = useToast();
   const [isPlaceBetOpen, setIsPlaceBetOpen] = useState<boolean>(true);
+  const [priceInput, setPriceInput] = useState<string>("");
   const [stakeAmount, setStakeAmount] = useState<string>("");
+  const [placing, setPlacing] = useState(false);
   const [matchedBets, setMatchedBets] = useState<any[]>([]);
   const [unmatchedBets, setUnmatchedBets] = useState<any[]>([]);
   const [showMatched, setShowMatched] = useState<boolean>(true);
@@ -41,8 +48,8 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
   const [expandedBets, setExpandedBets] = useState<Set<string>>(new Set());
 
   const params = useParams();
-  const eventId = (params as any)?.eventId;
-  const sportId = (params as any)?.sportId;
+  const eventId = propEventId || (params as any)?.eventId || "";
+  const sportId = propSportId || (params as any)?.sportId || "";
 
   const gradient = "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)";
 
@@ -50,42 +57,152 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
     1000, 5000, 10000, 25000, 50000, 100000, 200000, 500000,
   ];
 
+  const lowerUpperArry = [{
+    increment: 0.01,
+    lowerBound: 1.01,
+    upperBound: 2
+  }, {
+    increment: 0.02,
+    lowerBound: 2,
+    upperBound: 3
+  }, {
+    increment: 0.05,
+    lowerBound: 3,
+    upperBound: 4
+  }, {
+    increment: 0.1,
+    lowerBound: 4,
+    upperBound: 6
+  }, {
+    increment: 0.2,
+    lowerBound: 6,
+    upperBound: 10
+  }, {
+    increment: 0.5,
+    lowerBound: 10,
+    upperBound: 20
+  }, {
+    increment: 1,
+    lowerBound: 20,
+    upperBound: 30
+  }, {
+    increment: 2,
+    lowerBound: 30,
+    upperBound: 50
+  }, {
+    increment: 5,
+    lowerBound: 50,
+    upperBound: 100
+  }, {
+    increment: 10,
+    lowerBound: 100,
+    upperBound: 1000
+  }];
+
+  // Seed price when opened / odds change
+  useEffect(() => {
+    if (visible) {
+      setPriceInput(odds != null ? String(Number(odds).toFixed(2)) : "");
+    }
+  }, [visible, odds]);
+
   useEffect(() => {
     if (visible) {
       setIsPlaceBetOpen(true);
     }
   }, [visible]);
 
+  const fetchBets = async () => {
+    if (!eventId || !sportId) return;
+
+    await fetchData({
+      url: CONFIG.unmatchedBets,
+      payload: {
+        eventId: String(eventId),
+        sportId: String(sportId),
+      },
+      setFn: (res: any) => {
+        console.log("Bets response:", res);
+
+        const matched = res?.matchedBets || [];
+        const unmatched = res?.unmatchedBets || [];
+
+
+        setMatchedBets(matched);
+        setUnmatchedBets(unmatched);
+      },
+    });
+  };
+
   useEffect(() => {
-    const fetchBets = async () => {
-      if (!eventId || !sportId) return;
-
-      await fetchData({
-        url: CONFIG.unmatchedBets,
-        payload: {
-          eventId: String(eventId),
-          sportId: String(sportId),
-        },
-        setFn: (res: any) => {
-          console.log("Bets response:", res);
-
-          // FIX: API RETURNS matchedBets AT ROOT, NOT UNDER res.data
-          const matched = res?.matchedBets || [];
-          const unmatched = res?.unmatchedBets || [];
-
-          console.log("Setting Matched:", matched.length, "Unmatched:", unmatched.length);
-
-          setMatchedBets(matched);
-          setUnmatchedBets(unmatched);
-        },
-      });
-    };
-
     fetchBets();
   }, [eventId, sportId]);
 
+  // Determine side (BACK or LAY)
+  const side: "BACK" | "LAY" = React.useMemo(() => {
+    if (backLayClsModal === "slip-back") return "BACK";
+    if (backLayClsModal === "slip-lay") return "LAY";
+    if (backLayClsModal === "slip-Line-Yes") return "BACK";
+    return "LAY";
+  }, [backLayClsModal]);
+
+  const incPrice = () => {
+    if (marketType === 'FANCY' || marketType === 'BOOKMAKER') {
+      return;
+    }
+
+    const c = parseFloat(priceInput);
+    if (!c) return;
+
+    let increment = 0;
+
+    if (c >= lowerUpperArry[9].upperBound) {
+      increment = lowerUpperArry[9].increment;
+    }
+
+    for (let b = 0; b < lowerUpperArry.length; b++) {
+      if ((c >= lowerUpperArry[b].lowerBound) && (c < lowerUpperArry[b].upperBound)) {
+        increment = lowerUpperArry[b].increment;
+      }
+    }
+
+    const newVal = c + increment;
+    setPriceInput(newVal.toFixed(2));
+  };
+
+  const decPrice = () => {
+    if (marketType === 'FANCY' || marketType === 'BOOKMAKER') {
+      return;
+    }
+
+    const c = parseFloat(priceInput);
+    if (!c) return;
+
+    let increment: any;
+
+    if (c >= lowerUpperArry[9].upperBound) {
+      increment = lowerUpperArry[9].increment;
+    }
+
+    for (let b = 0; b < lowerUpperArry.length; b++) {
+      if ((c > lowerUpperArry[b].lowerBound) && (c <= lowerUpperArry[b].upperBound)) {
+        increment = lowerUpperArry[b].increment;
+      }
+    }
+
+    if (c <= 1.01) {
+      setPriceInput(priceInput);
+    } else {
+      const newVal = c - increment;
+      setPriceInput(newVal.toFixed(2));
+    }
+  };
+
   const handleStakeClick = (amount: number) => {
     setStakeAmount(amount.toString());
+    if (!priceInput) {
+      setPriceInput(odds != null ? String(Number(odds).toFixed(2)) : "");
+    }
   };
 
   const toggleBetExpansion = (betId: string) => {
@@ -110,21 +227,108 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
 
   const handleCancel = () => {
     setStakeAmount("");
+    setPriceInput("");
     setIsPlaceBetOpen(false);
     onClose?.();
   };
 
   const handleClose = () => {
     setStakeAmount("");
+    setPriceInput("");
     setIsPlaceBetOpen(false);
     onClose?.();
   };
 
-  const handlePlaceBet = () => {
-    if (!stakeAmount) return;
-    onPlaced?.();
-    setStakeAmount("");
-    setIsPlaceBetOpen(false);
+  // Build payload exactly like the previous project
+  const buildPayload = () => {
+    console.log("Building payload with:", { marketId, selectionId, eventId, sportId, marketType });
+    return {
+      marketId,
+      selectionId,
+      stake: Number((parseFloat(stakeAmount) || 0).toFixed(2)),
+      price: Number((parseFloat(priceInput) || 0).toFixed(2)),
+      eventId,
+      side,
+      matchMe: false,
+      type: marketType || "MATCH_ODDS",
+    };
+  };
+
+  const afterPlaceRefresh = async () => {
+    try {
+      await fetchData({
+        url: CONFIG.getAllMarketplURL,
+        payload: { eventId },
+        setFn: () => {}
+      });
+      // Refresh balance if needed - you can add balance refresh logic here
+    } catch {
+      /* silent */
+    }
+  };
+
+  const handlePlaceBet = async () => {
+    const s = parseFloat(stakeAmount) || 0;
+    const p = parseFloat(priceInput) || 0;
+    
+    if (s < minStake || s > maxStake) {
+      return;
+    }
+    if (p <= 1) {
+      return;
+    }
+
+    try {
+      setPlacing(true);
+      const payload = buildPayload();
+      
+      // Use fetchData for consistency with your existing code
+      await fetchData({
+        url: CONFIG.placeBetURL,
+        payload: payload,
+        setFn: async (res: any) => {
+          console.log("Place bet response:", res);
+          
+          // Parse message like in ChangePassword
+          let parts = [];
+          if (res?.meta?.message) {
+            parts = res.meta.message
+              .split(/',\s*'/)
+              .map((p: any) => p?.replace(/^'+|'+$/g, "").trim());
+          }
+
+          const msg = {
+            status: parts?.[0] || "",
+            title: parts?.[1] || "",
+            desc: parts?.[2] || "",
+          };
+
+          showToast(msg.status, msg.title, msg.desc);
+          
+          const ok =
+            res?.meta?.status === true ||
+            res?.status === true ||
+            res?.success === true;
+            
+          if (ok) {
+            await afterPlaceRefresh();
+            await fetchBets(); 
+            onPlaced?.();
+            setStakeAmount("");
+            setPriceInput("");
+            setIsPlaceBetOpen(false);
+            onClose?.();
+          }
+        }
+      });
+    } catch (error) {
+      console.error("Bet placement error:", error);
+    } finally {
+      setPlacing(false);
+    fetchBets(); 
+
+
+    }
   };
 
   const getBgColor = () => {
@@ -145,8 +349,6 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
       second: "2-digit",
     });
   };
-
-  console.log("Current state - Matched:", matchedBets.length, "Unmatched:", unmatchedBets.length);
 
   return (
     <div className="w-full">
@@ -225,19 +427,22 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
                     <div className="whitespace-nowrap inline-flex items-center">
                       <input
                         type="text"
-                        defaultValue={odds.toFixed(2)}
+                        value={priceInput}
+                        onChange={(e) => setPriceInput(e.target.value)}
                         maxLength={4}
                         className="w-[45px] h-[22px] align-middle text-black bg-white px-0.5 text-center border border-gray-300 text-[12px] font-normal"
                       />
                       <div className="inline-flex flex-col">
                         <button
                           type="button"
+                          onClick={incPrice}
                           className="w-5 h-[11px] px-0 py-0 bg-[#CCCCCC] flex items-center justify-center hover:bg-gray-300"
                         >
                           <FaAngleUp className="text-[10px] text-black" />
                         </button>
                         <button
                           type="button"
+                          onClick={decPrice}
                           className="w-5 h-[11px] px-0 py-0 bg-[#CCCCCC] flex items-center justify-center hover:bg-gray-300"
                         >
                           <FaAngleDown className="text-[10px] text-black" />
@@ -302,6 +507,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
               <button
                 type="button"
                 onClick={handleCancel}
+                disabled={placing}
                 className="px-2 py-1 text-[14px] bg-[#F41B35] text-white rounded-xs border-0 font-medium"
               >
                 Cancel
@@ -309,16 +515,16 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
               <button
                 type="button"
                 onClick={handlePlaceBet}
-                disabled={!stakeAmount}
+                disabled={placing || !stakeAmount || parseFloat(priceInput) <= 1}
                 style={{
                   background: gradient,
-                  opacity: stakeAmount ? 1 : 0.65,
-                  border: stakeAmount ? "1px solid black" : "none",
-                  color: stakeAmount ? "black" : "white",
+                  opacity: (stakeAmount && parseFloat(priceInput) > 1 && !placing) ? 1 : 0.65,
+                  border: (stakeAmount && parseFloat(priceInput) > 1 && !placing) ? "1px solid black" : "none",
+                  color: (stakeAmount && parseFloat(priceInput) > 1 && !placing) ? "black" : "white",
                 }}
                 className="px-2 py-1 text-[14px] rounded-xs font-medium transition-all"
               >
-                Submit
+                {placing ? "Placing..." : "Submit"}
               </button>
             </div>
           </div>
@@ -355,7 +561,6 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
               </>
             )}
 
-            {/* Arrow */}
             <span className="text-[16px] font-bold">
               {showUnmatched ? "▾" : "▸"}
             </span>
@@ -427,7 +632,6 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
               </>
             )}
 
-            {/* Arrow */}
             <span className="text-[16px] font-bold">
               {showMatched ? "▾" : "▸"}
             </span>
