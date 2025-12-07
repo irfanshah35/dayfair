@@ -1,6 +1,11 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react-hooks/set-state-in-effect */
+"use client";
 import React, { useState, useEffect } from "react";
-import { FaAngleUp, FaAngleDown, FaTimes } from "react-icons/fa";
+import { FaAngleUp, FaAngleDown, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { useParams } from "next/navigation";
+import { CONFIG } from "@/lib/config";
+import { fetchData } from "@/lib/functions";
 
 interface DBetSlipProps {
   visible?: boolean;
@@ -29,6 +34,15 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
 }) => {
   const [isPlaceBetOpen, setIsPlaceBetOpen] = useState<boolean>(true);
   const [stakeAmount, setStakeAmount] = useState<string>("");
+  const [matchedBets, setMatchedBets] = useState<any[]>([]);
+  const [unmatchedBets, setUnmatchedBets] = useState<any[]>([]);
+  const [showMatched, setShowMatched] = useState<boolean>(true);
+  const [showUnmatched, setShowUnmatched] = useState<boolean>(true);
+  const [expandedBets, setExpandedBets] = useState<Set<string>>(new Set());
+
+  const params = useParams();
+  const eventId = (params as any)?.eventId;
+  const sportId = (params as any)?.sportId;
 
   const gradient = "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)";
 
@@ -42,16 +56,51 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
     }
   }, [visible]);
 
-  // If not visible (no selection yet) → hide whole sidebar content
-  if (!visible) {
-  }
+  useEffect(() => {
+    const fetchBets = async () => {
+      if (!eventId || !sportId) return;
+
+      await fetchData({
+        url: CONFIG.unmatchedBets,
+        payload: {
+          eventId: String(eventId),
+          sportId: String(sportId),
+        },
+        setFn: (res: any) => {
+          console.log("Bets response:", res);
+
+          // FIX: API RETURNS matchedBets AT ROOT, NOT UNDER res.data
+          const matched = res?.matchedBets || [];
+          const unmatched = res?.unmatchedBets || [];
+
+          console.log("Setting Matched:", matched.length, "Unmatched:", unmatched.length);
+
+          setMatchedBets(matched);
+          setUnmatchedBets(unmatched);
+        },
+      });
+    };
+
+    fetchBets();
+  }, [eventId, sportId]);
 
   const handleStakeClick = (amount: number) => {
     setStakeAmount(amount.toString());
   };
 
+  const toggleBetExpansion = (betId: string) => {
+    setExpandedBets(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(betId)) {
+        newSet.delete(betId);
+      } else {
+        newSet.add(betId);
+      }
+      return newSet;
+    });
+  };
+
   const handleMinStack = () => {
-    // You can match this with minStake if needed
     setStakeAmount(String(minStake || 100));
   };
 
@@ -73,19 +122,31 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
 
   const handlePlaceBet = () => {
     if (!stakeAmount) return;
-    // Place bet logic here
     onPlaced?.();
     setStakeAmount("");
     setIsPlaceBetOpen(false);
   };
 
-  // Determine background color based on bet type
   const getBgColor = () => {
     if (backLayClsModal === "slip-back") return "#72bbef";
     if (backLayClsModal === "slip-lay") return "#faa9ba";
     return "#72bbef";
   };
 
+  const formatDateTime = (dateStr?: string) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    return d.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+
+  console.log("Current state - Matched:", matchedBets.length, "Unmatched:", unmatchedBets.length);
 
   return (
     <div className="w-full">
@@ -110,7 +171,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
       </div>
 
       <div className="mb-2.5">
-        {/* Place Bet Header (still clickable if you want collapse/open) */}
+        {/* Place Bet Header */}
         <div
           className="py-[5px] mt-3 px-4 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white rounded-tr-sm rounded-tl-sm flex justify-between items-center border-b border-[rgba(0,0,0,.175)] cursor-pointer"
           onClick={() => setIsPlaceBetOpen((prev) => !prev)}
@@ -121,7 +182,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
         </div>
 
         {/* BetSlip Content */}
-        {isPlaceBetOpen && (
+        {isPlaceBetOpen && visible && (
           <div
             className="rounded-tr-sm rounded-tl-sm overflow-hidden"
             style={{ backgroundColor: getBgColor() }}
@@ -146,7 +207,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
               </thead>
               <tbody>
                 <tr className="bg-transparent">
-                  <td className=" p-1 align-middle text-[12px] font-bold">
+                  <td className="p-1 align-middle text-[12px] font-bold">
                     <button
                       type="button"
                       onClick={handleClose}
@@ -160,7 +221,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
                       {runnerName}
                     </div>
                   </td>
-                  <td className="px-0 py-0  relative left-3.5 align-middle text-[12px] font-bold">
+                  <td className="px-0 py-0 relative left-3.5 align-middle text-[12px] font-bold">
                     <div className="whitespace-nowrap inline-flex items-center">
                       <input
                         type="text"
@@ -171,7 +232,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
                       <div className="inline-flex flex-col">
                         <button
                           type="button"
-                          className="w-5 h-[11px] px-0 py-0 bg-[#CCCCCC]  flex items-center justify-center hover:bg-gray-300"
+                          className="w-5 h-[11px] px-0 py-0 bg-[#CCCCCC] flex items-center justify-center hover:bg-gray-300"
                         >
                           <FaAngleUp className="text-[10px] text-black" />
                         </button>
@@ -264,36 +325,157 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
         )}
       </div>
 
-      <div className="mb-2.5 flex flex-col border border-[rgba(0,0,0,.175)] rounded-tr-sm rounded-tl-sm overflow-hidden">
+      {/* MATCH ODDS SUMMARY + MATCHED/UNMATCHED LIST */}
+      <div className="mb-2.5 border border-[rgba(0,0,0,.175)] rounded-tr-sm rounded-tl-sm overflow-hidden">
+        {/* Match Odds Header */}
         <div className="py-1 px-4 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white flex justify-between items-center border-b border-[rgba(0,0,0,.175)]">
-          <h6 className="mb-0 cursor-pointer text-[16px] text-white inline-block leading-[1.2] font-medium">
-            Match Odds
-          </h6>
+          <h6 className="mb-0 text-[16px] font-medium text-white">Match Odds</h6>
         </div>
 
-        <div className="w-full">
-          <div className="p-2 bg-white flex justify-between items-center border-b border-[#ebebeb] text-sm">
-            <div className="flex items-center gap-2 text-black font-bold">
-              <div className="inline-flex items-center justify-center min-w-7 h-6 px-1.5 rounded-xl text-white font-semibold text-[12px] bg-[rgb(220_53_69)]">
-                00
-              </div>
-              <div className="text-black font-bold leading-normal">
-                Unmatched
-              </div>
+        {/* UNMATCHED SUMMARY ROW */}
+        <div
+          className="w-full bg-white border-b border-[#ebebeb] flex items-center justify-between px-3 py-2 cursor-pointer"
+          onClick={() => setShowUnmatched((p) => !p)}
+        >
+          <div className="flex items-center gap-2">
+            <div className="min-w-7 h-6 px-2 flex items-center justify-center rounded-xl text-white font-bold text-[12px] bg-[rgb(220,53,69)]">
+              {String(unmatchedBets.length).padStart(2, "0")}
             </div>
+            <span className="font-bold text-black text-[13px]">Unmatched</span>
           </div>
-          <hr className="h-1 text-[#dccceb] m-0 border-t border-solid opacity-25" />
-          <div className="p-2 mt-1 bg-white flex justify-between items-center border-b border-[#ebebeb] text-sm">
-            <div className="flex items-center gap-2 text-black font-bold">
-              <div className="inline-flex items-center justify-center min-w-7 h-6 px-1.5 rounded-xl text-white font-semibold text-[12px] bg-[#50d0ae]">
-                00
-              </div>
-              <div className="text-black font-bold leading-normal">
-                Matched
-              </div>
-            </div>
+
+          <div className="flex items-center gap-2">
+            {unmatchedBets.length > 0 && (
+              <>
+                <span className="text-[12px] text-[#555] font-semibold">Average Odds</span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" />
+                  <div className="w-9 h-4 bg-gray-300 rounded-full peer"></div>
+                </label>
+              </>
+            )}
+
+            {/* Arrow */}
+            <span className="text-[16px] font-bold">
+              {showUnmatched ? "▾" : "▸"}
+            </span>
           </div>
         </div>
+
+        {/* UNMATCHED BETS LIST */}
+        {unmatchedBets.length > 0 && showUnmatched && (
+          <div className="w-full bg-white border-b border-[#ebebeb]">
+            <div className="py-1 px-3 bg-[linear-gradient(180deg,#030a12,#444647_42%)] text-white font-bold text-[13px]">
+              Unmatched Bets
+            </div>
+
+            {unmatchedBets.map((bet) => {
+              const isExpanded = expandedBets.has(bet.betId);
+              const isLay = bet.side === "LAY";
+              
+              return (
+                <div key={bet.betId} className={`border-b border-[#ebebeb] ${isLay ? 'border-l-[3px] border-l-[#f18883]' : 'border-l-[3px] border-l-[#72bbef]'}`}>
+                  <div
+                    className="w-full bg-white px-2 py-1 cursor-pointer flex items-center gap-1"
+                    onClick={() => toggleBetExpansion(bet.betId)}
+                  >
+                    <span className="text-[10px] font-bold text-black flex-shrink-0">
+                      {isExpanded ? <FaChevronDown /> : <FaChevronUp />}
+                    </span>
+                    <div className="flex-1">
+                      <div className={`text-[10px] font-bold ${isLay ? 'text-[#f56a6a]' : 'text-[#2a9df4]'}`}>
+                        {bet.side} {bet.selectionName}
+                      </div>
+                      <div className="text-[10px] text-black">
+                        for <span className="font-semibold">${bet.requestedSize}</span> @ <span className="font-semibold">{bet.requestedPrice}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {isExpanded && (
+                    <div className="px-2 py-1 bg-white text-[12px] text-gray-600">
+                      <div>Placed: <span>{formatDateTime(bet.placedDate)}</span></div>
+                      <div>Ref: <span>{bet.betId}</span></div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* MATCHED SUMMARY ROW */}
+        <div
+          className="w-full bg-white border-b border-[#ebebeb] flex items-center justify-between px-3 py-2 cursor-pointer"
+          onClick={() => setShowMatched((p) => !p)}
+        >
+          <div className="flex items-center gap-2">
+            <div className="min-w-7 h-6 px-2 flex items-center justify-center rounded-xl text-white font-bold text-[12px] bg-[#00c4a1]">
+              {String(matchedBets.length).padStart(2, "0")}
+            </div>
+            <span className="font-bold text-black text-[13px]">Matched</span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {matchedBets.length > 0 && (
+              <>
+                <span className="text-[12px] text-[#555] font-semibold">Average Odds</span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" />
+                  <div className="w-9 h-4 bg-gray-300 rounded-full peer"></div>
+                </label>
+              </>
+            )}
+
+            {/* Arrow */}
+            <span className="text-[16px] font-bold">
+              {showMatched ? "▾" : "▸"}
+            </span>
+          </div>
+        </div>
+
+        {/* MATCHED BETS LIST */}
+        {matchedBets.length > 0 && showMatched && (
+          <div className="w-full bg-white border-b border-[#ebebeb]">
+            <div className="py-1 px-3 bg-[linear-gradient(180deg,#030a12,#444647_42%)] text-white font-bold text-[13px]">
+              Match Odds
+            </div>
+
+            {matchedBets.map((bet) => {
+              const isExpanded = expandedBets.has(bet.betId);
+              const isLay = bet.side === "LAY";
+              
+              return (
+                <div key={bet.betId} className={`border-b border-[#ebebeb] ${isLay ? 'border-l-[3px] border-l-[#f18883]' : 'border-l-[3px] border-l-[#72bbef]'}`}>
+                  <div
+                    className="w-full bg-white px-2 py-1 cursor-pointer flex items-center gap-1"
+                    onClick={() => toggleBetExpansion(bet.betId)}
+                  >
+                    <span className="text-[10px] font-bold text-black flex-shrink-0">
+                      {isExpanded ? <FaChevronDown /> : <FaChevronUp />}
+                    </span>
+                    <div className="flex-1">
+                      <div className={`text-[10px] font-bold ${isLay ? 'text-[#f56a6a]' : 'text-[#2a9df4]'}`}>
+                        {bet.side} {bet.selectionName}
+                      </div>
+                      <div className="text-[10px] text-black">
+                        for <span className="font-semibold">${bet.requestedSize}</span> @ <span className="font-semibold">{bet.requestedPrice}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {isExpanded && (
+                    <div className="px-2 py-1 bg-white text-[12px] text-gray-600">
+                      <div>Placed: <span>{formatDateTime(bet.placedDate)}</span></div>
+                      <div>Matched: <span>{formatDateTime(bet.matchedDate)}</span></div>
+                      <div>Ref: <span>{bet.betId}</span></div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
