@@ -1,4 +1,4 @@
-import { Geist, Geist_Mono, Roboto_Condensed } from "next/font/google";
+import { Geist, Geist_Mono, Roboto_Condensed, Roboto  } from "next/font/google";
 import "./globals.css";
 import ResponsiveLayout from "./responsive-layout";
 import { Metadata } from "next";
@@ -30,6 +30,13 @@ const robotoCondensed = Roboto_Condensed({
   weight: ["300", "400", "700"],
 });
 
+const roboto = Roboto({
+  variable: "--font-roboto",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "700", "900"],
+  display: "swap",
+});
+
 export default function RootLayout({
   children,
 }: {
@@ -48,8 +55,10 @@ export default function RootLayout({
           ${geistSans.variable}
           ${geistMono.variable}
           ${robotoCondensed.variable} 
+          ${roboto.variable}
           antialiased
         `}
+        
         cz-shortcut-listen="true"
       >
         <ToastProvider>
