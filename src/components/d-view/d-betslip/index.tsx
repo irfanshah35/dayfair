@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { CONFIG } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
 import { useToast } from "@/components/common/toast/toast-context";
+import { useAppStore } from "@/lib/store/store";
 
 interface DBetSlipProps {
   visible?: boolean;
@@ -46,6 +47,10 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
   const [showMatched, setShowMatched] = useState<boolean>(true);
   const [showUnmatched, setShowUnmatched] = useState<boolean>(true);
   const [expandedBets, setExpandedBets] = useState<Set<string>>(new Set());
+  const { stakeValue, setStakeValue } = useAppStore();
+  const [isChecked, setIsChecked] = useState(false);
+
+
 
   const params = useParams();
   const eventId = propEventId || (params as any)?.eventId || "";
@@ -53,9 +58,14 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
 
   const gradient = "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)";
 
-  const stakeButtons = [
-    1000, 5000, 10000, 25000, 50000, 100000, 200000, 500000,
-  ];
+  const [stakeButtons, setStakeButtons] = useState([]);
+
+  useEffect(() => {
+    if (stakeValue && stakeValue.stake) {
+      const dynamicStakes = stakeValue.stake.map((item: any) => item.stakeAmount);
+      setStakeButtons(dynamicStakes);
+    }
+  }, [stakeValue]);
 
   const lowerUpperArry = [{
     increment: 0.01,
@@ -259,7 +269,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
       await fetchData({
         url: CONFIG.getAllMarketplURL,
         payload: { eventId },
-        setFn: () => {}
+        setFn: () => { }
       });
       // Refresh balance if needed - you can add balance refresh logic here
     } catch {
@@ -270,7 +280,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
   const handlePlaceBet = async () => {
     const s = parseFloat(stakeAmount) || 0;
     const p = parseFloat(priceInput) || 0;
-    
+
     if (s < minStake || s > maxStake) {
       return;
     }
@@ -281,14 +291,14 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
     try {
       setPlacing(true);
       const payload = buildPayload();
-      
+
       // Use fetchData for consistency with your existing code
       await fetchData({
         url: CONFIG.placeBetURL,
         payload: payload,
         setFn: async (res: any) => {
           console.log("Place bet response:", res);
-          
+
           // Parse message like in ChangePassword
           let parts = [];
           if (res?.meta?.message) {
@@ -304,15 +314,15 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
           };
 
           showToast(msg.status, msg.title, msg.desc);
-          
+
           const ok =
             res?.meta?.status === true ||
             res?.status === true ||
             res?.success === true;
-            
+
           if (ok) {
             await afterPlaceRefresh();
-            await fetchBets(); 
+            await fetchBets();
             onPlaced?.();
             setStakeAmount("");
             setPriceInput("");
@@ -325,7 +335,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
       console.error("Bet placement error:", error);
     } finally {
       setPlacing(false);
-    fetchBets(); 
+      fetchBets();
 
 
     }
@@ -534,20 +544,20 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
       {/* MATCH ODDS SUMMARY + MATCHED/UNMATCHED LIST */}
       <div className="mb-2.5 border border-[rgba(0,0,0,.175)] rounded-tr-sm rounded-tl-sm overflow-hidden">
         {/* Match Odds Header */}
-        <div className="py-1 px-4 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white flex justify-between items-center border-b border-[rgba(0,0,0,.175)]">
-          <h6 className="mb-0 text-[16px] font-medium text-white">Match Odds</h6>
+        <div className="py-1 px-4 h-[29.58px] bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white flex justify-between items-center border-b border-[rgba(0,0,0,.175)]">
+          <div className="mb-0 text-[16px] font-medium text-white leading-[19px]">Match Odds</div>
         </div>
 
         {/* UNMATCHED SUMMARY ROW */}
         <div
-          className="w-full bg-white border-b border-[#ebebeb] flex items-center justify-between px-3 py-2 cursor-pointer"
+          className="w-full bg-white border-b border-[#ebebeb] flex items-center justify-between px-2 py-2 cursor-pointer"
           onClick={() => setShowUnmatched((p) => !p)}
         >
           <div className="flex items-center gap-2">
             <div className="min-w-7 h-6 px-2 flex items-center justify-center rounded-xl text-white font-bold text-[12px] bg-[rgb(220,53,69)]">
               {String(unmatchedBets.length).padStart(2, "0")}
             </div>
-            <span className="font-bold text-black text-[13px]">Unmatched</span>
+            <span className="font-bold text-black text-[14px]">Unmatched</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -561,23 +571,23 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
               </>
             )}
 
-            <span className="text-[16px] font-bold">
+            {/* <span className="text-[16px] font-bold">
               {showUnmatched ? "▾" : "▸"}
-            </span>
+            </span> */}
           </div>
         </div>
 
         {/* UNMATCHED BETS LIST */}
         {unmatchedBets.length > 0 && showUnmatched && (
           <div className="w-full bg-white border-b border-[#ebebeb]">
-            <div className="py-1 px-3 bg-[linear-gradient(180deg,#030a12,#444647_42%)] text-white font-bold text-[13px]">
+            <div className="py-1 px-3 bg-[linear-gradient(180deg,#030a12,#444647_42%)] text-white font-bold text-[14px]">
               Unmatched Bets
             </div>
 
             {unmatchedBets.map((bet) => {
               const isExpanded = expandedBets.has(bet.betId);
               const isLay = bet.side === "LAY";
-              
+
               return (
                 <div key={bet.betId} className={`border-b border-[#ebebeb] ${isLay ? 'border-l-[3px] border-l-[#f18883]' : 'border-l-[3px] border-l-[#72bbef]'}`}>
                   <div
@@ -596,7 +606,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
                       </div>
                     </div>
                   </div>
-                  
+
                   {isExpanded && (
                     <div className="px-2 py-1 bg-white text-[12px] text-gray-600">
                       <div>Placed: <span>{formatDateTime(bet.placedDate)}</span></div>
@@ -608,68 +618,80 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
             })}
           </div>
         )}
+        <hr className="text-[#dccceb] h-1"/>
 
         {/* MATCHED SUMMARY ROW */}
         <div
-          className="w-full bg-white border-b border-[#ebebeb] flex items-center justify-between px-3 py-2 cursor-pointer"
+          className="w-full bg-white border-b mt-[3px] border-[#ebebeb] flex items-center justify-between px-2 py-2 cursor-pointer"
           onClick={() => setShowMatched((p) => !p)}
         >
           <div className="flex items-center gap-2">
             <div className="min-w-7 h-6 px-2 flex items-center justify-center rounded-xl text-white font-bold text-[12px] bg-[#00c4a1]">
               {String(matchedBets.length).padStart(2, "0")}
             </div>
-            <span className="font-bold text-black text-[13px]">Matched</span>
+            <span className="font-bold text-black text-[14px]">Matched</span>
           </div>
 
           <div className="flex items-center gap-2">
             {matchedBets.length > 0 && (
               <>
-                <span className="text-[12px] text-[#555] font-semibold">Average Odds</span>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input type="checkbox" className="sr-only peer" />
-                  <div className="w-9 h-4 bg-gray-300 rounded-full peer"></div>
-                </label>
+                <span className="text-[14px]">Average Odds</span>
+                <div className="flex items-center">
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" className="sr-only peer"
+                      checked={isChecked}
+                      onChange={() => setIsChecked(!isChecked)}
+                    />
+                    <div className="w-11 h-6 rounded-full peer border border-gray-300 transition-colors duration-300 peer-checked:bg-[#4cb04f] peer-checked:shadow-[0_0_0_0.25rem_#0d6efd40] peer-focus:outline-none peer-focus:shadow-[0_0_0_0.25rem_#0d6efd40] peer-focus:border-[#86b7fe]"></div>
+                    <div className="absolute left-1 top-1 w-4 h-4 bg-gray-300 rounded-full shadow-md transform peer-checked:translate-x-5 transition-transform duration-300"></div>
+                  </label>
+                </div>
+
               </>
             )}
 
-            <span className="text-[16px] font-bold">
+            {/* <span className="text-[16px] font-bold">
               {showMatched ? "▾" : "▸"}
-            </span>
+            </span> */}
           </div>
         </div>
 
         {/* MATCHED BETS LIST */}
         {matchedBets.length > 0 && showMatched && (
           <div className="w-full bg-white border-b border-[#ebebeb]">
-            <div className="py-1 px-3 bg-[linear-gradient(180deg,#030a12,#444647_42%)] text-white font-bold text-[13px]">
+            <div className="px-[10px] h-[30px] flex items-center bg-[linear-gradient(180deg,#030a12,#444647_42%)] text-white font-bold text-[12px]">
               Match Odds
             </div>
 
             {matchedBets.map((bet) => {
               const isExpanded = expandedBets.has(bet.betId);
               const isLay = bet.side === "LAY";
-              
+
               return (
-                <div key={bet.betId} className={`border-b border-[#ebebeb] ${isLay ? 'border-l-[3px] border-l-[#f18883]' : 'border-l-[3px] border-l-[#72bbef]'}`}>
+                <div key={bet.betId} className={`border-b p-2 border-[#ebebeb] ${isLay ? 'border-l-[3px] border-l-[#f18883]' : 'border-l-[3px] border-l-[#72bbef]'}`}>
                   <div
-                    className="w-full bg-white px-2 py-1 cursor-pointer flex items-center gap-1"
+                    className="w-full bg-white cursor-pointer flex items-center gap-2"
                     onClick={() => toggleBetExpansion(bet.betId)}
                   >
-                    <span className="text-[10px] font-bold text-black flex-shrink-0">
-                      {isExpanded ? <FaChevronDown /> : <FaChevronUp />}
-                    </span>
-                    <div className="flex-1">
-                      <div className={`text-[10px] font-bold ${isLay ? 'text-[#f56a6a]' : 'text-[#2a9df4]'}`}>
+                    {!isChecked && (
+                      <span className={`text-[10px] font-bold text-black flex-shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                        {/* {isExpanded ? <FaChevronDown /> : <FaChevronUp />} */}
+                        <FaChevronDown />
+                      </span>
+                    )
+                    }
+                    <div className="flex-1 leading-[14px]">
+                      <div className={`text-[12px] font-bold ${isLay ? 'text-[#f56a6a]' : 'text-[#2a9df4]'}`}>
                         {bet.side} {bet.selectionName}
                       </div>
-                      <div className="text-[10px] text-black">
+                      <div className="text-[12px] text-black">
                         for <span className="font-semibold">${bet.requestedSize}</span> @ <span className="font-semibold">{bet.requestedPrice}</span>
                       </div>
                     </div>
                   </div>
-                  
-                  {isExpanded && (
-                    <div className="px-2 py-1 bg-white text-[12px] text-gray-600">
+
+                  {isExpanded && !isChecked && (
+                    <div className="mt-[12px] bg-white text-[12px] text-gray-600">
                       <div>Placed: <span>{formatDateTime(bet.placedDate)}</span></div>
                       <div>Matched: <span>{formatDateTime(bet.matchedDate)}</span></div>
                       <div>Ref: <span>{bet.betId}</span></div>

@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { Minus, Plus } from "lucide-react";
+import { useAppStore } from "@/lib/store/store";
 
 interface MBetSlipProps {
   visible?: boolean;
@@ -39,10 +40,16 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
   const [matchMe, setMatchMe] = useState(false);
   const [stackValue, setStackValue] = useState(0);
   const slipRef = useRef<HTMLDivElement>(null);
+  const { stakeValue, setStakeValue } = useAppStore();
 
-  const stackButtons = [
-    1000, 5000, 10000, 25000, 50000, 100000, 200000, 500000,
-  ];
+  const [stakeButtons, setStakeButtons] = useState([]);
+
+  useEffect(() => {
+    if (stakeValue && stakeValue.stake) {
+      const dynamicStakes = stakeValue.stake.map((item: any) => item.stakeAmount);
+      setStakeButtons(dynamicStakes);
+    }
+  }, [stakeValue]);
 
   // Scroll behavior when betslip opens
   useEffect(() => {
@@ -205,7 +212,7 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
 
           {/* STAKE BUTTONS */}
           <div className="grid grid-cols-4 gap-x-[7px] gap-y-1.5 mb-1.5">
-            {stackButtons.map((value) => {
+            {stakeButtons.map((value:any) => {
               const isSelected = betAmount === value.toString();
 
               return (
