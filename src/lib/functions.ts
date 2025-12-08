@@ -246,3 +246,24 @@ export function formatDateStamp(isoString: string) {
 
   return `${day}/${month}/${year} ${time}`;
 }
+export function formatDateDetail(isoString: string) {
+  if (!isoString) return "";
+
+  const date = new Date(isoString);
+
+  const day = date.getUTCDate().toString().padStart(2, "0");
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
+  const year = date.getUTCFullYear();
+
+  let hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes().toString().padStart(2, "0");
+  const seconds = date.getUTCSeconds().toString().padStart(2, "0");
+
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12;
+
+  const time = `${hours.toString().padStart(2, "0")}:${minutes}:${seconds} ${ampm}`;
+
+  return `${day}-${month}-${year} ${time}`;
+}
+

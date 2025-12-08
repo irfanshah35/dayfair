@@ -396,7 +396,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
         {/* BetSlip Content */}
         {isPlaceBetOpen && visible && (
           <div
-            className="rounded-tr-sm rounded-tl-sm overflow-hidden"
+            className=" overflow-hidden"
             style={{ backgroundColor: getBgColor() }}
           >
             <table className="w-full border-collapse">
@@ -428,7 +428,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
                       <FaTimes />
                     </button>
                   </td>
-                  <td className="px-1 py-0 align-middle text-[12px] font-bold">
+                  <td className="px-1  align-middle text-[12px] font-bold">
                     <div className="text-[12px] font-bold text-black leading-tight py-1">
                       {runnerName}
                     </div>
@@ -594,7 +594,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
                     className="w-full bg-white px-2 py-1 cursor-pointer flex items-center gap-1"
                     onClick={() => toggleBetExpansion(bet.betId)}
                   >
-                    <span className="text-[10px] font-bold text-black flex-shrink-0">
+                    <span className="text-[10px] font-bold text-black shrink-0">
                       {isExpanded ? <FaChevronDown /> : <FaChevronUp />}
                     </span>
                     <div className="flex-1">
@@ -659,7 +659,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
         {/* MATCHED BETS LIST */}
         {matchedBets.length > 0 && showMatched && (
           <div className="w-full bg-white border-b border-[#ebebeb]">
-            <div className="px-[10px] h-[30px] flex items-center bg-[linear-gradient(180deg,#030a12,#444647_42%)] text-white font-bold text-[12px]">
+            <div className="px-2.5 h-[30px] flex items-center bg-[linear-gradient(180deg,#030a12,#444647_42%)] text-white font-bold text-[12px]">
               Match Odds
             </div>
 
@@ -674,13 +674,13 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
                     onClick={() => toggleBetExpansion(bet.betId)}
                   >
                     {!isChecked && (
-                      <span className={`text-[10px] font-bold text-black flex-shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                      <span className={`text-[10px] font-bold text-black shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
                         {/* {isExpanded ? <FaChevronDown /> : <FaChevronUp />} */}
                         <FaChevronDown />
                       </span>
                     )
                     }
-                    <div className="flex-1 leading-[14px]">
+                    <div className="flex-1 leading-3.5">
                       <div className={`text-[12px] font-bold ${isLay ? 'text-[#f56a6a]' : 'text-[#2a9df4]'}`}>
                         {bet.side} {bet.selectionName}
                       </div>
@@ -691,7 +691,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
                   </div>
 
                   {isExpanded && !isChecked && (
-                    <div className="mt-[12px] bg-white text-[12px] text-gray-600">
+                    <div className="mt-3 bg-white text-[12px] text-gray-600">
                       <div>Placed: <span>{formatDateTime(bet.placedDate)}</span></div>
                       <div>Matched: <span>{formatDateTime(bet.matchedDate)}</span></div>
                       <div>Ref: <span>{bet.betId}</span></div>

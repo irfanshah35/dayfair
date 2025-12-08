@@ -520,7 +520,7 @@ const Header = () => {
 
             {/* Mobile Dropdown */}
             {searchActive && mobileQuery && (
-              <ul className="absolute top-[30px] max-h-[190px] left-0 w-[150%] bg-white border border-gray-300 mt-1  overflow-y-auto z-[9999] shadow-[1px_0_10px_#000]">
+              <ul className="absolute top-[30px] max-h-[190px] left-0 w-[150%] bg-white border border-gray-300 mt-1  overflow-y-auto z-9999 shadow-[1px_0_10px_#000]">
                 {mobileResults?.length > 0 ? (
                   mobileResults?.map((match, index) => (
                     <li
@@ -528,7 +528,7 @@ const Header = () => {
                       onClick={() => handleMobileSelect(match)}
                       className="hover:bg-gray-100 text-black cursor-pointer border-b border-[#ccc] px-2 py-1.5"
                     >
-                      <div className="flex flex-col text-[12px] leading-[14px]">
+                      <div className="flex flex-col text-[12px] leading-3.5">
                         <div className="flex justify-between items-center w-full">
                           <div className="font-bold pb-1">
                             {match?.eventType?.name} | {match?.marketType}

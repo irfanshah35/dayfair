@@ -5,6 +5,7 @@ import MBetSlip from "../m-betslip";
 import DBetSlip from "@/components/d-view/d-betslip";
 import RulesModal from "@/components/modals/rules-modal";
 import { formatDateStamp } from "@/lib/functions";
+import { formatDateDetail } from "@/lib/functions";
 import { FaChevronDown } from "react-icons/fa";
 import { CONFIG } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
@@ -222,7 +223,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   }, [activeCategory]);
 
   return (
-    <div className="lg:m-[5px] lg:mt-[6px]">
+    <div className="lg:m-[5px] lg:mt-1.5">
       {/* MOBILE TOP TAB BAR */}
       <div className="relative flex lg:hidden justify-between items-center bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]">
         {/* Tabs */}
@@ -305,8 +306,8 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
 
                 {/* Toggle Switch */}
                 <div className="flex items-center gap-2">
-                  <label className="text-[12px] font-bold text-gray-700 cursor-pointer relative top-[-1px]" htmlFor="avg-toggle">Avg Odds</label>
-                  <div className="flex items-center mb-[4px]">
+                  <label className="text-[12px] font-bold text-gray-700 cursor-pointer relative -top-px" htmlFor="avg-toggle">Avg Odds</label>
+                  <div className="flex items-center mb-1">
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input type="checkbox" className="sr-only peer"
                       />
@@ -322,9 +323,9 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                 <table className="w-full border-collapse border border-black/12.5">
                   <thead>
                     <tr className="bg-white h-[26px] text-gray-700 text-sm border-b border-gray-300">
-                      <th className="text-left p-[2px] font-normal w-[60%]">Description</th>
-                      <th className="text-center p-[2px] font-normal border-l border-gray-300">Odds</th>
-                      <th className="text-center p-[2px] font-normal w-[20%] border-l border-gray-300">Stake</th>
+                      <th className="text-left p-0.5 font-normal w-[60%]">Description</th>
+                      <th className="text-center p-0.5 font-normal border-l border-gray-300">Odds</th>
+                      <th className="text-center p-0.5 font-normal w-[20%] border-l border-gray-300">Stake</th>
                     </tr>
                   </thead>
                   <tbody className="border-black">
@@ -336,10 +337,10 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                           className={`border-b border-gray-400 h-[41px] cursor-pointer ${bet.side === "LAY" ? "bg-[#faa9ba]" : "bg-[#73bcf0]"
                             }`}
                         >
-                          <td className="p-[2px] border-r border-gray-400">
+                          <td className="p-0.5 border-r border-gray-400">
                             <div className="flex items-center gap-2">
                               <div className={`${expandedRows[bet.betId] ? 'rotate-180' : ''}`}>
-                                <FaChevronDown className="w-3 h-[12px]" />
+                                <FaChevronDown className="w-3 h-3" />
                               </div>
                               <div className="leading-tight text-[12px]">
                                 <div className="text-gray-900">Match Odds - {bet.selectionName || bet.marketName}</div>
@@ -350,16 +351,16 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                               </div>
                             </div>
                           </td>
-                          <td className="text-center p-[2px] text-base text-black border-r border-gray-400">
+                          <td className="text-center p-0.5 text-base text-black border-r border-gray-400">
                             {bet.requestedPrice}
                           </td>
-                          <td className="text-center p-[2px] text-base text-black">
+                          <td className="text-center p-0.5 text-base text-black">
                             {bet.requestedSize}
                           </td>
                         </tr>
                         {expandedRows[bet.betId] && (
                           <tr className="bg-white border-b border-gray-400 h-[41px]">
-                            <td colSpan={3} className="text-xs text-gray-800 leading-snug p-[2px]">
+                            <td colSpan={3} className="text-xs text-gray-800 leading-snug p-0.5">
                               <div>
                                 <span className="font-medium">Placed: </span> {formatDateTime(bet.placedDate)}
                               </div>
@@ -387,7 +388,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
           {/* LEFT PART: MARKETS & ODDS */}
           <div className="left-part overflow-y-auto w-full lg:w-[70%]">
             {/* Game Header */}
-            <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[3.5px] pl-2 pr-2 lg:mb-[3px] lg:h-[32px] text-white">
+            <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[3.5px] px-2.5 lg:mb-[3px] lg:h-8 text-white">
               <span className="text-sm lg:text-[15px] lg:uppercase font-medium lg:leading-normal">
                 {apiData?.matchOddsData[0]?.event?.name || "Team A vs Team B"}
               </span>
@@ -395,7 +396,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                 <span className=" game-iconinplay">
                   <span
                     className={`
-                    text-xs py-1 rounded-full font-bold inline-block transition-all duration-300
+                   text-[16px] py-1 rounded-full font-medium inline-block transition-all duration-300
                     heartbeat-anim
                   `}
                   >
@@ -429,7 +430,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                     </div>
                     <div className=" text-white text-[12px] tracking-[-0.2px] font-bold md:font-normal  [text-shadow:#fc0_1px_0_10px]">
                       <span className=" text-[#ffff55]">Game time</span>{" "}
-                      {formatDateStamp(
+                      {formatDateDetail(
                         apiData?.matchOddsData[0]?.marketStartTime
                       )}
                     </div>
@@ -482,7 +483,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                         <div className="flex items-center">
                           <span className="flex items-center relative top-px text-white text-[13px] lg:text-[14px] font-bold md:font-normal">
                             <span className="relative w-[18px] h-[18px] mr-[5px] bg-yellow-500 rounded-xs">
-                              <span className="w-3 h-3 bg-black rounded-full mr-1.5 absolute z-20 top-0.5 left-[3px]"></span>
+                              <span className="w-[13px] h-[13px] bg-black rounded-full mr-1.5 absolute z-20 top-0.5 left-0.5"></span>
                             </span>
                             Cash Out
                           </span>
@@ -494,10 +495,10 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                         setSelectedMarketRules(market?.description?.rules || null);
                         setRulesOpen(true);
                       }}
-                      className="text-white"
+                      className="text-white mr-px mb-px"
                     >
                       <svg
-                        className="w-4 h-[15px] relative"
+                        className="w-4 h-4 relative"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 24 24"
                         fill="currentColor"
@@ -532,7 +533,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                   {/* Desktop Header */}
                   <div className="hidden lg:block text-[12px] border-b border-[#aaa] lg:border-none bg-white">
                     <div className="border-b border-white flex">
-                      <div className="p-[5px] leading-[15px] w-[40%]">
+                      <div className="ps-1.5 pe-[5px] py-[5px] leading-[15px] w-[40%]">
                         <b className="text-[14px] text-[#0dcaf0] md:font-normal">
                           <span>
                             Min: {market?.min} Max: {market?.max}
@@ -549,13 +550,13 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                         <b className="md:font-normal">LAY</b>
                       </div>
                       <div className="leading-[15px] py-[5px] pr-[5px] text-[#212529] text-center font-bold text-[14px] border-r border-white w-[20%] md:font-normal">
-                        Matched:{(market?.totalMatched / 1000)?.toFixed(2)}K
+                        Matched:&nbsp;{(market?.totalMatched / 1000)?.toFixed(2)}K
                       </div>
                     </div>
                   </div>
 
                   {/* RUNNERS */}
-                  <div className="lg:mb-[2px]">
+                  <div className="lg:mb-0.5">
                     {market?.runners?.map((runner: any) => {
                       const isSuspended =
                         runner?.status === "SUSPENDED" ||
