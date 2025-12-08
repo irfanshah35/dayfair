@@ -153,23 +153,23 @@ export default function Sidebar() {
       {/* Others */}
       <div>
         <div
-          className="cursor-pointer ps-1.5 pe-2 py-[7px] min-h-[29.59px] mb-0 btn-clr text-white mt-px"
+          className="cursor-pointer ps-1.5 pe-2 py-[7px]  min-h-[29.59px] mb-0 btn-clr text-white mt-px"
           onClick={() => setIsOthersOpen(!isOthersOpen)}
         >
           <h5 className="inline-block w-full text-[18px] mb-0">
             Others
             <FaChevronDown
-              className={`float-right transition-transform ${
-                isOthersOpen ? "" : "-rotate-90"
-              }`}
+              className={`float-right transition-transform ${isOthersOpen ? "" : "-rotate-90"
+                }`}
               size={14}
             />
           </h5>
         </div>
 
         {isOthersOpen && (
-          <nav className="bg-[#C3BDBD]">
-            <ul className="py-[5] px-3 ml-[-9]">
+          <nav className="bg-[#C3BDBD]  border-b border-[#9e9e9e]">
+
+            <ul className="py-[5] px-3 ml-[-9] h-[24.5px]">
               <li className="list-none text-white ml-2.5">
                 <Link href={"/live-casino"}>Casino</Link>
               </li>
@@ -181,15 +181,14 @@ export default function Sidebar() {
       {/* All Sports */}
       <div>
         <div
-          className="cursor-pointer pe-2 ps-1.5 py-[7px] mb-0 mt-px btn-clr text-white"
+          className="cursor-pointer pe-2 ps-1.5 py-[7px] mb-0 mt-[0.8px] btn-clr text-white h-[30px]"
           onClick={() => setIsAllSportsOpen(!isAllSportsOpen)}
         >
           <h5 className="inline-block w-full text-[18px] mb-0">
             All Sports
             <FaChevronDown
-              className={`float-right transition-transform ${
-                isAllSportsOpen ? "" : "-rotate-90"
-              }`}
+              className={`float-right transition-transform ${isAllSportsOpen ? "" : "-rotate-90"
+                }`}
               size={14}
             />
           </h5>
@@ -198,14 +197,18 @@ export default function Sidebar() {
         {isAllSportsOpen && (
           <nav className="bg-[#C3BDBD] py-[3px] text-white">
             {popularSportsList?.map((item: any, idx: number) => (
-              <ul key={idx} className="mt-1 mb-0">
-                <li className="list-none  pt-0.5 pl-2.5 pr-0">
+              <ul
+                key={idx}
+                className={`mb-0 ${idx === 0 ? "mt-[6.2px]" : "mt-[5.2px]"
+                  }`}
+              >
+                <li className="list-none pl-2.5 pr-0">
                   {/* Sport name */}
                   <div
                     className="cursor-pointer"
                     onClick={() => toggleSport(item?.sportId)}
                   >
-                    <span className="relative bottom-0.5">
+                    <span className="relative bottom-[1.7px]">
                       {open.sport === item?.sportId ? (
                         <FaRegSquareMinus className="inline-block w-3.5 h-[19px]" />
                       ) : (
@@ -218,18 +221,18 @@ export default function Sidebar() {
 
                   {/* Tournament list */}
                   {open.sport === item?.sportId && (
-                    <ul className="mb-0 ml-0 pl-0">
+                    <ul className="mb-0 ml-0 pl-0 relative bottom-0.5">
                       {tournamentList?.map((tour: any) => (
                         <li
                           key={tour?.tournamentId}
-                          className="list-none py-1 pl-5 pr-0"
+                          className="list-none py-1 pl-[19px] pr-0 leading-2.5"
                         >
                           {/* Tournament */}
                           <div
-                            className="cursor-pointer"
+                            className="cursor-pointer "
                             onClick={() => toggleTournament(tour?.tournamentId)}
                           >
-                            <span>
+                            <span className="relative bottom-0.5">
                               {open.tournament === tour?.tournamentId ? (
                                 <FaRegSquareMinus
                                   className="inline-block align-middle"
@@ -242,12 +245,12 @@ export default function Sidebar() {
                                 />
                               )}
                             </span>
-                            <span className="pl-1">{tour?.tournamentName}</span>
+                            <span className="pl-[3px]">{tour?.tournamentName}</span>
                           </div>
 
                           {/* Matches */}
                           {open.tournament === tour?.tournamentId && (
-                            <ul className="mb-0 ml-0 pl-0">
+                            <ul className="mb-0 ml-0 pl-0 ">
                               {eventList?.map((event: any, idx: number) => (
                                 <li
                                   key={idx}
