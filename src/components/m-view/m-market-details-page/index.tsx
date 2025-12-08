@@ -56,6 +56,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
 
   const dynamicCategories = [
     ...new Set(apiData?.matchOddsData?.map((item: any) => item.marketName)),
+
   ];
 
   const categories = ["Popular", ...dynamicCategories, "All Market"];
@@ -207,7 +208,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   useEffect(() => {
     const allMarkets = apiData?.matchOddsData || [];
     let filterdData = [];
-
     // Popular
     if (activeCategory === "Popular") {
       filterdData = allMarkets?.filter((market: any) => market?.popular);
@@ -218,7 +218,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
         (market: any) => market?.marketName === activeCategory
       );
     }
-
     setFilteredMarketData(filterdData);
   }, [activeCategory]);
 
@@ -474,16 +473,26 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                   className="bg-[linear-gradient(180deg,#000000,#ccc1c1)]"
                 >
                   {/* Market Title Row */}
-                  <div className=" mt-0 py-1 pl-2 pr-1.5 lg:py-[3px] flex justify-between items-center">
+                  <div className=" mt-0 py-1 pl-2 pr-1.5 lg:py-[3px] flex justify-between items-center h-[36px]">
                     <div className="flex gap-2 items-center">
                       <span className="font-bold md:font-normal text-white text-[13px] lg:text-[14px]">
                         {market?.marketName}
                       </span>
-                      <div className="ml-3">
+                      {/* <div className="ml-3">
                         <div className="flex items-center">
                           <span className="flex items-center relative top-px text-white text-[13px] lg:text-[14px] font-bold md:font-normal">
                             <span className="relative w-[18px] h-[18px] mr-[5px] bg-yellow-500 rounded-xs">
                               <span className="w-[13px] h-[13px] bg-black rounded-full mr-1.5 absolute z-20 top-0.5 left-0.5"></span>
+                            </span>
+                            Cash Out
+                          </span>
+                        </div>
+                      </div> */}
+                      <div className="ml-1 h-[26px] relative top-[-2px]">
+                        <div className="bg-[#ccc] text-black rounded-[4px] py-[3px] px-[10px] my-[2px] leading-[18px] inline-block ml-2 align-middle font-normal">
+                          <span className="ml-[5px] text-sm">
+                            <span className="w-[18px] relative h-[18px] rounded-[2px] float-left bg-[#ffb900] flex items-center justify-center text-black">
+                              <span className="w-[13px] h-[13px] bg-black rounded-full absolute mr-1.5  z-20 top-[3px] left-[3px]"></span>
                             </span>
                             Cash Out
                           </span>

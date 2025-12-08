@@ -176,3 +176,11 @@ body {
 .font-roboto {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
+
+.rules-content a{
+  color: #0D6EfD;
+  text-decoration: underline;
+}
+.rules-content a:hover{
+  color: #0a58ca;
+}
