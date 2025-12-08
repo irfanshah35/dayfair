@@ -5,17 +5,31 @@ import MBetSlip from "../m-betslip";
 import DBetSlip from "@/components/d-view/d-betslip";
 import RulesModal from "@/components/modals/rules-modal";
 import { formatDateStamp } from "@/lib/functions";
+import { FaChevronDown } from "react-icons/fa";
+import { CONFIG } from "@/lib/config";
+import { fetchData } from "@/lib/functions";
+import { useToast } from "@/components/common/toast/toast-context";
+import { useAppStore } from "@/lib/store/store";
+import { useParams } from "next/navigation"; // 👈 Added this for params
 
 export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   const [activeTab, setActiveTab] = useState("odds");
   const [activeCategory, setActiveCategory] = useState("Popular");
   const [filteredMarketData, setFilteredMarketData] = useState<any[]>([]);
-  // const [active, setActive] = useState(false);
   const betslipRef = useRef<HTMLDivElement>(null);
 
   // INLINE (mobile) slip open or not
   const [isSlipOpen, setIsSlipOpen] = useState(false);
-const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(null);
+  const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(null);
+
+  // 👇 State for Real Data
+  const [matchedBets, setMatchedBets] = useState<any[]>([]);
+  const [unmatchedBets, setUnmatchedBets] = useState<any[]>([]);
+
+  const params = useParams();
+  // Event ID aur Sport ID nikal rahe hain API call ke liye
+  const eventId = (params as any)?.eventId || "";
+  const sportId = (params as any)?.sportId || "";
 
   // Track which row is open (mobile)
   const [openSlip, setOpenSlip] = useState<{
@@ -45,14 +59,59 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
 
   const categories = ["Popular", ...dynamicCategories, "All Market"];
 
-  // useEffect(() => {
-  //   // Toggle active after 1s for demo
-  //   const timer = setInterval(() => {
-  //     setActive((prev) => !prev);
-  //   }, 800);
+  // 👇 Accordion toggle state
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
-  //   return () => clearInterval(timer);
-  // }, []);
+  const toggleRow = (id: any) => {
+    setExpandedRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  // 👇 Helper function to format date inside Accordion
+  const formatDateTime = (dateStr?: string) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    return d.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+
+  // 👇 API Fetch Logic (Same as DBetSlip)
+  const fetchBets = async () => {
+    if (!eventId || !sportId) return;
+
+    await fetchData({
+      url: CONFIG.unmatchedBets,
+      payload: {
+        eventId: String(eventId),
+        sportId: String(sportId),
+      },
+      setFn: (res: any) => {
+        console.log("Bets response:", res);
+        const matched = res?.matchedBets || [];
+        const unmatched = res?.unmatchedBets || [];
+        setMatchedBets(matched);
+        setUnmatchedBets(unmatched);
+      },
+    });
+  };
+
+  // 👇 Fetch data on mount or when eventId changes
+  useEffect(() => {
+    fetchBets();
+    // Optional: Auto refresh every few seconds
+    // const interval = setInterval(fetchBets, 5000);
+    // return () => clearInterval(interval);
+  }, [eventId, sportId]);
+
+
   useEffect(() => {
     if (isSlipOpen && betslipRef.current) {
       setTimeout(() => {
@@ -125,6 +184,7 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
   const closeInlineSlip = () => {
     setIsSlipOpen(false);
     setOpenSlip(null);
+    fetchBets(); // Refresh bets when slip closes (after placement)
   };
 
   // Check if this runner row has an open mobile slip
@@ -170,11 +230,10 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
           <div className="flex pt-[13px] pb-3">
             <a
               onClick={() => setActiveTab("odds")}
-              className={`relative block text-[12px] text-center border-r px-4 ${
-                activeTab === "odds"
-                  ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
-                  : ""
-              }`}
+              className={`relative block text-[12px] text-center border-r px-4 ${activeTab === "odds"
+                ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
+                : ""
+                }`}
             >
               ODDS
             </a>
@@ -183,13 +242,13 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
           <div className="flex">
             <a
               onClick={() => setActiveTab("betList")}
-              className={`relative block text-[12px] text-center px-4 ${
-                activeTab === "betList"
-                  ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
-                  : ""
-              }`}
+              className={`relative block text-[12px] text-center px-4 ${activeTab === "betList"
+                ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
+                : ""
+                }`}
             >
-              BET LIST ( 0 )
+              {/* Count update kiya hai */}
+              BET LIST ( {matchedBets.length} )
             </a>
           </div>
         </div>
@@ -228,9 +287,100 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
 
       {activeTab === "betList" ? (
         <div className="block">
-          <div className="flex justify-center items-center h-[30vh] text-[21px] mt-4">
-            You Have No Open Bets.
-          </div>
+          {matchedBets.length === 0 ? (
+            <div className="flex justify-center items-center h-[30vh] text-[21px] mt-4">
+              You Have No Open Bets.
+            </div>
+          ) : (
+
+            <div className="w-full max-w-2xl mx-auto bg-white shadow-sm">
+              {/* Header Section */}
+              <div className="flex justify-between items-center h-[29.5px] m-[3px]">
+                <div className="flex items-center gap-2">
+                  <span className="bg-[#00B59B] text-white px-2 py-0.5 rounded text-[13px] font-bold">
+                    {matchedBets.length}
+                  </span>
+                  <span className="font-bold text-gray-800 text-[12px]">Matched</span>
+                </div>
+
+                {/* Toggle Switch */}
+                <div className="flex items-center gap-2">
+                  <label className="text-[12px] font-bold text-gray-700 cursor-pointer relative top-[-1px]" htmlFor="avg-toggle">Avg Odds</label>
+                  <div className="flex items-center mb-[4px]">
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" className="sr-only peer"
+                      />
+                      <div className="w-[35px] h-5 rounded-full peer border border-gray-300 transition-colors duration-300 peer-checked:bg-[#0d6dfc] peer-checked:shadow-[0_0_0_0.25rem_#0d6efd40] peer-focus:outline-none peer-focus:shadow-[0_0_0_3px_#0d6efd40] peer-focus:border-[#86b7fe]"></div>
+                      <div className="absolute left-[3px] top-[3px] w-[13px] h-[13px] bg-[#bfbfbf] rounded-full shadow-md transform peer-checked:translate-x-4 transition-transform duration-300"></div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Table */}
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse border border-black/12.5">
+                  <thead>
+                    <tr className="bg-white h-[26px] text-gray-700 text-sm border-b border-gray-300">
+                      <th className="text-left p-[2px] font-normal w-[60%]">Description</th>
+                      <th className="text-center p-[2px] font-normal border-l border-gray-300">Odds</th>
+                      <th className="text-center p-[2px] font-normal w-[20%] border-l border-gray-300">Stake</th>
+                    </tr>
+                  </thead>
+                  <tbody className="border-black">
+                    {matchedBets.map((bet) => (
+                      <React.Fragment key={bet.betId}>
+                        {/* --- MAIN ROW --- */}
+                        <tr
+                          onClick={() => toggleRow(bet.betId)}
+                          className={`border-b border-gray-400 h-[41px] cursor-pointer ${bet.side === "LAY" ? "bg-[#faa9ba]" : "bg-[#73bcf0]"
+                            }`}
+                        >
+                          <td className="p-[2px] border-r border-gray-400">
+                            <div className="flex items-center gap-2">
+                              <div className={`${expandedRows[bet.betId] ? 'rotate-180' : ''}`}>
+                                <FaChevronDown className="w-3 h-[12px]" />
+                              </div>
+                              <div className="leading-tight text-[12px]">
+                                <div className="text-gray-900">Match Odds - {bet.selectionName || bet.marketName}</div>
+
+                                <div className=" text-gray-800 mt-0.5">
+                                  <span className="">Bet Id</span> {bet.betId}
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="text-center p-[2px] text-base text-black border-r border-gray-400">
+                            {bet.requestedPrice}
+                          </td>
+                          <td className="text-center p-[2px] text-base text-black">
+                            {bet.requestedSize}
+                          </td>
+                        </tr>
+                        {expandedRows[bet.betId] && (
+                          <tr className="bg-white border-b border-gray-400 h-[41px]">
+                            <td colSpan={3} className="text-xs text-gray-800 leading-snug p-[2px]">
+                              <div>
+                                <span className="font-medium">Placed: </span> {formatDateTime(bet.placedDate)}
+                              </div>
+                              <div>
+                                <span className="font-medium">Matched: </span> {formatDateTime(bet.matchedDate)}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </tbody>
+                </table>
+                {matchedBets.length === 0 && (
+                  <div className="p-4 text-center text-sm text-gray-500">No bets found.</div>
+                )}
+              </div>
+            </div>
+          )}
+
+
         </div>
       ) : (
         <div className="flex w-full">
@@ -302,11 +452,10 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
                 {categories?.map((category: any, idx: number) => (
                   <li
                     key={idx}
-                    className={`px-2.5 py-[5px] whitespace-nowrap rounded-full ml-[5px] text-[12px] font-medium border border-white cursor-pointer ${
-                      activeCategory === category
-                        ? "bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)] text-black"
-                        : "hover:bg-gray-100 bg-transparent text-white"
-                    }`}
+                    className={`px-2.5 py-[5px] whitespace-nowrap rounded-full ml-[5px] text-[12px] font-medium border border-white cursor-pointer ${activeCategory === category
+                      ? "bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)] text-black"
+                      : "hover:bg-gray-100 bg-transparent text-white"
+                      }`}
                   >
                     <button onClick={() => setActiveCategory(category)}>
                       {category.toUpperCase()}
@@ -340,22 +489,22 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
                         </div>
                       </div>
                     </div>
-                 <button
-  onClick={() => {
-    setSelectedMarketRules(market?.description?.rules || null);
-    setRulesOpen(true);
-  }}
-  className="text-white"
->
-  <svg
-    className="w-4 h-[15px] relative"
-    xmlns="http://www.w3.org/2000/svg"
-    viewBox="0 0 24 24"
-    fill="currentColor"
-  >
-    <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 9.5C12.8284 9.5 13.5 8.82843 13.5 8C13.5 7.17157 12.8284 6.5 12 6.5C11.1716 6.5 10.5 7.17157 10.5 8C10.5 8.82843 11.1716 9.5 12 9.5ZM14 15H13V10.5H10V12.5H11V15H10V17H14V15Z"></path>
-  </svg>
-</button>
+                    <button
+                      onClick={() => {
+                        setSelectedMarketRules(market?.description?.rules || null);
+                        setRulesOpen(true);
+                      }}
+                      className="text-white"
+                    >
+                      <svg
+                        className="w-4 h-[15px] relative"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                      >
+                        <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 9.5C12.8284 9.5 13.5 8.82843 13.5 8C13.5 7.17157 12.8284 6.5 12 6.5C11.1716 6.5 10.5 7.17157 10.5 8C10.5 8.82843 11.1716 9.5 12 9.5ZM14 15H13V10.5H10V12.5H11V15H10V17H14V15Z"></path>
+                      </svg>
+                    </button>
                   </div>
 
                   {/* Mobile Header */}
@@ -434,19 +583,17 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
                             {/* Odds Cells */}
                             <div
                               className={`relative w-[40%] lg:text-[#212529] lg:w-[60%] flex 
-                              ${
-                                isSuspended
+                              ${isSuspended
                                   ? "after:content-['SUSPENDED'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed"
                                   : ""
-                              }`}
+                                }`}
                             >
                               {/* BACK (mobile visible, desktop: first cell) */}
                               <div
-                                className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${
-                                  !isSuspended
-                                    ? "cursor-pointer"
-                                    : "cursor-not-allowed"
-                                }`}
+                                className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!isSuspended
+                                  ? "cursor-pointer"
+                                  : "cursor-not-allowed"
+                                  }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -475,11 +622,10 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
 
                               {/* Extra BACK cells for desktop layout (hidden on mobile) */}
                               <div
-                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
-                                  !isSuspended
-                                    ? "cursor-pointer"
-                                    : "cursor-not-allowed"
-                                }`}
+                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!isSuspended
+                                  ? "cursor-pointer"
+                                  : "cursor-not-allowed"
+                                  }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -506,11 +652,10 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
                                 </span>
                               </div>
                               <div
-                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
-                                  !isSuspended
-                                    ? "cursor-pointer"
-                                    : "cursor-not-allowed"
-                                }`}
+                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!isSuspended
+                                  ? "cursor-pointer"
+                                  : "cursor-not-allowed"
+                                  }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -539,11 +684,10 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
 
                               {/* LAY */}
                               <div
-                                className={`text-center lg:border-l lg:border-white flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
-                                  !isSuspended
-                                    ? "cursor-pointer"
-                                    : "cursor-not-allowed"
-                                }`}
+                                className={`text-center lg:border-l lg:border-white flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!isSuspended
+                                  ? "cursor-pointer"
+                                  : "cursor-not-allowed"
+                                  }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -569,11 +713,10 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
                                 </span>
                               </div>
                               <div
-                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
-                                  !isSuspended
-                                    ? "cursor-pointer"
-                                    : "cursor-not-allowed"
-                                }`}
+                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!isSuspended
+                                  ? "cursor-pointer"
+                                  : "cursor-not-allowed"
+                                  }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -599,11 +742,10 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
                                 </span>
                               </div>
                               <div
-                                className={`text-center lg:border-l lg:border-white border-r hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
-                                  !isSuspended
-                                    ? "cursor-pointer"
-                                    : "cursor-not-allowed"
-                                }`}
+                                className={`text-center lg:border-l lg:border-white border-r hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!isSuspended
+                                  ? "cursor-pointer"
+                                  : "cursor-not-allowed"
+                                  }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -636,26 +778,26 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
                             market?.marketId,
                             runner?.selectionId
                           ) && (
-                            <div ref={betslipRef} className="lg:hidden">
-                              {betSlipData && (
-                                <MBetSlip
-                                  visible={isSlipOpen}
-                                  backLayClsModal={betSlipData?.slipCls}
-                                  extraBgClass={betSlipData?.slipBgClass}
-                                  odds={betSlipData?.odds}
-                                  marketId={betSlipData?.marketId}
-                                  selectionId={betSlipData?.selectionId}
-                                  eventId="event123"
-                                  marketType={market?.marketType}
-                                  runnerName={betSlipData?.runnerName}
-                                  minStake={betSlipData?.min}
-                                  maxStake={betSlipData?.max}
-                                  onClose={closeInlineSlip}
-                                  onPlaced={closeInlineSlip}
-                                />
-                              )}
-                            </div>
-                          )}
+                              <div ref={betslipRef} className="lg:hidden">
+                                {betSlipData && (
+                                  <MBetSlip
+                                    visible={isSlipOpen}
+                                    backLayClsModal={betSlipData?.slipCls}
+                                    extraBgClass={betSlipData?.slipBgClass}
+                                    odds={betSlipData?.odds}
+                                    marketId={betSlipData?.marketId}
+                                    selectionId={betSlipData?.selectionId}
+                                    eventId="event123"
+                                    marketType={market?.marketType}
+                                    runnerName={betSlipData?.runnerName}
+                                    minStake={betSlipData?.min}
+                                    maxStake={betSlipData?.max}
+                                    onClose={closeInlineSlip}
+                                    onPlaced={closeInlineSlip}
+                                  />
+                                )}
+                              </div>
+                            )}
                         </React.Fragment>
                       );
                     })}
@@ -669,26 +811,28 @@ const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(nu
             <DBetSlip
               visible={!!betSlipData}
               odds={betSlipData?.odds}
-              marketId={betSlipData?.marketId} 
+              marketId={betSlipData?.marketId}
               selectionId={betSlipData?.selectionId}
               runnerName={betSlipData?.runnerName}
               minStake={betSlipData?.min}
               maxStake={betSlipData?.max}
               backLayClsModal={betSlipData?.slipCls}
               onClose={() => setBetSlipData(null)}
+              // 👇 Refresh bets when DBetSlip places a bet
+              onPlaced={() => fetchBets()}
             />
           </div>
         </div>
       )}
 
-<RulesModal 
-  open={isrulesopen} 
-  onClose={() => {
-    setRulesOpen(false);
-    setSelectedMarketRules(null);
-  }}
-  rules={selectedMarketRules}
-/>
+      <RulesModal
+        open={isrulesopen}
+        onClose={() => {
+          setRulesOpen(false);
+          setSelectedMarketRules(null);
+        }}
+        rules={selectedMarketRules}
+      />
 
       <style jsx>{`
         @keyframes zoomInZoomOut {
