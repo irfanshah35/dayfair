@@ -12,6 +12,7 @@ import { fetchData } from "@/lib/functions";
 import { useToast } from "@/components/common/toast/toast-context";
 import { useAppStore } from "@/lib/store/store";
 import { useParams } from "next/navigation"; // 👈 Added this for params
+import { Check } from "lucide-react";
 
 export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   const [activeTab, setActiveTab] = useState("odds");
@@ -21,6 +22,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
 
   // INLINE (mobile) slip open or not
   const [isSlipOpen, setIsSlipOpen] = useState(false);
+  const [isbetlimits, setIsBetLimits] = useState(false);
   const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(null);
 
   // 👇 State for Real Data
@@ -489,12 +491,17 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                         </div>
                       </div> */}
                       <div className="ml-1 h-[26px] relative top-[-2px]">
-                        <div className="bg-[#ccc] text-black rounded-[4px] py-[3px] px-[10px] my-[2px] leading-[18px] inline-block ml-2 align-middle font-normal">
-                          <span className="ml-[5px] text-sm">
+                        <div onClick={() => setIsBetLimits(true)} className="bg-[#ccc] text-black rounded-[4px] py-[3px] px-[10px] my-[2px] leading-[18px] inline-block ml-2 align-middle font-normal cursor-pointer">
+                          <span className={`ml-[5px] text-sm ${isbetlimits ? "font-bold text-[#008000]" : "font-normal text-black"}`}>
                             <span className="w-[18px] relative h-[18px] rounded-[2px] float-left bg-[#ffb900] flex items-center justify-center text-black">
-                              <span className="w-[13px] h-[13px] bg-black rounded-full absolute mr-1.5  z-20 top-[3px] left-[3px]"></span>
+                              {!isbetlimits ? (
+                                <span className="w-[13px] h-[13px] bg-black rounded-full absolute mr-1.5  z-20 top-[3px] left-[3px]"></span>
+                              ) : (
+                                <i className="fa fa-check"></i>
+                              )}
+
                             </span>
-                            Cash Out
+                            {isbetlimits ? "0.35" : "Cash Out"}
                           </span>
                         </div>
                       </div>
