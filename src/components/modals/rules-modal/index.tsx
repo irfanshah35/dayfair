@@ -70,7 +70,7 @@ export default function RulesModal({
           </div>
 
           {/* Dynamic Content */}
-          <div className="p-3 pt-9 md:pt-14 pb-9 text-[15px] [@media(min-width:992px)]:text-[12px] [@media(min-width:992px)]:pt-[31px]">
+          <div className="p-3 pt-9 md:pt-14 pb-9 md:pb-3 text-[15px] [@media(min-width:992px)]:text-[12px] [@media(min-width:992px)]:pt-[13px]">
             {rules ? (
               <div
                 className="rules-content"
