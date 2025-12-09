@@ -77,7 +77,7 @@ const matches: Match[] = [
 
 const Header = () => {
   const [searchActive, setSearchActive] = useState(false);
-  const [userBalance, setUserBalance] = useState<any>();
+const { userBalance, setUserBalance } = useAppStore(); 
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLLIElement | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -158,15 +158,16 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetchData({
-        url: CONFIG.getUserBalance,
-        payload: { key: CONFIG.siteKey },
-        setFn: setUserBalance,
-      });
-    }
-  }, [isLoggedIn]);
+ useEffect(() => {
+  if (isLoggedIn) {
+    fetchData({
+      url: CONFIG.getUserBalance,
+      payload: { key: CONFIG.siteKey },
+      setFn: setUserBalance, // This now updates the global store
+    });
+  }
+}, [isLoggedIn]);
+
 
   useEffect(() => {
     function handleClickOutside(e: any) {
