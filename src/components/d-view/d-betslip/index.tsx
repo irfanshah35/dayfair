@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaAngleUp, FaAngleDown, FaTimes, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useParams } from "next/navigation";
-import { CONFIG } from "@/lib/config";
+import { CONFIG, STACK_VALUE } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
 import { useToast } from "@/components/common/toast/toast-context";
 import { useAppStore } from "@/lib/store/store";
@@ -58,14 +58,21 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
 
   const gradient = "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)";
 
-  const [stakeButtons, setStakeButtons] = useState([]);
+const [stakeButtons, setStakeButtons] = useState(
+  STACK_VALUE.map((item) => item.stakeAmount)
+);
 
-  useEffect(() => {
-    if (stakeValue && stakeValue.stake) {
-      const dynamicStakes = stakeValue.stake.map((item: any) => item.stakeAmount);
-      setStakeButtons(dynamicStakes);
-    }
-  }, [stakeValue]);
+useEffect(() => {
+  // Try to use API stake values first
+  if (stakeValue && stakeValue.stake && stakeValue.stake.length > 0) {
+    const dynamicStakes = stakeValue.stake.map((item: any) => item.stakeAmount);
+    setStakeButtons(dynamicStakes);
+  } else {
+    // Fallback to config stake values if api fail
+    const fallbackStakes = STACK_VALUE.map((item) => item.stakeAmount);
+    setStakeButtons(fallbackStakes);
+  }
+}, [stakeValue]);
 
   const lowerUpperArry = [{
     increment: 0.01,
@@ -706,5 +713,4 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
     </div>
   );
 };
-
 export default DBetSlip;
