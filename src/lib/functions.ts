@@ -230,15 +230,18 @@ export function formatDateStamp(isoString: string) {
   if (!isoString) return "";
 
   const date = new Date(isoString);
+  
+  // Add 5 hours for Pakistan timezone (UTC+5)
+  const pkDate = new Date(date.getTime() + (5 * 60 * 60 * 1000));
 
-  const day = date.getDate();
-  const month = date.getMonth() + 1;
-  const year = date.getFullYear();
+  const day = pkDate.getUTCDate();
+  const month = pkDate.getUTCMonth() + 1;
+  const year = pkDate.getUTCFullYear();
 
-  let hours = date.getHours();
-  const minutes = date.getMinutes().toString().padStart(2, "0");
+  let hours = pkDate.getUTCHours();
+  const minutes = pkDate.getUTCMinutes().toString().padStart(2, "0");
 
-  const ampm = hours >= 12 ? "PM" : "AM"; // UPPERCASE
+  const ampm = hours >= 12 ? "PM" : "AM";
 
   hours = hours % 12 || 12;
 
@@ -246,18 +249,22 @@ export function formatDateStamp(isoString: string) {
 
   return `${day}/${month}/${year} ${time}`;
 }
+
 export function formatDateDetail(isoString: string) {
   if (!isoString) return "";
 
   const date = new Date(isoString);
+  
+  // Add 5 hours for Pakistan timezone (UTC+5)
+  const pkDate = new Date(date.getTime() + (5 * 60 * 60 * 1000));
 
-  const day = date.getUTCDate().toString().padStart(2, "0");
-  const month = (date.getUTCMonth() + 1).toString().padStart(2, "0");
-  const year = date.getUTCFullYear();
+  const day = pkDate.getUTCDate().toString().padStart(2, "0");
+  const month = (pkDate.getUTCMonth() + 1).toString().padStart(2, "0");
+  const year = pkDate.getUTCFullYear();
 
-  let hours = date.getUTCHours();
-  const minutes = date.getUTCMinutes().toString().padStart(2, "0");
-  const seconds = date.getUTCSeconds().toString().padStart(2, "0");
+  let hours = pkDate.getUTCHours();
+  const minutes = pkDate.getUTCMinutes().toString().padStart(2, "0");
+  const seconds = pkDate.getUTCSeconds().toString().padStart(2, "0");
 
   const ampm = hours >= 12 ? "PM" : "AM";
   hours = hours % 12 || 12;
