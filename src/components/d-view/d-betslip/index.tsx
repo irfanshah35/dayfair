@@ -382,13 +382,13 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
         </div>
       </div>
 
-      <div className="mb-2.5">
+      <div className="mb-[11px]">
         {/* Place Bet Header */}
         <div
-          className="py-[3px] mt-3 px-4 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white rounded-tr-sm rounded-tl-sm flex justify-between items-center border-b border-[rgba(0,0,0,.175)] cursor-pointer h-[29px]"
+          className="py-[5px] mt-3 px-4 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white rounded-tr-sm rounded-tl-sm flex justify-between items-center border-b border-[rgba(0,0,0,.175)] cursor-pointer h-[30px]"
           onClick={() => setIsPlaceBetOpen((prev) => !prev)}
         >
-          <h6 className="mb-0 text-[16px] relative text-white inline-block leading-[1.2] font-medium">
+          <h6 className="mb-0 text-[16px] relative top-[1px] text-white inline-block leading-[1.2] font-medium">
             Place Bet
           </h6>
         </div>
@@ -544,7 +544,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
       {/* MATCH ODDS SUMMARY + MATCHED/UNMATCHED LIST */}
       <div className="mb-2.5 border border-[rgba(0,0,0,.175)] rounded-tr-sm rounded-tl-sm overflow-hidden">
         {/* Match Odds Header */}
-        <div className="py-1 px-4 h-[29.58px] bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white flex justify-between items-center border-b border-[rgba(0,0,0,.175)]">
+        <div className="py-1 px-4 h-[29.58px] bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white flex justify-between items-center border-b border-[rgba(0,0,0,.175)] h-[29px]">
           <div className="mb-0 text-[16px] font-medium text-white leading-[19px]">Match Odds</div>
         </div>
 
@@ -622,7 +622,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
 
         {/* MATCHED SUMMARY ROW */}
         <div
-          className="w-full bg-white border-b mt-[3px] border-[#ebebeb] flex items-center justify-between px-2 py-2 cursor-pointer"
+          className="w-full bg-white border-b mt-[6px] border-[#ebebeb] flex items-center justify-between px-2 py-2 pb-[11px] cursor-pointer"
           onClick={() => setShowMatched((p) => !p)}
         >
           <div className="flex items-center gap-2">
@@ -674,14 +674,14 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
                     onClick={() => toggleBetExpansion(bet.betId)}
                   >
                     {!isChecked && (
-                      <span className={`text-[10px] font-bold text-black shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                      <span className={`text-[11px] font-bold text-black shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
                         {/* {isExpanded ? <FaChevronDown /> : <FaChevronUp />} */}
                         <FaChevronDown />
                       </span>
                     )
                     }
-                    <div className="flex-1 leading-3.5">
-                      <div className={`text-[12px] font-bold ${isLay ? 'text-[#f56a6a]' : 'text-[#2a9df4]'}`}>
+                    <div className="flex-1 leading-[15px]">
+                      <div className={`text-[12px] font-bold ${isLay ? 'text-[#e99292]' : 'text-[#5fa4e2]'}`}>
                         {bet.side} {bet.selectionName}
                       </div>
                       <div className="text-[12px] text-black">
