@@ -5,6 +5,8 @@ import { CONFIG, STACK_VALUE } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
 import { useToast } from "@/components/common/toast/toast-context";
 import { useAppStore } from "@/lib/store/store";
+import { useRouter } from "next/navigation";
+import Loader from "@/components/common/loader";
 
 interface DBetSlipProps {
   visible?: boolean;
@@ -49,9 +51,10 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
   const [expandedBets, setExpandedBets] = useState<Set<string>>(new Set());
   const { stakeValue, setStakeValue } = useAppStore();
   const [isChecked, setIsChecked] = useState(false);
+  const { userBalance, setUserBalance } = useAppStore();
 
 
-
+const router = useRouter();
   const params = useParams();
   const eventId = propEventId || (params as any)?.eventId || "";
   const sportId = propSportId || (params as any)?.sportId || "";
@@ -284,69 +287,104 @@ useEffect(() => {
     }
   };
 
-  const handlePlaceBet = async () => {
-    const s = parseFloat(stakeAmount) || 0;
-    const p = parseFloat(priceInput) || 0;
 
-    if (s < minStake || s > maxStake) {
-      return;
-    }
-    if (p <= 1) {
-      return;
-    }
+// Updated refreshUserBalance function
+const refreshUserBalance = async () => {
+  try {
+    await fetchData({
+      url: CONFIG.getUserBalance,
+      payload: { key: CONFIG.siteKey },
+      setFn: (res: any) => {
+        console.log("Balance refreshed:", res);
+        // Update global store so Header shows new balance immediately
+        setUserBalance(res);
+      }
+    });
+  } catch (error) {
+    console.error("Balance refresh error:", error);
+  }
+};
 
-    try {
-      setPlacing(true);
-      const payload = buildPayload();
+const handlePlaceBet = async () => {
+  const s = parseFloat(stakeAmount) || 0;
+  const p = parseFloat(priceInput) || 0;
 
-      // Use fetchData for consistency with your existing code
-      await fetchData({
-        url: CONFIG.placeBetURL,
-        payload: payload,
-        setFn: async (res: any) => {
-          console.log("Place bet response:", res);
+  // ===== AUTHENTICATION CHECK =====
+  const token = localStorage.getItem('token'); 
+  
+  if (!token) {
+    showToast('error', 'Authentication Required', 'Please login first to place bet');
+    
+    setTimeout(() => {
+    router.push('/login');
+    }, 1500);
+    
+    return;
+  }
 
-          // Parse message like in ChangePassword
-          let parts = [];
-          if (res?.meta?.message) {
-            parts = res.meta.message
-              .split(/',\s*'/)
-              .map((p: any) => p?.replace(/^'+|'+$/g, "").trim());
-          }
+  if (s < minStake || s > maxStake) {
+    showToast('error', 'Invalid Stake', `Stake must be between ${minStake} and ${maxStake}`);
+    return;
+  }
+  
+  if (p <= 1) {
+    showToast('error', 'Invalid Odds', 'Odds must be greater than 1');
+    return;
+  }
 
-          const msg = {
-            status: parts?.[0] || "",
-            title: parts?.[1] || "",
-            desc: parts?.[2] || "",
-          };
+  try {
+    setPlacing(true);
+    const payload = buildPayload();
 
-          showToast(msg.status, msg.title, msg.desc);
+    // ===== PLACE BET API CALL =====
+    await fetchData({
+      url: CONFIG.placeBetURL,
+      payload: payload,
+      setFn: async (res: any) => {
+        console.log("Place bet response:", res);
 
-          const ok =
-            res?.meta?.status === true ||
-            res?.status === true ||
-            res?.success === true;
-
-          if (ok) {
-            await afterPlaceRefresh();
-            await fetchBets();
-            onPlaced?.();
-            setStakeAmount("");
-            setPriceInput("");
-            setIsPlaceBetOpen(false);
-            onClose?.();
-          }
+        // Parse message
+        let parts = [];
+        if (res?.meta?.message) {
+          parts = res.meta.message
+            .split(/',\s*'/)
+            .map((p: any) => p?.replace(/^'+|'+$/g, "").trim());
         }
-      });
-    } catch (error) {
-      console.error("Bet placement error:", error);
-    } finally {
-      setPlacing(false);
-      fetchBets();
 
+        const msg = {
+          status: parts?.[0] || "",
+          title: parts?.[1] || "",
+          desc: parts?.[2] || "",
+        };
 
-    }
-  };
+        showToast(msg.status, msg.title, msg.desc);
+
+        const ok =
+          res?.meta?.status === true ||
+          res?.status === true ||
+          res?.success === true;
+
+        if (ok) {
+      
+          onPlaced?.();
+          setStakeAmount("");
+          setPriceInput("");
+          setIsPlaceBetOpen(false);
+          onClose?.();
+        }
+      }
+    });
+  } catch (error: any) {
+    console.error("Bet placement error:", error);
+    
+  } finally {
+    setPlacing(false);
+    await fetchBets();
+    await refreshUserBalance();
+          
+        
+  }
+};
 
   const getBgColor = () => {
     if (backLayClsModal === "slip-back") return "#72bbef";
@@ -401,151 +439,160 @@ useEffect(() => {
         </div>
 
         {/* BetSlip Content */}
-        {isPlaceBetOpen && visible && (
-          <div
-            className=" overflow-hidden "
-            style={{ backgroundColor: getBgColor() }}
-          >
-            <table className="w-full border-collapse relative top-[1px]">
-              <thead>
-                <tr className="bg-[#ccc] font-roboto">
-                  <th className="text-center text-[12px] font-bold p-[5px_8px_2px] text-[#303030] border-b border-[#dee2e6]"></th>
-                  <th className="text-start text-[12px] font-bold p-[3px_0_2px] text-[#303030] border-b border-[#dee2e6] whitespace-nowrap">
-                    (Bet For)
-                  </th>
-                  <th className="text-center text-[12px] pr-4.5 font-bold p-[3px_0_2px] text-[#303030] border-b border-[#dee2e6]">
-                    Odds
-                  </th>
-                  <th className="text-center text-[12px] pr-15 font-bold p-[3px_0_2px] text-[#303030] border-b border-[#dee2e6]">
-                    <span className="relative left-[12px]">Stake</span>
-                  </th>
-                  <th className="text-end text-[12px] font-bold p-[3px_0_2px] pr-[5px] text-[#303030] border-b border-[#dee2e6]">
-                    Profit
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="bg-transparent">
-                  <td className="p-1 align-middle text-[12px] font-bold w-[33.55px] text-center">
-                    <button
-                      type="button"
-                      onClick={handleClose}
-                      className="text-red-600 cursor-pointer text-[12px] relative top-[1px] left-[1px]"
-                    >
-                      <FaTimes />
-                    </button>
-                  </td>
-                  <td className="align-middle text-[12px] font-bold">
-                    <div className="text-[12px] leading-[18px] font-bold text-black py-1 pl-1 pr-[3px]">
-                      {runnerName}
-                    </div>
-                  </td>
-                  <td className="px-0 py-0 relative top-[-2px] left-3.5 align-middle text-[12px] font-bold">
-                    <div className="whitespace-nowrap inline-flex items-center">
-                      <input
-                        type="text"
-                        value={priceInput}
-                        onChange={(e) => setPriceInput(e.target.value)}
-                        maxLength={4}
-                        className="w-[45px] h-[22px] align-middle text-black bg-white px-0.5 text-center border border-gray-300 text-[12px] font-normal "
-                      />
-                      <div className="inline-flex flex-col">
-                        <button
-                          type="button"
-                          onClick={incPrice}
-                          className="w-5 h-[11px] px-0 py-0 bg-[#CCCCCC] flex items-center justify-center hover:bg-gray-300"
-                        >
-                          <FaAngleUp className="text-[10px] text-black" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={decPrice}
-                          className="w-5 h-[11px] px-0 py-0 bg-[#CCCCCC] flex items-center justify-center hover:bg-gray-300"
-                        >
-                          <FaAngleDown className="text-[10px] text-black" />
-                        </button>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-7 py-0 align-middle text-[12px] font-bold relative top-[-2px]">
-                    <input
-                      type="number"
-                      maxLength={10}
-                      value={stakeAmount}
-                      onChange={(e) => setStakeAmount(e.target.value)}
-                      className="w-[70px] h-[22px] px-0.5 text-center text-black bg-white border border-gray-300 text-[12px]"
-                    />
-                  </td>
-                  <td className="text-end px-1 py-0 align-middle text-[12px] font-bold"></td>
-                </tr>
-                <tr>
-                  <td colSpan={5} className="p-[5px] border-t border-b border-white">
-                    {stakeButtons.map((amount) => (
-                      <button
-                        key={amount}
-                        type="button"
-                        onClick={() => handleStakeClick(amount)}
-                        className="w-auto border-0 min-w-[18.9%] btn-clr font-normal h-[25px] mr-[3px] mb-[3px] text-center inline-block p-0 text-white rounded text-[14px] hover:border hover:border-black transition-all"
-                        style={{
-                          background:
-                            "linear-gradient(180deg, #030a12, #444647 42%, #58595a)",
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = gradient;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background =
-                            "linear-gradient(180deg, #030a12, #444647 42%, #58595a)";
-                        }}
-                      >
-                        {amount}
-                      </button>
-                    ))}
-                    <button
-                      type="button"
-                      onClick={handleMinStack}
-                      style={{ background: gradient }}
-                      className="w-auto border-0 min-w-[18.9%] font-bold h-[25px] mr-[3px] mb-[3px] text-center inline-block p-0 text-white rounded text-[12px] hover:border hover:border-black transition-all"
-                    >
-                      Min Stack
-                    </button>
-                    <button
-                      type="button"
-                      onClick={handleMaxStack}
-                      className="w-auto border-0 min-w-[18.9%] bg-[#2A4679] font-bold h-[25px] mr-[3px] mb-[3px] text-center inline-block p-0 text-white rounded text-[12px]"
-                    >
-                      Max Stack
-                    </button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div className="flex justify-between p-2.5">
-              <button
-                type="button"
-                onClick={handleCancel}
-                disabled={placing}
-                className="px-2 py-1 w-[55.67px] h-[31px] text-[14px] bg-[#db3545] text-white rounded-xs border-0 font-medium"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handlePlaceBet}
-                disabled={placing || !stakeAmount || parseFloat(priceInput) <= 1}
-                style={{
-                  background: gradient,
-                  opacity: (stakeAmount && parseFloat(priceInput) > 1 && !placing) ? 1 : 0.65,
-                  border: (stakeAmount && parseFloat(priceInput) > 1 && !placing) ? "1px solid black" : "none",
-                  color: (stakeAmount && parseFloat(priceInput) > 1 && !placing) ? "black" : "white",
-                }}
-                className="px-2 py-1 text-[14px] h-[31px] relative top-[-2px] rounded-xs font-medium transition-all"
-              >
-                {placing ? "Placing..." : "Submit"}
-              </button>
+       {isPlaceBetOpen && visible && (
+  <div
+    className="overflow-hidden relative"
+    style={{ 
+      backgroundColor: getBgColor(),
+      pointerEvents: placing ? 'none' : 'auto'
+    }}
+  >
+    {placing && (
+      <div className=" inset-0 [&_.loderrr]:!min-h-auto flex items-center justify-center z-9999">
+        <Loader />
+      </div>
+    )}
+
+    <table className="w-full border-collapse relative top-[1px]">
+      <thead>
+        <tr className="bg-[#ccc] font-roboto">
+          <th className="text-center text-[12px] font-bold p-[5px_8px_2px] text-[#303030] border-b border-[#dee2e6]"></th>
+          <th className="text-start text-[12px] font-bold p-[3px_0_2px] text-[#303030] border-b border-[#dee2e6] whitespace-nowrap">
+            (Bet For)
+          </th>
+          <th className="text-center text-[12px] pr-4.5 font-bold p-[3px_0_2px] text-[#303030] border-b border-[#dee2e6]">
+            Odds
+          </th>
+          <th className="text-center text-[12px] pr-15 font-bold p-[3px_0_2px] text-[#303030] border-b border-[#dee2e6]">
+            <span className="relative left-[12px]">Stake</span>
+          </th>
+          <th className="text-end text-[12px] font-bold p-[3px_0_2px] pr-[5px] text-[#303030] border-b border-[#dee2e6]">
+            Profit
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr className="bg-transparent">
+          <td className="p-1 align-middle text-[12px] font-bold w-[33.55px] text-center">
+            <button
+              type="button"
+              onClick={handleClose}
+              className="text-red-600 cursor-pointer text-[12px] relative top-[1px] left-[1px]"
+            >
+              <FaTimes />
+            </button>
+          </td>
+          <td className="align-middle text-[12px] font-bold">
+            <div className="text-[12px] leading-[18px] font-bold text-black py-1 pl-1 pr-[3px]">
+              {runnerName}
             </div>
-          </div>
-        )}
+          </td>
+          <td className="px-0 py-0 relative top-[-2px] left-3.5 align-middle text-[12px] font-bold">
+            <div className="whitespace-nowrap inline-flex items-center">
+              <input
+                type="text"
+                value={priceInput}
+                onChange={(e) => setPriceInput(e.target.value)}
+                maxLength={4}
+                className="w-[45px] h-[22px] align-middle text-black bg-white px-0.5 text-center border border-gray-300 text-[12px] font-normal "
+              />
+              <div className="inline-flex flex-col">
+                <button
+                  type="button"
+                  onClick={incPrice}
+                  className="w-5 h-[11px] px-0 py-0 bg-[#CCCCCC] flex items-center justify-center hover:bg-gray-300"
+                >
+                  <FaAngleUp className="text-[10px] text-black" />
+                </button>
+                <button
+                  type="button"
+                  onClick={decPrice}
+                  className="w-5 h-[11px] px-0 py-0 bg-[#CCCCCC] flex items-center justify-center hover:bg-gray-300"
+                >
+                  <FaAngleDown className="text-[10px] text-black" />
+                </button>
+              </div>
+            </div>
+          </td>
+          <td className="px-7 py-0 align-middle text-[12px] font-bold relative top-[-2px]">
+            <input
+              type="number"
+              maxLength={10}
+              value={stakeAmount}
+              onChange={(e) => setStakeAmount(e.target.value)}
+              className="w-[70px] h-[22px] px-0.5 text-center text-black bg-white border border-gray-300 text-[12px]"
+            />
+          </td>
+          <td className="text-end px-1 py-0 align-middle text-[12px] font-bold"></td>
+        </tr>
+        <tr>
+          <td colSpan={5} className="p-[5px] border-t border-b border-white">
+            {stakeButtons.map((amount) => (
+              <button
+                key={amount}
+                type="button"
+                onClick={() => handleStakeClick(amount)}
+                className="w-auto border-0 min-w-[18.9%] btn-clr font-normal h-[25px] mr-[3px] mb-[3px] text-center inline-block p-0 text-white rounded text-[14px] hover:border hover:border-black transition-all"
+                style={{
+                  background:
+                    "linear-gradient(180deg, #030a12, #444647 42%, #58595a)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = gradient;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background =
+                    "linear-gradient(180deg, #030a12, #444647 42%, #58595a)";
+                }}
+              >
+                {amount}
+              </button>
+            ))}
+            <button
+              type="button"
+              onClick={handleMinStack}
+              style={{ background: gradient }}
+              className="w-auto border-0 min-w-[18.9%] font-bold h-[25px] mr-[3px] mb-[3px] text-center inline-block p-0 text-white rounded text-[12px] hover:border hover:border-black transition-all"
+            >
+              Min Stack
+            </button>
+            <button
+              type="button"
+              onClick={handleMaxStack}
+              className="w-auto border-0 min-w-[18.9%] bg-[#2A4679] font-bold h-[25px] mr-[3px] mb-[3px] text-center inline-block p-0 text-white rounded text-[12px]"
+            >
+              Max Stack
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div className="flex justify-between p-2.5">
+      <button
+        type="button"
+        onClick={handleCancel}
+        disabled={placing}
+        className="px-2 py-1 w-[55.67px] h-[31px] text-[14px] bg-[#db3545] text-white rounded-xs border-0 font-medium"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        onClick={handlePlaceBet}
+        disabled={placing || !stakeAmount || parseFloat(priceInput) <= 1}
+        style={{
+          background: gradient,
+          opacity: (stakeAmount && parseFloat(priceInput) > 1 && !placing) ? 1 : 0.65,
+          border: (stakeAmount && parseFloat(priceInput) > 1 && !placing) ? "1px solid black" : "none",
+          color: (stakeAmount && parseFloat(priceInput) > 1 && !placing) ? "black" : "white",
+        }}
+        className="px-2 py-1 text-[14px] h-[31px] relative top-[-2px] rounded-xs font-medium transition-all"
+      >
+        {placing ? "Placing..." : "Submit"}
+      </button>
+    </div>
+  </div>
+)}
       </div>
 
       {/* MATCH ODDS SUMMARY + MATCHED/UNMATCHED LIST */}
