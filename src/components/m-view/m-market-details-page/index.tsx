@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import MBetSlip from "../m-betslip";
 import DBetSlip from "@/components/d-view/d-betslip";
 import RulesModal from "@/components/modals/rules-modal";
@@ -11,8 +11,7 @@ import { CONFIG } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
 import { useToast } from "@/components/common/toast/toast-context";
 import { useAppStore } from "@/lib/store/store";
-import { useParams } from "next/navigation"; // 👈 Added this for params
-import { Check } from "lucide-react";
+import { useParams } from "next/navigation";
 
 export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   const [activeTab, setActiveTab] = useState("odds");
@@ -23,14 +22,19 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   // INLINE (mobile) slip open or not
   const [isSlipOpen, setIsSlipOpen] = useState(false);
   const [isbetlimits, setIsBetLimits] = useState(false);
-  const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(null);
+  const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(
+    null
+  );
 
   // 👇 State for Real Data
   const [matchedBets, setMatchedBets] = useState<any[]>([]);
   const [unmatchedBets, setUnmatchedBets] = useState<any[]>([]);
+  const [marketPL, setMarketPL] = useState<
+    Record<string, Record<number, number>>
+  >({});
+  const [slipPreview, setSlipPreview] = useState({ stake: 0, price: 0 });
 
   const params = useParams();
-  // Event ID aur Sport ID nikal rahe hain API call ke liye
   const eventId = (params as any)?.eventId || "";
   const sportId = (params as any)?.sportId || "";
 
@@ -52,13 +56,13 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     slipBgClass: string;
     min: number;
     max: number;
+    side: "BACK" | "LAY";
   } | null>(null);
 
   const [isrulesopen, setRulesOpen] = useState(false);
 
   const dynamicCategories = [
     ...new Set(apiData?.matchOddsData?.map((item: any) => item.marketName)),
-
   ];
 
   const categories = ["Popular", ...dynamicCategories, "All Market"];
@@ -73,7 +77,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     }));
   };
 
-  // 👇 Helper function to format date inside Accordion
+  // 👇 Format date helper
   const formatDateTime = (dateStr?: string) => {
     if (!dateStr) return "";
     const d = new Date(dateStr);
@@ -87,7 +91,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     });
   };
 
-  // 👇 API Fetch Logic (Same as DBetSlip)
+  // 👇 Fetch Bets API
   const fetchBets = async () => {
     if (!eventId || !sportId) return;
 
@@ -106,15 +110,89 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
       },
     });
   };
+  // 👇 Fetch Profit/Loss API
+  // 👇 Fetch Profit/Loss API
+  const fetchMarketPL = useCallback(async () => {
+    if (!eventId || !sportId) return;
 
-  // 👇 Fetch data on mount or when eventId changes
-  useEffect(() => {
-    fetchBets();
-    // Optional: Auto refresh every few seconds
-    // const interval = setInterval(fetchBets, 5000);
-    // return () => clearInterval(interval);
+    try {
+      await fetchData({
+        cachedKey: `market_pl_${eventId}_${sportId}`,
+        url: CONFIG.getAllMarketplURL,
+        payload: {
+          eventId: String(eventId),
+          sportId: String(sportId),
+        },
+        setFn: (res: any) => {
+          console.log("📦 Full PL response:", res); // Just console
+
+          // If pl exists, update state
+          if (res?.pl) {
+            setMarketPL(res.pl);
+          }
+        },
+        forceApiCall: true, // Disable cache temporarily to test live data
+      });
+    } catch (error) {
+      console.error("❌ Error fetching PL:", error);
+    }
   }, [eventId, sportId]);
 
+  // 👇 Fetch all data on mount
+  useEffect(() => {
+    fetchBets();
+    fetchMarketPL();
+  }, [eventId, sportId, fetchMarketPL]);
+
+  // Helper function to get PL for a specific runner
+  const getRunnerPL = (marketId: string, selectionId: number) => {
+    if (!marketPL || Object.keys(marketPL).length === 0) return null;
+
+    // Find the market key (it might be a string like "1.251406395")
+    const marketKey =
+      Object.keys(marketPL).find(
+        (key) => Math.abs(parseFloat(key) - parseFloat(marketId)) < 0.0001
+      ) || marketId;
+
+    const marketData = marketPL[marketKey];
+    if (!marketData) return null;
+
+    const selectionKey = String(selectionId);
+    return marketData[selectionKey] || 0;
+  };
+
+  // 👇 Calculate preview PL for other runners when betslip is open
+  const calculatePreviewPL = (
+    side: "BACK" | "LAY",
+    price: number,
+    stake: number,
+    currentSelectionId: number,
+    targetSelectionId: number
+  ): number => {
+    // If same runner, calculate actual PL
+    if (currentSelectionId === targetSelectionId) {
+      if (side === "BACK") {
+        return stake * (price - 1); // Profit if BACK wins
+      } else {
+        return stake; // Profit if LAY wins
+      }
+    } else {
+      // For other runners (liability)
+      if (side === "BACK") {
+        return -stake; // Loss if BACK loses
+      } else {
+        return -(stake * (price - 1)); // Loss if LAY loses
+      }
+    }
+  };
+
+  // Handle slip preview from betslip
+  const handleSlipPreview = useCallback(
+    ({ stake, price }: { stake: number; price: number }) => {
+      setSlipPreview({ stake, price });
+    },
+    []
+  );
 
   useEffect(() => {
     if (isSlipOpen && betslipRef.current) {
@@ -177,6 +255,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
       slipBgClass: bg,
       min: minStake,
       max: maxStake,
+      side: column,
     });
 
     // For mobile inline betslip
@@ -188,7 +267,8 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   const closeInlineSlip = () => {
     setIsSlipOpen(false);
     setOpenSlip(null);
-    fetchBets(); // Refresh bets when slip closes (after placement)
+    fetchBets();
+    fetchMarketPL(); // Refresh PL after bet placement
   };
 
   // Check if this runner row has an open mobile slip
@@ -223,6 +303,55 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     setFilteredMarketData(filterdData);
   }, [activeCategory]);
 
+  // Format PL value with + or -
+  const formatPLValue = (value: number | null) => {
+    if (value === null || value === undefined) return null;
+    if (value === 0) return "0.00";
+
+    const isPositive = value > 0;
+    const absValue = Math.abs(value);
+    const formatted = absValue.toFixed(2);
+
+    return (
+      <span
+        className={` gap-1 ${isPositive ? "text-green-600" : "text-red-600"}`}
+      >
+        {isPositive ? <>{formatted}</> : <>{formatted}</>}
+      </span>
+    );
+  };
+
+  // Get combined PL (actual PL + preview PL)
+  const getCombinedPL = (marketId: string, selectionId: number) => {
+    const actualPL = getRunnerPL(marketId, selectionId) || 0;
+
+    // If betslip is open for this market, add preview PL
+    if (
+      openSlip &&
+      betSlipData &&
+      openSlip.marketId === marketId &&
+      slipPreview.stake > 0
+    ) {
+      const previewPL = calculatePreviewPL(
+        openSlip.side,
+        slipPreview.price,
+        slipPreview.stake,
+        openSlip.selectionId,
+        selectionId
+      );
+
+      // If this is the same runner, show actual PL + preview PL
+      if (openSlip.selectionId === selectionId) {
+        return actualPL + previewPL;
+      } else {
+        // For other runners, show liability
+        return actualPL + previewPL;
+      }
+    }
+
+    return actualPL;
+  };
+
   return (
     <div className="lg:m-[5px] lg:mt-1.5">
       {/* MOBILE TOP TAB BAR */}
@@ -232,10 +361,11 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
           <div className="flex pt-[13px] pb-3">
             <a
               onClick={() => setActiveTab("odds")}
-              className={`relative block text-[12px] text-center border-r px-4 ${activeTab === "odds"
-                ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
-                : ""
-                }`}
+              className={`relative block text-[12px] text-center border-r px-4 ${
+                activeTab === "odds"
+                  ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
+                  : ""
+              }`}
             >
               ODDS
             </a>
@@ -244,12 +374,12 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
           <div className="flex">
             <a
               onClick={() => setActiveTab("betList")}
-              className={`relative block text-[12px] text-center px-4 ${activeTab === "betList"
-                ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
-                : ""
-                }`}
+              className={`relative block text-[12px] text-center px-4 ${
+                activeTab === "betList"
+                  ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
+                  : ""
+              }`}
             >
-              {/* Count update kiya hai */}
               BET LIST ( {matchedBets.length} )
             </a>
           </div>
@@ -294,7 +424,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
               You Have No Open Bets.
             </div>
           ) : (
-
             <div className="w-full max-w-2xl mx-auto bg-white shadow-sm">
               {/* Header Section */}
               <div className="flex justify-between items-center h-[29.5px] m-[3px]">
@@ -302,16 +431,22 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                   <span className="bg-[#00B59B] text-white px-2 py-0.5 rounded text-[13px] font-bold">
                     {matchedBets.length}
                   </span>
-                  <span className="font-bold text-gray-800 text-[12px]">Matched</span>
+                  <span className="font-bold text-gray-800 text-[12px]">
+                    Matched
+                  </span>
                 </div>
 
                 {/* Toggle Switch */}
                 <div className="flex items-center gap-2">
-                  <label className="text-[12px] font-bold text-gray-700 cursor-pointer relative -top-px" htmlFor="avg-toggle">Avg Odds</label>
+                  <label
+                    className="text-[12px] font-bold text-gray-700 cursor-pointer relative -top-px"
+                    htmlFor="avg-toggle"
+                  >
+                    Avg Odds
+                  </label>
                   <div className="flex items-center mb-1">
                     <label className="relative inline-flex items-center cursor-pointer">
-                      <input type="checkbox" className="sr-only peer"
-                      />
+                      <input type="checkbox" className="sr-only peer" />
                       <div className="w-[35px] h-5 rounded-full peer border border-gray-300 transition-colors duration-300 peer-checked:bg-[#0d6dfc] peer-checked:shadow-[0_0_0_0.25rem_#0d6efd40] peer-focus:outline-none peer-focus:shadow-[0_0_0_3px_#0d6efd40] peer-focus:border-[#86b7fe]"></div>
                       <div className="absolute left-[3px] top-[3px] w-[13px] h-[13px] bg-[#bfbfbf] rounded-full shadow-md transform peer-checked:translate-x-4 transition-transform duration-300"></div>
                     </label>
@@ -324,9 +459,15 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                 <table className="w-full border-collapse border border-black/12.5">
                   <thead>
                     <tr className="bg-white h-[26px] text-gray-700 text-sm border-b border-gray-300">
-                      <th className="text-left p-0.5 font-normal w-[60%]">Description</th>
-                      <th className="text-center p-0.5 font-normal border-l border-gray-300">Odds</th>
-                      <th className="text-center p-0.5 font-normal w-[20%] border-l border-gray-300">Stake</th>
+                      <th className="text-left p-0.5 font-normal w-[60%]">
+                        Description
+                      </th>
+                      <th className="text-center p-0.5 font-normal border-l border-gray-300">
+                        Odds
+                      </th>
+                      <th className="text-center p-0.5 font-normal w-[20%] border-l border-gray-300">
+                        Stake
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="border-black">
@@ -335,16 +476,24 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                         {/* --- MAIN ROW --- */}
                         <tr
                           onClick={() => toggleRow(bet.betId)}
-                          className={`border-b border-gray-400 h-[41px] cursor-pointer ${bet.side === "LAY" ? "bg-[#faa9ba]" : "bg-[#73bcf0]"
-                            }`}
+                          className={`border-b border-gray-400 h-[41px] cursor-pointer ${
+                            bet.side === "LAY" ? "bg-[#faa9ba]" : "bg-[#73bcf0]"
+                          }`}
                         >
                           <td className="p-0.5 border-r border-gray-400">
                             <div className="flex items-center gap-2">
-                              <div className={`${expandedRows[bet.betId] ? 'rotate-180' : ''}`}>
+                              <div
+                                className={`${
+                                  expandedRows[bet.betId] ? "rotate-180" : ""
+                                }`}
+                              >
                                 <FaChevronDown className="w-3 h-3" />
                               </div>
                               <div className="leading-tight text-[12px]">
-                                <div className="text-gray-900">Match Odds - {bet.selectionName || bet.marketName}</div>
+                                <div className="text-gray-900">
+                                  Match Odds -{" "}
+                                  {bet.selectionName || bet.marketName}
+                                </div>
 
                                 <div className=" text-gray-800 mt-0.5">
                                   <span className="">Bet Id</span> {bet.betId}
@@ -361,12 +510,17 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                         </tr>
                         {expandedRows[bet.betId] && (
                           <tr className="bg-white border-b border-gray-400 h-[41px]">
-                            <td colSpan={3} className="text-xs text-gray-800 leading-snug p-0.5">
+                            <td
+                              colSpan={3}
+                              className="text-xs text-gray-800 leading-snug p-0.5"
+                            >
                               <div>
-                                <span className="font-medium">Placed: </span> {formatDateTime(bet.placedDate)}
+                                <span className="font-medium">Placed: </span>{" "}
+                                {formatDateTime(bet.placedDate)}
                               </div>
                               <div>
-                                <span className="font-medium">Matched: </span> {formatDateTime(bet.matchedDate)}
+                                <span className="font-medium">Matched: </span>{" "}
+                                {formatDateTime(bet.matchedDate)}
                               </div>
                             </td>
                           </tr>
@@ -376,13 +530,13 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                   </tbody>
                 </table>
                 {matchedBets.length === 0 && (
-                  <div className="p-4 text-center text-sm text-gray-500">No bets found.</div>
+                  <div className="p-4 text-center text-sm text-gray-500">
+                    No bets found.
+                  </div>
                 )}
               </div>
             </div>
           )}
-
-
         </div>
       ) : (
         <div className="flex w-full">
@@ -454,10 +608,11 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                 {categories?.map((category: any, idx: number) => (
                   <li
                     key={idx}
-                    className={`px-2.5 py-[5px] whitespace-nowrap rounded-full ml-[5px] text-[12px] font-medium border border-white cursor-pointer ${activeCategory === category
-                      ? "bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)] text-black"
-                      : "hover:bg-gray-100 bg-transparent text-white"
-                      }`}
+                    className={`px-2.5 py-[5px] whitespace-nowrap rounded-full ml-[5px] text-[12px] font-medium border border-white cursor-pointer ${
+                      activeCategory === category
+                        ? "bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)] text-black"
+                        : "hover:bg-gray-100 bg-transparent text-white"
+                    }`}
                   >
                     <button onClick={() => setActiveCategory(category)}>
                       {category.toUpperCase()}
@@ -480,26 +635,24 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                       <span className="font-bold md:font-normal text-white text-[13px] lg:text-[14px]">
                         {market?.marketName}
                       </span>
-                      {/* <div className="ml-3">
-                        <div className="flex items-center">
-                          <span className="flex items-center relative top-px text-white text-[13px] lg:text-[14px] font-bold md:font-normal">
-                            <span className="relative w-[18px] h-[18px] mr-[5px] bg-yellow-500 rounded-xs">
-                              <span className="w-[13px] h-[13px] bg-black rounded-full mr-1.5 absolute z-20 top-0.5 left-0.5"></span>
-                            </span>
-                            Cash Out
-                          </span>
-                        </div>
-                      </div> */}
                       <div className="ml-1 h-[26px] relative top-[-2px]">
-                        <div onClick={() => setIsBetLimits(true)} className="bg-[#ccc] text-black rounded-[4px] py-[3px] px-[10px] my-[2px] leading-[18px] inline-block ml-2 align-middle font-normal cursor-pointer">
-                          <span className={`ml-[5px] text-sm ${isbetlimits ? "font-bold text-[#008000]" : "font-normal text-black"}`}>
+                        <div
+                          onClick={() => setIsBetLimits(true)}
+                          className="bg-[#ccc] text-black rounded-[4px] py-[3px] px-[10px] my-[2px] leading-[18px] inline-block ml-2 align-middle font-normal cursor-pointer"
+                        >
+                          <span
+                            className={`ml-[5px] text-sm ${
+                              isbetlimits
+                                ? "font-bold text-[#008000]"
+                                : "font-normal text-black"
+                            }`}
+                          >
                             <span className="w-[18px] relative h-[18px] rounded-[2px] float-left bg-[#ffb900] flex items-center justify-center text-black">
                               {!isbetlimits ? (
                                 <span className="w-[13px] h-[13px] bg-black rounded-full absolute mr-1.5  z-20 top-[3px] left-[3px]"></span>
                               ) : (
                                 <i className="fa fa-check"></i>
                               )}
-
                             </span>
                             {isbetlimits ? "0.35" : "Cash Out"}
                           </span>
@@ -508,7 +661,9 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                     </div>
                     <button
                       onClick={() => {
-                        setSelectedMarketRules(market?.description?.rules || null);
+                        setSelectedMarketRules(
+                          market?.description?.rules || null
+                        );
                         setRulesOpen(true);
                       }}
                       className="text-white mr-px mb-px"
@@ -566,7 +721,8 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                         <b className="md:font-normal">LAY</b>
                       </div>
                       <div className="leading-[15px] py-[5px] pr-[5px] text-[#212529] text-center font-bold text-[14px] border-r border-white w-[20%] md:font-normal">
-                        Matched:&nbsp;{(market?.totalMatched / 1000)?.toFixed(2)}K
+                        Matched:&nbsp;
+                        {(market?.totalMatched / 1000)?.toFixed(2)}K
                       </div>
                     </div>
                   </div>
@@ -581,17 +737,30 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                         (item: any) => item?.selectionId === runner?.selectionId
                       )?.runnerName;
 
+                      // Get PL for this runner
+                      const runnerPL = getCombinedPL(
+                        market.marketId,
+                        runner.selectionId
+                      );
+                      const displayPL = formatPLValue(runnerPL);
+
                       return (
                         <React.Fragment key={runner?.selectionId}>
                           {/* Runner Row */}
                           <div className="flex border-b border-[#aaa] lg:border-white bg-gray-50 h-[41px] lg:h-10 lg:bg-[#f2f2f2]">
                             <div className="col-span-3 py-0.5 px-[5px] lg:border-l lg:border-white md:col-span-1 w-[60%] lg:w-[40%]">
-                              <div className="flex">
+                              <div className="flex justify-between items-center">
                                 <div className="w-full">
-                                  <span className="flex justify-between">
+                                  <span className=" ">
                                     <b className="font-semibold md:font-normal text-[12px] lg:text-[14px] text-[#212529]">
                                       {runnerName}
                                     </b>
+                                    {/* Display PL here */}
+                                    {displayPL && (
+                                      <div className="-m-1 ml-1 text-[12px]  ">
+                                        {displayPL}
+                                      </div>
+                                    )}
                                   </span>
                                 </div>
                               </div>
@@ -600,17 +769,19 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                             {/* Odds Cells */}
                             <div
                               className={`relative w-[40%] lg:text-[#212529] lg:w-[60%] flex 
-                              ${isSuspended
+                              ${
+                                isSuspended
                                   ? "after:content-['SUSPENDED'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed"
                                   : ""
-                                }`}
+                              }`}
                             >
                               {/* BACK (mobile visible, desktop: first cell) */}
                               <div
-                                className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!isSuspended
-                                  ? "cursor-pointer"
-                                  : "cursor-not-allowed"
-                                  }`}
+                                className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${
+                                  !isSuspended
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -639,10 +810,11 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
 
                               {/* Extra BACK cells for desktop layout (hidden on mobile) */}
                               <div
-                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!isSuspended
-                                  ? "cursor-pointer"
-                                  : "cursor-not-allowed"
-                                  }`}
+                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
+                                  !isSuspended
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -669,10 +841,11 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                 </span>
                               </div>
                               <div
-                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!isSuspended
-                                  ? "cursor-pointer"
-                                  : "cursor-not-allowed"
-                                  }`}
+                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
+                                  !isSuspended
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -701,10 +874,11 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
 
                               {/* LAY */}
                               <div
-                                className={`text-center lg:border-l lg:border-white flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!isSuspended
-                                  ? "cursor-pointer"
-                                  : "cursor-not-allowed"
-                                  }`}
+                                className={`text-center lg:border-l lg:border-white flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
+                                  !isSuspended
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -730,10 +904,11 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                 </span>
                               </div>
                               <div
-                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!isSuspended
-                                  ? "cursor-pointer"
-                                  : "cursor-not-allowed"
-                                  }`}
+                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
+                                  !isSuspended
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -759,10 +934,11 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                 </span>
                               </div>
                               <div
-                                className={`text-center lg:border-l lg:border-white border-r hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!isSuspended
-                                  ? "cursor-pointer"
-                                  : "cursor-not-allowed"
-                                  }`}
+                                className={`text-center lg:border-l lg:border-white border-r hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
+                                  !isSuspended
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -795,26 +971,31 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                             market?.marketId,
                             runner?.selectionId
                           ) && (
-                              <div ref={betslipRef} className="lg:hidden">
-                                {betSlipData && (
-                                  <MBetSlip
-                                    visible={isSlipOpen}
-                                    backLayClsModal={betSlipData?.slipCls}
-                                    extraBgClass={betSlipData?.slipBgClass}
-                                    odds={betSlipData?.odds}
-                                    marketId={betSlipData?.marketId}
-                                    selectionId={betSlipData?.selectionId}
-                                    eventId="event123"
-                                    marketType={market?.marketType}
-                                    runnerName={betSlipData?.runnerName}
-                                    minStake={betSlipData?.min}
-                                    maxStake={betSlipData?.max}
-                                    onClose={closeInlineSlip}
-                                    onPlaced={closeInlineSlip}
-                                  />
-                                )}
-                              </div>
-                            )}
+                            <div ref={betslipRef} className="lg:hidden">
+                              {betSlipData && (
+                                <MBetSlip
+                                  visible={isSlipOpen}
+                                  backLayClsModal={betSlipData?.slipCls}
+                                  extraBgClass={betSlipData?.slipBgClass}
+                                  odds={betSlipData?.odds}
+                                  marketId={betSlipData?.marketId}
+                                  selectionId={betSlipData?.selectionId}
+                                  eventId={eventId}
+                                  sportId={sportId}
+                                  marketType={market?.marketType}
+                                  runnerName={betSlipData?.runnerName}
+                                  minStake={betSlipData?.min}
+                                  maxStake={betSlipData?.max}
+                                  onClose={closeInlineSlip}
+                                  onPlaced={() => {
+                                    closeInlineSlip();
+                                    fetchMarketPL();
+                                  }}
+                                  onPreviewChange={handleSlipPreview}
+                                />
+                              )}
+                            </div>
+                          )}
                         </React.Fragment>
                       );
                     })}
@@ -830,13 +1011,18 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
               odds={betSlipData?.odds}
               marketId={betSlipData?.marketId}
               selectionId={betSlipData?.selectionId}
+              eventId={eventId}
+              sportId={sportId}
               runnerName={betSlipData?.runnerName}
               minStake={betSlipData?.min}
               maxStake={betSlipData?.max}
               backLayClsModal={betSlipData?.slipCls}
               onClose={() => setBetSlipData(null)}
-              // 👇 Refresh bets when DBetSlip places a bet
-              onPlaced={() => fetchBets()}
+              onPlaced={() => {
+                fetchBets();
+                fetchMarketPL();
+              }}
+              onPreviewChange={handleSlipPreview}
             />
           </div>
         </div>
