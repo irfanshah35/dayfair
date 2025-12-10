@@ -184,3 +184,12 @@ body {
 .rules-content a:hover{
   color: #0a58ca;
 }
+
+.animate-spin {
+  animation: spin-slow 2s linear infinite !important;
+}
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
