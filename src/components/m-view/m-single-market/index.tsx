@@ -145,7 +145,7 @@ const MSingleMarket = () => {
                       <td className="px-[15px] align-middle">
                         <div className="flex justify-between items-center">
                           <div className="game-name float-left text-left relative bottom-[3px]">
-                            <a className="text-[#212529] hover:underline cursor-pointer text-[14px]">
+                            <a className="text-[#212529] hover:underline cursor-pointer text-[14px] relative md:top-[1px]">
                               {item?.event?.name}
                               {item?.marketStartTime && (
                                 <span className="text-[#212529]"> / {formatDateStamp(item?.marketStartTime)}</span>
@@ -159,7 +159,7 @@ const MSingleMarket = () => {
                               </span>
                             ) : (
                               <span className="game-icon w-[25px] flex justify-center items-center">
-                                <i className="fas fa-clock text-sm" style={{ color: "green" }}></i>
+                                <i className="fas fa-clock text-sm relative md:top-[1px]" style={{ color: "green" }}></i>
                               </span>
                             )}
                           </div>
@@ -170,12 +170,12 @@ const MSingleMarket = () => {
                       {odds.map((o) => (
                         <React.Fragment key={o}>
                           <td>
-                            <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
+                            <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] h-[25px] border-0 cursor-pointer min-w-10">
                               {item?.runners[o]?.ex?.availableToBack[0]?.price || "-"}
                             </button>
                           </td>
                           <td>
-                            <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
+                            <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] h-[25px] border-0 cursor-pointer min-w-10">
                               {item?.runners[o]?.ex?.availableToLay[0]?.price || "-"}
                             </button>
                           </td>
