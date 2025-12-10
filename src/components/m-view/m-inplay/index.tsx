@@ -160,8 +160,8 @@ const MInplay = () => {
 
             return (
               <div key={sport}>
-                <div className="bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white mt-1 px-4 h-8 flex items-center font-medium text-[16px] leading-[19px]">
-                  <h4 className="relative top-[0.1px] font-medium">{sport}</h4>
+                <div className={`bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white  px-4 h-8 flex items-center font-medium text-[16px] leading-[19px] ${sport === "Cricket"? 'mt-1': " mt-[3px]"}`}>
+                  <h4 className="relative top-[-1px] font-medium">{sport}</h4>
                 </div>
 
                 <div className="w-full bg-white">
@@ -182,9 +182,9 @@ const MInplay = () => {
                             onClick={() =>
                               router.push(`/market-details/${item.event?.id}/${item.eventType?.id}`)
                             }
-                            className="cursor-pointer border-b border-[#d6d8d7]"
+                            className="cursor-pointer border-b border-[#d6d8d7] relative"
                           >
-                            <td className="px-[15px] align-middle">
+                            <td className="px-[15px] align-middle relative top-[1px]">
                               <div className="flex justify-between items-center">
                                 <div className="game-name float-left text-left relative bottom-[3px]">
                                   <a className="text-[#212529] hover:underline cursor-pointer text-[14px]">
@@ -194,7 +194,7 @@ const MInplay = () => {
                                 <div className="game-icons float-right w-auto flex items-center space-x-1 -mt-px">
                                   {item.inplay && (
                                     <span className="game-icon w-[25px] flex justify-center items-center">
-                                      <span className="w-3 h-3 bg-[#28a745] rounded-full inline-block"></span>
+                                      <span className="w-3 h-3 bg-[#28a745] rounded-full inline-block relative top-[-1px]"></span>
                                     </span>
                                   )}
                                 </div>
