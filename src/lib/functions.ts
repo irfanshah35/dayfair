@@ -57,7 +57,7 @@ export async function fetchData({
   // API CALL
   try {
     const response: any = await http.post(url, payload);
-    const apiData = response.data.data;
+const apiData = response?.data?.data ?? response?.data;
     setFn && setFn(apiData);
 
     // SHOW TOAST

@@ -3,6 +3,7 @@ import { CONFIG } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState, useRef } from "react";
+
 interface ExposureModalProps {
   open: boolean;
   onClose: () => void;
@@ -46,9 +47,15 @@ export default function ExposureModal({ open, onClose }: ExposureModalProps) {
     }
   }, [open]);
 
+  const handleNavigation = (eventId: string, eventTypeId: string) => {
+    // Close modal first
+    onClose();
+    // Then navigate
+    router.push(`/market-details/${eventId}/${eventTypeId}`);
+  };
+
   if (!show) return null;
 
-  // if (!open) return null;
   return (
     <div>
       <div className="fixed text-black inset-0 pt-3.5 bg-black/50 flex items-center min-[992px]:items-start justify-center z-50">
@@ -100,16 +107,16 @@ export default function ExposureModal({ open, onClose }: ExposureModalProps) {
                         {item?.eventType?.name}
                       </td>
                       <td
-                        className="px-2 py-1.5 md:px-3 md:py-[7px] h-10 text-center border text-[#0d6efd] border-black/12.5 bg-transparent text-xs md:text-base"
-                        onClick={() => {
-                          router.push(
-                            `/marked-details/${item?.event?.id}/${item?.eventType?.id}`
-                          );
-                        }}
+                        className="px-2 py-1.5 md:px-3 md:py-[7px] h-10 text-center border text-[#0d6efd] border-black/12.5 bg-transparent text-xs md:text-base cursor-pointer "
+                        onClick={() => handleNavigation(item?.event?.id, item?.eventType?.id)}
                       >
                         {item?.event?.name}
                       </td>
-                      <td className="px-2 py-1.5 md:px-3 md:py-[7px] h-10 text-center border text-black border-black/12.5 bg-transparent text-xs md:text-base"></td>
+                      <td 
+                        className="px-2 py-1.5 md:px-3 md:py-[7px] h-10 text-center border text-[#0d6efd] border-black/12.5 bg-transparent text-xs md:text-base cursor-pointer "
+                      >
+                        {item?.market?.name }
+                      </td>
                       <td className="px-2 py-1.5 md:px-3 md:py-[7px] h-10 text-center border text-black border-black/12.5 bg-transparent text-xs md:text-base">
                         {item?.betCounts}
                       </td>
@@ -118,7 +125,7 @@ export default function ExposureModal({ open, onClose }: ExposureModalProps) {
                 ) : (
                   <tr>
                     <td
-                      colSpan={5}
+                      colSpan={4}
                       className="px-2 py-1.5 md:px-3 md:py-[7px] h-10 text-center border text-black border-black/12.5 bg-transparent text-xs md:text-base"
                     >
                       No real-time records found
