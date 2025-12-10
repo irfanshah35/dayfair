@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -33,9 +34,7 @@ const DTopnav = () => {
     setNavItems((prev) => [...prev, ...newItems]);
   }, [menuList]);
 
-  const isActive = (href: string) => {
-    return pathname === href;
-  };
+  const isActive = (href: string) => pathname === href;
 
   return (
     <div className="hidden md:block">

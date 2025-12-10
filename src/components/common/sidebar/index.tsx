@@ -1,10 +1,15 @@
 "use client";
 import { useAppStore } from "@/lib/store/store";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { FaChevronDown, FaCaretRight } from "react-icons/fa";
 import { FaRegSquarePlus, FaRegSquareMinus } from "react-icons/fa6";
+import dynamic from "next/dynamic";
+
+const lazyLoadCasino = dynamic(() => import("@/components/m-view/m-live-casino"), {
+  ssr: false,
+  loading: () => <></>,
+});
 
 const adaptEventsMap = (raw: any): Record<string, any[]> => {
   if (!raw || typeof raw !== "object") return {};
@@ -19,7 +24,6 @@ const adaptEventsMap = (raw: any): Record<string, any[]> => {
       totalMatched: it?.oddsData?.totalMatched ?? it?.totalMatched ?? 0,
       eventId: String(it?.event?.id ?? it?.id ?? ""),
       eventTypeId: String(it?.eventType?.id ?? ""),
-      // preserve original for routing/other fields you might need
       __raw: it,
     }));
   });
@@ -35,7 +39,6 @@ const buildTournamentsForSport = (
   const seen = new Set<string>();
   const unique: any[] = [];
 
-  // Keep first occurrence for each tournamentId
   for (const ev of arr) {
     if (ev.tournamentId && !seen.has(ev.tournamentId)) {
       seen.add(ev.tournamentId);
@@ -45,7 +48,6 @@ const buildTournamentsForSport = (
       });
     }
   }
-  // Optional: sort by name
   unique.sort((a, b) => a.tournamentName.localeCompare(b.tournamentName));
   return unique;
 };
@@ -57,12 +59,7 @@ export default function Sidebar() {
   const [popularSportsList, setPopularSportList] = useState<any>();
   const [tournamentList, setTournamentList] = useState<any>();
   const router = useRouter();
-
   const { menuList, allEventsList } = useAppStore();
-
-  useEffect(() => {
-    console.log("allEventsList in Sidebar:");
-  }, [allEventsList]);
 
   useEffect(() => {
     const events = adaptEventsMap(allEventsList);
@@ -89,26 +86,21 @@ export default function Sidebar() {
         marketCount: x?.marketCount ?? 0,
         isOpen: false,
       }))
-      .filter((s) => s.sportId !== "66103") // keep your original filter
+      .filter((s) => s.sportId !== "66103")
       .sort((a, b) => a.sequence - b.sequence);
   };
-
-  // const [open, setOpen] = useState<Record<string, boolean>>({});
 
   const [open, setOpen] = useState<{
     sport: string;
     tournament: string | null;
-  }>({
-    sport: "0",
-    tournament: null,
-  });
+  }>({ sport: "0", tournament: null });
 
   const pathName = usePathname();
 
   const toggleSport = (key: string) => {
     setOpen((prev) => ({
-      sport: prev.sport === key ? "0" : key, // open one, close others
-      tournament: null, // close all tournaments when switching sport
+      sport: prev.sport === key ? "0" : key,
+      tournament: null,
     }));
     const events = adaptEventsMap(allEventsList);
     const tournament = buildTournamentsForSport(key, events || {});
@@ -117,28 +109,32 @@ export default function Sidebar() {
 
   const toggleTournament = (key: string) => {
     if (pathName?.includes("/market-details") && open.tournament !== key) {
-      router.push("/"); // navigate to home on sport change
+      router.push("/");
     }
     setOpen((prev) => ({
       ...prev,
-      tournament: prev.tournament === key ? "0" : key, // close all tournaments when switching sport
+      tournament: prev.tournament === key ? "0" : key,
     }));
     const events = adaptEventsMap(allEventsList);
     const eventData = events[open.sport];
     const filteredEvents = eventData.filter(
       (e: any) => e.tournamentId === String(key)
     );
-
     const sortedEvents = filteredEvents?.sort(
       (a: any, b: any) => b.totalMatched - a.totalMatched
     );
-
     setEventList(sortedEvents);
   };
 
-  // const toggle = (key: string) => {
-  //   setOpen((prev) => ({ ...prev, [key]: !prev[key] }));
-  // };
+  const handleCasinoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    lazyLoadCasino; // triggers lazy load
+    router.push("/live-casino");
+  };
+
+  const handleMarketDetailsClick = (event: any) => {
+    router.push(`/market-details/${event?.eventId}/${event?.sportId}`);
+  };
 
   return (
     <div
@@ -168,10 +164,11 @@ export default function Sidebar() {
 
         {isOthersOpen && (
           <nav className="bg-[#C3BDBD]  border-b border-[#9e9e9e]">
-
             <ul className="py-[5] px-3 ml-[-9] h-[24.5px]">
               <li className="list-none text-white ml-2.5">
-                <Link href={"/live-casino"}>Casino</Link>
+                <a href="#" onClick={handleCasinoClick}>
+                  Casino
+                </a>
               </li>
             </ul>
           </nav>
@@ -245,7 +242,9 @@ export default function Sidebar() {
                                 />
                               )}
                             </span>
-                            <span className="pl-[3px]">{tour?.tournamentName}</span>
+                            <span className="pl-[3px]">
+                              {tour?.tournamentName}
+                            </span>
                           </div>
 
                           {/* Matches */}
@@ -256,9 +255,7 @@ export default function Sidebar() {
                                   key={idx}
                                   className="list-none py-1 pl-4 pr-0"
                                   onClick={() =>
-                                    router.push(
-                                      `/market-details/${event?.eventId}/${event?.sportId}`
-                                    )
+                                    handleMarketDetailsClick(event)
                                   }
                                 >
                                   <div className="cursor-pointer flex items-start">

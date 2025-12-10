@@ -3,6 +3,16 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/lib/store/store";
+import dynamic from "next/dynamic";
+
+// Lazy load MarketDetails page
+const lazyLoadMarketDetails = dynamic(
+  () => import("@/components/m-view/m-market-details-page"),
+  {
+    ssr: false,
+    loading: () => <span>Loading Market Details...</span>,
+  }
+);
 
 const DGameList = ({
   sportId,
@@ -38,7 +48,13 @@ const DGameList = ({
       const sports = allEventsList[Number(sportId)];
       setSelectedSport(sports);
     }
-  }, [allEventsList]);
+  }, [allEventsList, sportId]);
+
+  // Handle click with lazy loading
+  const handleMarketDetailsClick = (item: any) => {
+    lazyLoadMarketDetails; // trigger dynamic import
+    router.push(`/market-details/${item?.event?.id}/${item?.eventType?.id}`);
+  };
 
   return (
     <div className="lg:px-[9px]">
@@ -84,11 +100,7 @@ const DGameList = ({
                     selectedSport?.map((item: any, idx: number) => (
                       <tr
                         key={idx}
-                        onClick={() =>
-                          router.push(
-                            `/market-details/${item?.event?.id}/${item?.eventType?.id}`
-                          )
-                        }
+                        onClick={() => handleMarketDetailsClick(item)}
                         className="cursor-pointer border-b border-[#d6d8d7]"
                       >
                         <td className="px-[15px] align-middle">
@@ -119,42 +131,42 @@ const DGameList = ({
                         {/* Runner 1 odds */}
                         <td>
                           <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                            {item.runners?.[0]?.ex?.availableToBack?.[0]
-                              ?.price || "-"}
+                            {item.runners?.[0]?.ex?.availableToBack?.[0]?.price ||
+                              "-"}
                           </button>
                         </td>
                         <td>
                           <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                            {item.runners?.[0]?.ex?.availableToLay?.[0]
-                              ?.price || "-"}
+                            {item.runners?.[0]?.ex?.availableToLay?.[0]?.price ||
+                              "-"}
                           </button>
                         </td>
 
-                        {/* Draw/X odds (Runner 3 if exists) */}
+                        {/* Draw/X odds */}
                         <td>
                           <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                            {item.runners?.[2]?.ex?.availableToBack?.[0]
-                              ?.price || "-"}
+                            {item.runners?.[2]?.ex?.availableToBack?.[0]?.price ||
+                              "-"}
                           </button>
                         </td>
                         <td>
                           <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                            {item.runners?.[2]?.ex?.availableToLay?.[0]
-                              ?.price || "-"}
+                            {item.runners?.[2]?.ex?.availableToLay?.[0]?.price ||
+                              "-"}
                           </button>
                         </td>
 
                         {/* Runner 2 odds */}
                         <td>
                           <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                            {item.runners?.[1]?.ex?.availableToBack?.[0]
-                              ?.price || "-"}
+                            {item.runners?.[1]?.ex?.availableToBack?.[0]?.price ||
+                              "-"}
                           </button>
                         </td>
                         <td>
                           <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                            {item.runners?.[1]?.ex?.availableToLay?.[0]
-                              ?.price || "-"}
+                            {item.runners?.[1]?.ex?.availableToLay?.[0]?.price ||
+                              "-"}
                           </button>
                         </td>
                       </tr>

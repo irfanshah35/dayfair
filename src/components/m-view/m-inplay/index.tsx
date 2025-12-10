@@ -2,8 +2,19 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/lib/store/store";
-import MSportsTab from "../m-sports-tab";
-import MLiveCasino from "../m-live-casino";
+import dynamic from "next/dynamic";
+
+// Lazy load the components
+const MSportsTab = dynamic(() => import("../m-sports-tab"), {
+  loading: () => <></>,
+  ssr: false,
+});
+
+const MLiveCasino = dynamic(() => import("../m-live-casino"), {
+  loading: () => <></>,
+  ssr: false,
+});
+
 
 interface MInplayProps {
   activeTab?: string;
@@ -14,14 +25,10 @@ const MInplay = () => {
   const [activeTab, setActiveTab] = useState("4");
   const router = useRouter();
   const [inPlayEvents, setInPlayEvents] = useState<any[]>([]);
-
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 992);
-    };
-
+    const handleResize = () => setIsMobile(window.innerWidth < 992);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
@@ -39,7 +46,6 @@ const MInplay = () => {
     setInPlayEvents(filtered);
   }, [allEventsList]);
 
-  // Group events by sport using useMemo
   const groupedBySport = useMemo(() => {
     return inPlayEvents.reduce((acc, ev) => {
       const sport = ev.eventType?.name || "Other";
@@ -50,7 +56,6 @@ const MInplay = () => {
     }, {} as Record<string, { events: any[]; sportId: number }>);
   }, [inPlayEvents]);
 
-  // Define sport order
   const sortedSports = useMemo(() => {
     const sportOrder = ["Cricket", "Tennis", "Soccer"];
     return Object.keys(groupedBySport).sort((a, b) => {
@@ -63,18 +68,9 @@ const MInplay = () => {
     });
   }, [groupedBySport]);
 
-  // Calculate mobile events based on active tab
   const mobileEvents = useMemo(() => {
-    if (!activeTab) {
-      return sortedSports.flatMap((sport) => groupedBySport[sport].events);
-    }
-
-    // Filter only events that match the active tab ID
-    const filtered = inPlayEvents.filter(
-      (ev: any) => ev.eventType?.id === activeTab
-    );
-
-    return filtered;
+    if (!activeTab) return sortedSports.flatMap((sport) => groupedBySport[sport].events);
+    return inPlayEvents.filter((ev: any) => ev.eventType?.id === activeTab);
   }, [activeTab, inPlayEvents, sortedSports, groupedBySport]);
 
   const renderEventCard = (item: any, idx: number) => (
@@ -89,8 +85,7 @@ const MInplay = () => {
         <div className="flex items-center">
           <div className="w-2/3 flex flex-col">
             <p className="mb-0 text-[13px] font-bold leading-tight">
-              {item.runnersName?.[0]?.runnerName} v{" "}
-              {item.runnersName?.[1]?.runnerName}
+              {item.runnersName?.[0]?.runnerName} v {item.runnersName?.[1]?.runnerName}
             </p>
           </div>
           <div className="w-1/3 text-right">
@@ -111,7 +106,7 @@ const MInplay = () => {
         </div>
 
         <div className="flex">
-          {/* Runner 1 odds */}
+          {/* Runner 1 */}
           <div className="w-1/3 flex justify-center">
             <button className="w-1/2 bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
               {item.runners?.[0]?.ex?.availableToBack?.[0]?.price || "-"}
@@ -120,8 +115,7 @@ const MInplay = () => {
               {item.runners?.[0]?.ex?.availableToLay?.[0]?.price || "-"}
             </button>
           </div>
-
-          {/* Draw/X odds (Runner 3 if exists, or show "-") */}
+          {/* Draw/X */}
           <div className="w-1/3 flex justify-center">
             <button className="w-1/2 bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
               {item.runners?.[2]?.ex?.availableToBack?.[0]?.price || "-"}
@@ -130,8 +124,7 @@ const MInplay = () => {
               {item.runners?.[2]?.ex?.availableToLay?.[0]?.price || "-"}
             </button>
           </div>
-
-          {/* Runner 2 odds */}
+          {/* Runner 2 */}
           <div className="w-1/3 flex justify-center">
             <button className="w-1/2 bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
               {item.runners?.[1]?.ex?.availableToBack?.[0]?.price || "-"}
@@ -148,14 +141,11 @@ const MInplay = () => {
   return (
     <>
       <div className="lg:px-[9px]">
-        {/* Mobile View - No Sport Headers, Filtered by Active Tab */}
         <div className="lg:hidden">
           <MSportsTab activeTab={activeTab} setActiveTab={setActiveTab} />
           {mobileEvents.length > 0 ? (
             <div className="overflow-y-auto no-scrollbar max-h-[265px]">
-              {mobileEvents.map((item: any, idx: number) => {
-                return renderEventCard(item, idx);
-              })}
+              {mobileEvents.map((item: any, idx: number) => renderEventCard(item, idx))}
             </div>
           ) : (
             <div className="text-center bg-[#ccc] pt-2 pb-[9px] px-[15px] mb-[25px] text-[12px] text-[#21252a]">
@@ -164,133 +154,94 @@ const MInplay = () => {
           )}
         </div>
 
-        {/* Desktop View - With Sport Headers, All Sports */}
         <div className="hidden lg:block">
           {sortedSports.map((sport) => {
             const events = groupedBySport[sport].events;
 
             return (
               <div key={sport}>
-                {/* Sport Header */}
                 <div className="bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white mt-1 px-4 h-8 flex items-center font-medium text-[16px] leading-[19px]">
                   <h4 className="relative top-[0.1px] font-medium">{sport}</h4>
                 </div>
 
-                {/* Desktop Table */}
-                <div className="w-full">
-                  <div className="bg-white">
-                    <table className="w-full coupon-table">
-                      <thead>
-                        <tr className="bg-white border-b-2 border-[#dee2e6]">
-                          <th className="w-[63%] text-left pt-1 pb-[5px] px-[15px] text-[12px] text-[#303030]">
-                            Game
-                          </th>
-                          <th
-                            colSpan={2}
-                            className="text-center pt-1 pb-[5px] px-[15px] text-[12px] font-bold text-[#303030]"
+                <div className="w-full bg-white">
+                  <table className="w-full coupon-table">
+                    <thead>
+                      <tr className="bg-white border-b-2 border-[#dee2e6]">
+                        <th className="w-[63%] text-left pt-1 pb-[5px] px-[15px] text-[12px] text-[#303030]">Game</th>
+                        <th colSpan={2} className="text-center pt-1 pb-[5px] px-[15px] text-[12px] font-bold text-[#303030]">1</th>
+                        <th colSpan={2} className="text-center pt-1 pb-[5px] px-[15px] text-[12px] font-bold text-[#303030]">X</th>
+                        <th colSpan={2} className="text-center pt-1 pb-[5px] px-[15px] text-[12px] font-bold text-[#303030]">2</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {events.length > 0 ? (
+                        events.map((item: any, idx: number) => (
+                          <tr
+                            key={idx}
+                            onClick={() =>
+                              router.push(`/market-details/${item.event?.id}/${item.eventType?.id}`)
+                            }
+                            className="cursor-pointer border-b border-[#d6d8d7]"
                           >
-                            1
-                          </th>
-                          <th
-                            colSpan={2}
-                            className="text-center pt-1 pb-[5px] px-[15px] text-[12px] font-bold text-[#303030]"
-                          >
-                            X
-                          </th>
-                          <th
-                            colSpan={2}
-                            className="text-center pt-1 pb-[5px] px-[15px] text-[12px] font-bold text-[#303030]"
-                          >
-                            2
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {events.length > 0 ? (
-                          events.map((item: any, idx: number) => (
-                            <tr
-                              key={idx}
-                              onClick={() =>
-                                router.push(
-                                  `/market-details/${item.event?.id}/${item.eventType?.id}`
-                                )
-                              }
-                              className="cursor-pointer border-b border-[#d6d8d7]"
-                            >
-                              <td className="px-[15px] align-middle">
-                                <div className="flex justify-between items-center">
-                                  <div className="game-name float-left text-left relative bottom-[3px]">
-                                    <a className="text-[#212529] hover:underline cursor-pointer text-[14px]">
-                                      {item.runnersName?.[0]?.runnerName} v{" "}
-                                      {item.runnersName?.[1]?.runnerName}
-                                    </a>
-                                  </div>
-                                  <div className="game-icons float-right w-auto flex items-center space-x-1 -mt-px">
-                                    {item.inplay && (
-                                      <span className="game-icon w-[25px] flex justify-center items-center">
-                                        <span className="w-3 h-3 bg-[#28a745] rounded-full inline-block"></span>
-                                      </span>
-                                    )}
-                                  </div>
+                            <td className="px-[15px] align-middle">
+                              <div className="flex justify-between items-center">
+                                <div className="game-name float-left text-left relative bottom-[3px]">
+                                  <a className="text-[#212529] hover:underline cursor-pointer text-[14px]">
+                                    {item.runnersName?.[0]?.runnerName} v {item.runnersName?.[1]?.runnerName}
+                                  </a>
                                 </div>
-                              </td>
+                                <div className="game-icons float-right w-auto flex items-center space-x-1 -mt-px">
+                                  {item.inplay && (
+                                    <span className="game-icon w-[25px] flex justify-center items-center">
+                                      <span className="w-3 h-3 bg-[#28a745] rounded-full inline-block"></span>
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </td>
 
-                              {/* Runner 1 odds */}
-                              <td>
-                                <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                                  {item.runners?.[0]?.ex?.availableToBack?.[0]
-                                    ?.price || "-"}
-                                </button>
-                              </td>
-                              <td>
-                                <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                                  {item.runners?.[0]?.ex?.availableToLay?.[0]
-                                    ?.price || "-"}
-                                </button>
-                              </td>
-
-                              {/* Draw/X odds (Runner 3 if exists) */}
-                              <td>
-                                <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                                  {item.runners?.[2]?.ex?.availableToBack?.[0]
-                                    ?.price || "-"}
-                                </button>
-                              </td>
-                              <td>
-                                <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                                  {item.runners?.[2]?.ex?.availableToLay?.[0]
-                                    ?.price || "-"}
-                                </button>
-                              </td>
-
-                              {/* Runner 2 odds */}
-                              <td>
-                                <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                                  {item.runners?.[1]?.ex?.availableToBack?.[0]
-                                    ?.price || "-"}
-                                </button>
-                              </td>
-                              <td>
-                                <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
-                                  {item.runners?.[1]?.ex?.availableToLay?.[0]
-                                    ?.price || "-"}
-                                </button>
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td
-                              colSpan={7}
-                              className="text-center bg-[#ccc] py-2 px-4 text-[16px] text-[#21252a]"
-                            >
-                              No real-time records found
+                            <td >
+                              <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
+                                {item.runners?.[0]?.ex?.availableToBack?.[0]?.price || "-"}
+                              </button>
+                            </td>
+                            <td>
+                              <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
+                                {item.runners?.[0]?.ex?.availableToLay?.[0]?.price || "-"}
+                              </button>
+                            </td>
+                            <td>
+                              <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
+                                {item.runners?.[2]?.ex?.availableToBack?.[0]?.price || "-"}
+                              </button>
+                            </td>
+                            <td>
+                              <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
+                                {item.runners?.[2]?.ex?.availableToLay?.[0]?.price || "-"}
+                              </button>
+                            </td>
+                            <td>
+                              <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
+                                {item.runners?.[1]?.ex?.availableToBack?.[0]?.price || "-"}
+                              </button>
+                            </td>
+                            <td>
+                              <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
+                                {item.runners?.[1]?.ex?.availableToLay?.[0]?.price || "-"}
+                              </button>
                             </td>
                           </tr>
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={7} className="text-center bg-[#ccc] py-2 px-4 text-[16px] text-[#21252a]">
+                            No real-time records found
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             );
