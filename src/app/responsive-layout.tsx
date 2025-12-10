@@ -1,23 +1,41 @@
 "use client";
-import Header from "@/components/common/header";
-import Sidebar from "@/components/common/sidebar";
-import DTopnav from "@/components/d-view/d-topnav";
-import MFooter from "@/components/m-view/m-footer";
-import MMenuTabs from "@/components/m-view/m-menu-tabs";
-import MSportsTab from "@/components/m-view/m-sports-tab";
+
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import Loading from "./loading";
 import { fetchData } from "@/lib/functions";
 import { CONFIG } from "@/lib/config";
 import { useAppStore } from "../lib/store/store";
 import { useAuthStore } from "@/lib/store/authStore";
 
-export default function ResponsiveLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+// 🔥 Lazy Load Components Instead of Direct Import
+const Header = dynamic(() => import("@/components/common/header"), {
+  loading: () => <Loading />,
+});
+
+const Sidebar = dynamic(() => import("@/components/common/sidebar"), {
+  loading: () => <Loading />,
+});
+
+const DTopnav = dynamic(() => import("@/components/d-view/d-topnav"), {
+  loading: () => <Loading />,
+  ssr: false,
+});
+
+const MFooter = dynamic(() => import("@/components/m-view/m-footer"), {
+  loading: () => <Loading />,
+});
+
+const MMenuTabs = dynamic(() => import("@/components/m-view/m-menu-tabs"), {
+  loading: () => <Loading />,
+});
+
+const MSportsTab = dynamic(() => import("@/components/m-view/m-sports-tab"), {
+  loading: () => <Loading />,
+});
+
+export default function ResponsiveLayout({ children }: { children: React.ReactNode }) {
   const {
     setCasinoEvents,
     setAllEventsList,
@@ -25,27 +43,30 @@ export default function ResponsiveLayout({
     setMenuList,
     setExchangeNews,
     setUserBalance,
-    setStakeValue
+    setStakeValue,
   } = useAppStore();
+
   const pathname = usePathname();
   const [isMobile, setIsMobile] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const { checkLogin, isLoggedIn } = useAuthStore();
 
+  // device breakpoint detection
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 992);
       setIsReady(true);
     };
-
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // API Calls
   useEffect(() => {
     const token = localStorage.getItem("token");
     checkLogin(token || "");
+
     fetchData({
       url: CONFIG.getAllEventsList,
       payload: { key: CONFIG.siteKey },
@@ -53,6 +74,7 @@ export default function ResponsiveLayout({
       setFn: setAllEventsList,
       expireIn: CONFIG.getAllEventsListTime,
     });
+
     fetchData({
       url: CONFIG.getTopCasinoGame,
       payload: { key: CONFIG.siteKey },
@@ -60,6 +82,7 @@ export default function ResponsiveLayout({
       setFn: setCasinoEvents,
       expireIn: CONFIG.getTopCasinoGameTime,
     });
+
     fetchData({
       url: CONFIG.menuList,
       payload: { key: CONFIG.siteKey },
@@ -67,6 +90,7 @@ export default function ResponsiveLayout({
       setFn: setMenuList,
       expireIn: CONFIG.menuListTime,
     });
+
     fetchData({
       url: CONFIG.getExchangeTypeList,
       payload: { key: CONFIG.siteKey },
@@ -74,6 +98,7 @@ export default function ResponsiveLayout({
       setFn: setExchangeTypeList,
       expireIn: CONFIG.getExchangeTypeListTime,
     });
+
     fetchData({
       url: CONFIG.getExchangeNews,
       payload: { key: CONFIG.siteKey },
@@ -81,6 +106,7 @@ export default function ResponsiveLayout({
       setFn: setExchangeNews,
       expireIn: CONFIG.getExchangeNewsTime,
     });
+
     fetchData({
       url: CONFIG.getUserBetStake,
       payload: { key: CONFIG.siteKey },
@@ -88,10 +114,9 @@ export default function ResponsiveLayout({
       setFn: setStakeValue,
       expireIn: CONFIG.getUserBetStakeTime,
     });
-
   }, []);
 
-  // 🔥 FIX: No empty white screen + no footer/header flicker
+  // Prevent blank white page before DOM mount
   if (!isReady) {
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-white z-9999">
@@ -102,45 +127,42 @@ export default function ResponsiveLayout({
 
   const hideMenuAndSports =
     pathname?.includes("/market-details") ||
-    pathname === "/accountstatement" ||
-    pathname === "/activity-log" ||
-    pathname === "/bethistory" ||
-    pathname === "/changepassword" ||
-    pathname === "/password-history" ||
-    pathname === "/profitloss" ||
-    pathname === "/profitloss-event" ||
-    pathname === "/profitloss-market" ||
-    pathname === "/settings" ||
-    pathname === "/userBetHistory";
+    [
+      "/accountstatement",
+      "/activity-log",
+      "/bethistory",
+      "/changepassword",
+      "/password-history",
+      "/profitloss",
+      "/profitloss-event",
+      "/profitloss-market",
+      "/settings",
+      "/userBetHistory",
+    ].includes(pathname || "");
 
-  if (pathname === "/login") {
-    return children;
-  }
+  if (pathname === "/login") return children;
 
   return (
     <>
+      {/* ---------------- MOBILE VIEW ---------------- */}
       {isMobile ? (
         <div className="relative w-full h-screen overflow-hidden">
           <div className="fixed top-0 left-0 w-full z-50 bg-white shadow">
             <Header />
-            {!hideMenuAndSports && (
-              <>
-                <MMenuTabs />
-              </>
-            )}
+            {!hideMenuAndSports && <MMenuTabs />}
           </div>
 
           <div className="overflow-y-auto h-full">
-            <div
-              className={`${hideMenuAndSports ? "h-[100px]" : "h-[142px]"}`}
-            ></div>
+            <div className={`${hideMenuAndSports ? "h-[100px]" : "h-[142px]"}`}></div>
             {children}
+
             <div className="fixed bottom-0 left-0 w-full z-50 bg-white shadow">
-            <MFooter />
-          </div>
+              <MFooter />
+            </div>
           </div>
         </div>
       ) : (
+        /* ---------------- DESKTOP VIEW ---------------- */
         <div className="relative w-full h-screen overflow-hidden">
           <div className="fixed top-0 left-0 w-full z-50 bg-white shadow">
             <Header />
@@ -158,6 +180,7 @@ export default function ResponsiveLayout({
               <div className="h-[30]"></div>
             </main>
           </div>
+
           <div className="fixed bottom-0 left-0 w-full z-50 bg-white shadow">
             <MFooter />
           </div>

@@ -408,7 +408,7 @@ const handlePlaceBet = async () => {
   return (
     <div className="w-full">
       {/* Live Match Header */}
-      <div className="mb-2.5 py-1 mt-[1px] px-4 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white rounded-tr-sm rounded-tl-sm flex justify-between items-center border-b border-[rgba(0,0,0,.175)]">
+      <div className="mb-2.5 py-1 mt-px px-4 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white rounded-tr-sm rounded-tl-sm flex justify-between items-center border-b border-[rgba(0,0,0,.175)]">
         <h6 className="mb-0 cursor-pointer text-[16px] text-white inline-block leading-[1.2] font-medium">
           Live Match
         </h6>
@@ -433,7 +433,7 @@ const handlePlaceBet = async () => {
           className="py-[5px] mt-3 px-4 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white rounded-tr-sm rounded-tl-sm flex justify-between items-center border-b border-[rgba(0,0,0,.175)] cursor-pointer h-[30px]"
           onClick={() => setIsPlaceBetOpen((prev) => !prev)}
         >
-          <h6 className="mb-0 text-[16px] relative top-[1px] text-white inline-block leading-[1.2] font-medium">
+          <h6 className="mb-0 text-[16px] relative top-px text-white inline-block leading-[1.2] font-medium">
             Place Bet
           </h6>
         </div>
@@ -448,12 +448,12 @@ const handlePlaceBet = async () => {
     }}
   >
     {placing && (
-      <div className=" inset-0 [&_.loderrr]:!min-h-auto flex items-center justify-center z-9999">
+      <div className=" inset-0 [&_.loderrr]:min-h-auto! flex items-center justify-center z-9999">
         <Loader />
       </div>
     )}
 
-    <table className="w-full border-collapse relative top-[1px]">
+    <table className="w-full border-collapse relative top-px">
       <thead>
         <tr className="bg-[#ccc] font-roboto">
           <th className="text-center text-[12px] font-bold p-[5px_8px_2px] text-[#303030] border-b border-[#dee2e6]"></th>
@@ -464,7 +464,7 @@ const handlePlaceBet = async () => {
             Odds
           </th>
           <th className="text-center text-[12px] pr-15 font-bold p-[3px_0_2px] text-[#303030] border-b border-[#dee2e6]">
-            <span className="relative left-[12px]">Stake</span>
+            <span className="relative left-3">Stake</span>
           </th>
           <th className="text-end text-[12px] font-bold p-[3px_0_2px] pr-[5px] text-[#303030] border-b border-[#dee2e6]">
             Profit
@@ -477,7 +477,7 @@ const handlePlaceBet = async () => {
             <button
               type="button"
               onClick={handleClose}
-              className="text-red-600 cursor-pointer text-[12px] relative top-[1px] left-[1px]"
+              className="text-red-600 cursor-pointer text-[12px] relative top-px left-px"
             >
               <FaTimes />
             </button>
@@ -487,7 +487,7 @@ const handlePlaceBet = async () => {
               {runnerName}
             </div>
           </td>
-          <td className="px-0 py-0 relative top-[-2px] left-3.5 align-middle text-[12px] font-bold">
+          <td className="px-0 py-0 relative -top-0.5 left-3.5 align-middle text-[12px] font-bold">
             <div className="whitespace-nowrap inline-flex items-center">
               <input
                 type="text"
@@ -514,7 +514,7 @@ const handlePlaceBet = async () => {
               </div>
             </div>
           </td>
-          <td className="px-7 py-0 align-middle text-[12px] font-bold relative top-[-2px]">
+          <td className="px-7 py-0 align-middle text-[12px] font-bold relative -top-0.5">
             <input
               type="number"
               maxLength={10}
@@ -586,7 +586,7 @@ const handlePlaceBet = async () => {
           border: (stakeAmount && parseFloat(priceInput) > 1 && !placing) ? "1px solid black" : "none",
           color: (stakeAmount && parseFloat(priceInput) > 1 && !placing) ? "black" : "white",
         }}
-        className="px-2 py-1 text-[14px] h-[31px] relative top-[-2px] rounded-xs font-medium transition-all"
+        className="px-2 py-1 text-[14px] h-[31px] relative -top-0.5 rounded-xs font-medium transition-all"
       >
         {placing ? "Placing..." : "Submit"}
       </button>
@@ -598,7 +598,7 @@ const handlePlaceBet = async () => {
       {/* MATCH ODDS SUMMARY + MATCHED/UNMATCHED LIST */}
       <div className="mb-2.5 border border-[rgba(0,0,0,.175)] rounded-tr-sm rounded-tl-sm overflow-hidden">
         {/* Match Odds Header */}
-        <div className="py-1 px-4 h-[29.58px] bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white flex justify-between items-center border-b border-[rgba(0,0,0,.175)] h-[29px]">
+        <div className="py-1 px-4 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] text-white flex justify-between items-center border-b border-[rgba(0,0,0,.175)] h-[29px]">
           <div className="mb-0 text-[16px] font-medium text-white leading-[19px]">Match Odds</div>
         </div>
 
@@ -676,7 +676,7 @@ const handlePlaceBet = async () => {
 
         {/* MATCHED SUMMARY ROW */}
         <div
-          className="w-full bg-white border-b mt-[6px] border-[#ebebeb] flex items-center justify-between px-2 py-2 pb-[11px] cursor-pointer"
+          className="w-full bg-white border-b mt-1.5 border-[#ebebeb] flex items-center justify-between px-2 py-2 pb-[11px] cursor-pointer"
           onClick={() => setShowMatched((p) => !p)}
         >
           <div className="flex items-center gap-2">

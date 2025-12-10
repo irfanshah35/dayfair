@@ -2,7 +2,7 @@
 const MFooter = () => {
   return (
     <footer className="w-full bg-transparent">
-      <div className="w-full h-[32px] md:h-[38px] bg-black text-white px-2.5 py-1.5"
+      <div className="w-full h-8 md:h-[38px] bg-black text-white px-2.5 py-1.5"
       style={{ fontFamily: "var(--font-roboto)" }}>
         <p className="max-md:text-[12px] text-base text-center"
         >

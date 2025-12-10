@@ -1,9 +1,17 @@
 "use client";
-import DSportNav from "@/components/d-view/d-sports-nav";
-import MLiveCasino from "@/components/m-view/m-live-casino";
-import MSingleMarket from "@/components/m-view/m-single-market";
+
 import { useEffect, useState } from "react";
-// import MHeader from "./components/m-view/m-header";
+import dynamic from "next/dynamic";
+
+const MSingleMarket = dynamic(
+  () => import("@/components/m-view/m-single-market"),
+  { loading: () => <></> }
+);
+
+const MLiveCasino = dynamic(
+  () => import("@/components/m-view/m-live-casino"),
+  { loading: () => <></> }
+);
 
 export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
