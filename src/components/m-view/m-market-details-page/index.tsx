@@ -34,6 +34,11 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   >({});
   const [slipPreview, setSlipPreview] = useState({ stake: 0, price: 0 });
 
+  // 🔹 NEW: Cashout states
+  const [cashoutValues, setCashoutValues] = useState<Record<string, number | string>>({});
+  const [showCashoutValue, setShowCashoutValue] = useState<Record<string, boolean>>({});
+  const intrvlCashOutRef = useRef<Record<string, number>>({});
+
   const params = useParams();
   const eventId = (params as any)?.eventId || "";
   const sportId = (params as any)?.sportId || "";
@@ -110,7 +115,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
       },
     });
   };
-  // 👇 Fetch Profit/Loss API
+
   // 👇 Fetch Profit/Loss API
   const fetchMarketPL = useCallback(async () => {
     if (!eventId || !sportId) return;
@@ -124,14 +129,12 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
           sportId: String(sportId),
         },
         setFn: (res: any) => {
-          console.log("📦 Full PL response:", res); // Just console
-
-          // If pl exists, update state
+          console.log("📦 Full PL response:", res);
           if (res?.pl) {
             setMarketPL(res.pl);
           }
         },
-        forceApiCall: true, // Disable cache temporarily to test live data
+        forceApiCall: true,
       });
     } catch (error) {
       console.error("❌ Error fetching PL:", error);
@@ -148,7 +151,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   const getRunnerPL = (marketId: string, selectionId: number) => {
     if (!marketPL || Object.keys(marketPL).length === 0) return null;
 
-    // Find the market key (it might be a string like "1.251406395")
     const marketKey =
       Object.keys(marketPL).find(
         (key) => Math.abs(parseFloat(key) - parseFloat(marketId)) < 0.0001
@@ -169,19 +171,17 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     currentSelectionId: number,
     targetSelectionId: number
   ): number => {
-    // If same runner, calculate actual PL
     if (currentSelectionId === targetSelectionId) {
       if (side === "BACK") {
-        return stake * (price - 1); // Profit if BACK wins
+        return stake * (price - 1);
       } else {
-        return stake; // Profit if LAY wins
+        return stake;
       }
     } else {
-      // For other runners (liability)
       if (side === "BACK") {
-        return -stake; // Loss if BACK loses
+        return -stake;
       } else {
-        return -(stake * (price - 1)); // Loss if LAY loses
+        return -(stake * (price - 1));
       }
     }
   };
@@ -206,6 +206,133 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     }
   }, [isSlipOpen, openSlip]);
 
+  const calculateCashOut = (market: any) => {
+    const marketId = market.marketId;
+    
+    if (intrvlCashOutRef.current[marketId]) {
+      clearInterval(intrvlCashOutRef.current[marketId]);
+    }
+
+    // Check if market has PL data
+    const marketKey = Object.keys(marketPL).find(
+      (key) => Math.abs(parseFloat(key) - parseFloat(marketId)) < 0.0001
+    ) || marketId;
+
+    const marketData = marketPL[marketKey];
+    
+    if (!marketData || Object.keys(marketData).length === 0) {
+      setCashoutValues(prev => ({ ...prev, [marketId]: "Cash Out" }));
+      setShowCashoutValue(prev => ({ ...prev, [marketId]: false }));
+      return;
+    }
+
+    // Check if there's any profit/loss
+    const hasPL = Object.values(marketData).some((val: any) => Math.abs(val) > 0);
+    
+    if (!hasPL) {
+      setCashoutValues(prev => ({ ...prev, [marketId]: "Cash Out" }));
+      setShowCashoutValue(prev => ({ ...prev, [marketId]: false }));
+      return;
+    }
+
+    // Start interval to calculate cashout periodically
+    intrvlCashOutRef.current[marketId] = window.setInterval(() => {
+      cashOutOnInterval(market);
+    }, 1000);
+  };
+
+  // 🔹 NEW: Cashout calculation logic
+  const cashOutOnInterval = (market: any) => {
+    const marketId = market.marketId;
+    
+    // Get current market PL
+    const marketKey = Object.keys(marketPL).find(
+      (key) => Math.abs(parseFloat(key) - parseFloat(marketId)) < 0.0001
+    ) || marketId;
+
+    const marketData = marketPL[marketKey];
+    if (!marketData) return;
+
+    // Calculate cashout based on current odds and PL
+    const runners = market.runners || [];
+    let totalCashout = 0;
+    let hasValidCashout = false;
+
+    runners.forEach((runner: any) => {
+      const selectionId = runner.selectionId;
+      const pl = marketData[String(selectionId)] || 0;
+      
+      if (Math.abs(pl) > 0) {
+        const backPrice = runner.ex?.availableToBack?.[0]?.price || 0;
+        const layPrice = runner.ex?.availableToLay?.[0]?.price || 0;
+        
+        if (backPrice > 0 && layPrice > 0) {
+          // Simple cashout calculation
+          const midPrice = (backPrice + layPrice) / 2;
+          const cashoutValue = pl > 0 ? pl * 0.95 : pl * 1.05; // 5% margin
+          totalCashout += cashoutValue;
+          hasValidCashout = true;
+        }
+      }
+    });
+
+    if (hasValidCashout) {
+      setCashoutValues(prev => ({ ...prev, [marketId]: totalCashout.toFixed(2) }));
+      setShowCashoutValue(prev => ({ ...prev, [marketId]: true }));
+    } else {
+      setCashoutValues(prev => ({ ...prev, [marketId]: "Cash Out" }));
+      setShowCashoutValue(prev => ({ ...prev, [marketId]: false }));
+    }
+  };
+
+  // 🔹 NEW: Toggle cashout for a market
+  const toggleCashout = (market: any) => {
+    const marketId = market.marketId;
+    const isActive = showCashoutValue[marketId];
+
+    if (isActive) {
+      // Turn off cashout
+      if (intrvlCashOutRef.current[marketId]) {
+        clearInterval(intrvlCashOutRef.current[marketId]);
+        delete intrvlCashOutRef.current[marketId];
+      }
+      setCashoutValues(prev => ({ ...prev, [marketId]: "Cash Out" }));
+      setShowCashoutValue(prev => ({ ...prev, [marketId]: false }));
+    } else {
+      // Turn on cashout
+      calculateCashOut(market);
+    }
+  };
+
+  // 🔹 Cleanup intervals on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(intrvlCashOutRef.current).forEach(interval => {
+        if (interval) clearInterval(interval);
+      });
+    };
+  }, []);
+
+  // 🔹 Initialize cashout when marketPL changes
+  useEffect(() => {
+    if (Object.keys(marketPL).length > 0) {
+      const allMarkets = apiData?.matchOddsData || [];
+      allMarkets.forEach((market: any) => {
+        // Auto-enable cashout if there's PL data
+        const marketKey = Object.keys(marketPL).find(
+          (key) => Math.abs(parseFloat(key) - parseFloat(market.marketId)) < 0.0001
+        );
+        
+        if (marketKey && marketPL[marketKey]) {
+          const hasPL = Object.values(marketPL[marketKey]).some((val: any) => Math.abs(val) > 0);
+          if (hasPL && market.runners && market.runners.length < 3) {
+            calculateCashOut(market);
+          }
+        }
+      });
+    }
+  }, [marketPL]);
+
   // Handle price click (BACK / LAY)
   const onPriceClick = ({
     marketId,
@@ -226,18 +353,15 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   }) => {
     const raw = Number(price || 0);
 
-    // Block click if 0 or invalid
     if (!Number.isFinite(raw) || raw <= 0) {
       return;
     }
 
     const finalPrice = Number(raw.toFixed(2));
 
-    // slip class
     const cls: "slip-back" | "slip-lay" =
       column === "BACK" ? "slip-back" : "slip-lay";
 
-    // bg theme (for mobile slip extra class, if needed)
     const bg = cls === "slip-back" ? "betbg--back" : "betbg--lay";
 
     const minStake = Number.isFinite(min as number) ? (min as number) : 1;
@@ -245,7 +369,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
       ? (max as number)
       : 99999999;
 
-    // Shared betslip data (mobile + desktop)
     setBetSlipData({
       marketId: marketId || "",
       selectionId: selectionId || 0,
@@ -258,7 +381,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
       side: column,
     });
 
-    // For mobile inline betslip
     setIsSlipOpen(true);
     setOpenSlip({ marketId, selectionId, side: column });
   };
@@ -268,7 +390,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     setIsSlipOpen(false);
     setOpenSlip(null);
     fetchBets();
-    fetchMarketPL(); // Refresh PL after bet placement
+    fetchMarketPL();
   };
 
   // Check if this runner row has an open mobile slip
@@ -290,7 +412,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   useEffect(() => {
     const allMarkets = apiData?.matchOddsData || [];
     let filterdData = [];
-    // Popular
     if (activeCategory === "Popular") {
       filterdData = allMarkets?.filter((market: any) => market?.popular);
     } else if (activeCategory === "All Market") {
@@ -325,7 +446,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   const getCombinedPL = (marketId: string, selectionId: number) => {
     const actualPL = getRunnerPL(marketId, selectionId) || 0;
 
-    // If betslip is open for this market, add preview PL
     if (
       openSlip &&
       betSlipData &&
@@ -340,11 +460,9 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
         selectionId
       );
 
-      // If this is the same runner, show actual PL + preview PL
       if (openSlip.selectionId === selectionId) {
         return actualPL + previewPL;
       } else {
-        // For other runners, show liability
         return actualPL + previewPL;
       }
     }
@@ -352,11 +470,22 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     return actualPL;
   };
 
+  // Check if market has profit/loss
+  const hasProfitAndLoss = (marketId: string) => {
+    const marketKey = Object.keys(marketPL).find(
+      (key) => Math.abs(parseFloat(key) - parseFloat(marketId)) < 0.0001
+    ) || marketId;
+
+    const marketData = marketPL[marketKey];
+    if (!marketData) return false;
+
+    return Object.values(marketData).some((val: any) => Math.abs(val) > 0);
+  };
+
   return (
     <div className="lg:m-[5px] lg:mt-1.5">
       {/* MOBILE TOP TAB BAR */}
       <div className="relative flex lg:hidden justify-between items-center bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]">
-        {/* Tabs */}
         <div className="flex items-center text-black font-semibold">
           <div className="flex pt-[13px] pb-3">
             <a
@@ -385,9 +514,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
           </div>
         </div>
 
-        {/* Speaker + TV Icons */}
         <div>
-          {/* Speaker Icon */}
           <div className="absolute top-3 right-11">
             <button className="flex items-center gap-1 text-black">
               <svg
@@ -401,7 +528,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
             </button>
           </div>
 
-          {/* TV Icon */}
           <div className="absolute top-2.5 right-2">
             <p className="mb-0 text-black">
               <svg
@@ -425,7 +551,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
             </div>
           ) : (
             <div className="w-full max-w-2xl mx-auto bg-white shadow-sm">
-              {/* Header Section */}
               <div className="flex justify-between items-center h-[29.5px] m-[3px]">
                 <div className="flex items-center gap-2">
                   <span className="bg-[#00B59B] text-white px-2 py-0.5 rounded text-[13px] font-bold">
@@ -436,7 +561,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                   </span>
                 </div>
 
-                {/* Toggle Switch */}
                 <div className="flex items-center gap-2">
                   <label
                     className="text-[12px] font-bold text-gray-700 cursor-pointer relative -top-px"
@@ -454,7 +578,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                 </div>
               </div>
 
-              {/* Table */}
               <div className="overflow-x-auto">
                 <table className="w-full border-collapse border border-black/12.5">
                   <thead>
@@ -473,7 +596,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                   <tbody className="border-black">
                     {matchedBets.map((bet) => (
                       <React.Fragment key={bet.betId}>
-                        {/* --- MAIN ROW --- */}
                         <tr
                           onClick={() => toggleRow(bet.betId)}
                           className={`border-b border-gray-400 h-[41px] cursor-pointer ${
@@ -494,7 +616,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                   Match Odds -{" "}
                                   {bet.selectionName || bet.marketName}
                                 </div>
-
                                 <div className=" text-gray-800 mt-0.5">
                                   <span className="">Bet Id</span> {bet.betId}
                                 </div>
@@ -529,47 +650,30 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                     ))}
                   </tbody>
                 </table>
-                {matchedBets.length === 0 && (
-                  <div className="p-4 text-center text-sm text-gray-500">
-                    No bets found.
-                  </div>
-                )}
               </div>
             </div>
           )}
         </div>
       ) : (
         <div className="flex w-full">
-          {/* LEFT PART: MARKETS & ODDS */}
           <div className="left-part overflow-y-auto w-full lg:w-[70%]">
-            {/* Game Header */}
             <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[3.5px] px-2.5 lg:mb-[3px] lg:h-8 text-white">
               <span className="text-sm lg:text-[15px] lg:uppercase font-medium lg:leading-normal">
                 {apiData?.matchOddsData[0]?.event?.name || "Team A vs Team B"}
               </span>
               {apiData?.matchOddsData[0]?.inplay ? (
                 <span className=" game-iconinplay">
-                  <span
-                    className={`
-                   text-[16px] py-1 rounded-full font-medium inline-block transition-all duration-300
-                    heartbeat-anim
-                  `}
-                  >
+                  <span className="text-[16px] py-1 rounded-full font-medium inline-block transition-all duration-300 heartbeat-anim">
                     INPLAY
                   </span>
                 </span>
               ) : (
-                <span
-                  className={`
-                    text-xs py-1 rounded-full font-bold md:font-normal  inline-block
-                  `}
-                >
+                <span className="text-xs py-1 rounded-full font-bold md:font-normal inline-block">
                   {formatDateStamp(apiData?.matchOddsData[0]?.marketStartTime)}
                 </span>
               )}
             </div>
 
-            {/* Game Status Banner */}
             <div
               className="p-0 mb-[3px] bg-no-repeat bg-cover bg-center w-full h-[90px]"
               style={{
@@ -591,10 +695,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                     </div>
                   </div>
                   <div className="flex justify-center items-center flex-col [text-shadow:#fc0_1px_0_10px]">
-                    <span
-                      className={`relative -top-0.5 left-[5px] font-bold text-[12px]
-                        heartbeat-anim2`}
-                    >
+                    <span className="relative -top-0.5 left-[5px] font-bold text-[12px] heartbeat-anim2">
                       Bet Started
                     </span>
                   </div>
@@ -602,7 +703,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
               </div>
             </div>
 
-            {/* Market Categories (MOBILE) */}
             <div className="md:hidden">
               <ul className="flex overflow-x-auto no-scrollbar p-[5px] bg-[linear-gradient(180deg,#000000,#000000_42%,#000000)] text-white">
                 {categories?.map((category: any, idx: number) => (
@@ -622,42 +722,48 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
               </ul>
             </div>
 
-            {/* Dynamic Markets */}
             {(isMobile ? filteredMarketData : apiData?.matchOddsData)?.map(
               (market: any) => (
                 <div
                   key={market?.marketId}
                   className="bg-[linear-gradient(180deg,#000000,#ccc1c1)]"
                 >
-                  {/* Market Title Row */}
                   <div className=" mt-0 py-1 pl-2 pr-1.5 lg:py-[3px] flex justify-between items-center h-[36px]">
                     <div className="flex gap-2 items-center">
                       <span className="font-bold md:font-normal text-white text-[13px] lg:text-[14px]">
                         {market?.marketName}
                       </span>
-                      <div className="ml-1 h-[26px] relative top-[-2px]">
-                        <div
-                          onClick={() => setIsBetLimits(true)}
-                          className="bg-[#ccc] text-black rounded-[4px] py-[3px] px-[10px] my-[2px] leading-[18px] inline-block ml-2 align-middle font-normal cursor-pointer"
-                        >
-                          <span
-                            className={`ml-[5px] text-sm ${
-                              isbetlimits
-                                ? "font-bold text-[#008000]"
-                                : "font-normal text-black"
-                            }`}
+                      
+                      {/* 🔹 NEW: Cashout Toggle */}
+                      {market?.runners?.length < 3 && hasProfitAndLoss(market.marketId) && (
+                        <div className="ml-1 h-[26px] relative top-[-2px]">
+                          <div
+                            onClick={() => toggleCashout(market)}
+                            className="bg-[#ccc] text-black rounded-[4px] py-[3px] px-[10px] my-[2px] leading-[18px] inline-block ml-2 align-middle font-normal cursor-pointer"
                           >
-                            <span className="w-[18px] relative h-[18px] rounded-[2px] float-left bg-[#ffb900] flex items-center justify-center text-black">
-                              {!isbetlimits ? (
-                                <span className="w-[13px] h-[13px] bg-black rounded-full absolute mr-1.5  z-20 top-[3px] left-[3px]"></span>
-                              ) : (
-                                <i className="fa fa-check"></i>
-                              )}
+                            <span className="ml-[5px] text-sm">
+                              <span className="w-[18px] relative h-[18px] rounded-[2px] float-left bg-[#ffb900] flex items-center justify-center text-black">
+                                {!showCashoutValue[market.marketId] ? (
+                                  <span className="w-[13px] h-[13px] bg-black rounded-full absolute mr-1.5 z-20 top-[3px] left-[3px]"></span>
+                                ) : (
+                                  <i className="fa fa-check"></i>
+                                )}
+                              </span>
+                              <span className={`${
+                                showCashoutValue[market.marketId]
+                                  ? typeof cashoutValues[market.marketId] === "number" && cashoutValues[market.marketId] < 0
+                                    ? "font-bold text-[#ff0000]"
+                                    : "font-bold text-[#008000]"
+                                  : "font-normal text-black"
+                              }`}>
+                                {showCashoutValue[market.marketId]
+                                  ? cashoutValues[market.marketId]
+                                  : "Cash Out"}
+                              </span>
                             </span>
-                            {isbetlimits ? "0.35" : "Cash Out"}
-                          </span>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
                     <button
                       onClick={() => {
@@ -679,7 +785,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                     </button>
                   </div>
 
-                  {/* Mobile Header */}
                   <div className="text-[12px] border-b border-[#aaa] lg:hidden">
                     <div className="flex bg-gray-100">
                       <div className="py-0.5 text-black px-[5px] flex justify-between items-center border-b border-[#aaa] w-[60%] md:font-normal">
@@ -701,7 +806,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                     </div>
                   </div>
 
-                  {/* Desktop Header */}
                   <div className="hidden lg:block text-[12px] border-b border-[#aaa] lg:border-none bg-white">
                     <div className="border-b border-white flex">
                       <div className="ps-1.5 pe-[5px] py-[5px] leading-[15px] w-[40%]">
@@ -727,7 +831,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                     </div>
                   </div>
 
-                  {/* RUNNERS */}
                   <div className="lg:mb-0.5">
                     {market?.runners?.map((runner: any) => {
                       const isSuspended =
@@ -737,7 +840,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                         (item: any) => item?.selectionId === runner?.selectionId
                       )?.runnerName;
 
-                      // Get PL for this runner
                       const runnerPL = getCombinedPL(
                         market.marketId,
                         runner.selectionId
@@ -746,7 +848,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
 
                       return (
                         <React.Fragment key={runner?.selectionId}>
-                          {/* Runner Row */}
                           <div className="flex border-b border-[#aaa] lg:border-white bg-gray-50 h-[41px] lg:h-10 lg:bg-[#f2f2f2]">
                             <div className="col-span-3 py-0.5 px-[5px] lg:border-l lg:border-white md:col-span-1 w-[60%] lg:w-[40%]">
                               <div className="flex justify-between items-center">
@@ -755,7 +856,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                     <b className="font-semibold md:font-normal text-[12px] lg:text-[14px] text-[#212529]">
                                       {runnerName}
                                     </b>
-                                    {/* Display PL here */}
                                     {displayPL && (
                                       <div className="-m-1 ml-1 text-[12px]  ">
                                         {displayPL}
@@ -766,7 +866,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                               </div>
                             </div>
 
-                            {/* Odds Cells */}
                             <div
                               className={`relative w-[40%] lg:text-[#212529] lg:w-[60%] flex 
                               ${
@@ -775,7 +874,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                   : ""
                               }`}
                             >
-                              {/* BACK (mobile visible, desktop: first cell) */}
                               <div
                                 className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${
                                   !isSuspended
@@ -808,7 +906,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                 </span>
                               </div>
 
-                              {/* Extra BACK cells for desktop layout (hidden on mobile) */}
                               <div
                                 className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
                                   !isSuspended
@@ -872,7 +969,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                 </span>
                               </div>
 
-                              {/* LAY */}
                               <div
                                 className={`text-center lg:border-l lg:border-white flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
                                   !isSuspended
@@ -966,7 +1062,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                             </div>
                           </div>
 
-                          {/* INLINE MOBILE BETSLIP UNDER ROW */}
                           {isRowSlipOpen(
                             market?.marketId,
                             runner?.selectionId
