@@ -146,7 +146,7 @@ export default function BetHistory() {
     <div className="md:mx-[5px] md:my-1.5 ">
       <div className="relative flex flex-col min-w-0 wrap-break-word bg-white md:border border-black/12.5 rounded">
         {/* Card Header */}
-        <div className="px-4 py-1 md:py-0 h-[37.8px] md:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5">
+        <div className="px-4 py-1 md:py-0 md:h-[37.8px] md:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5">
           <h4 className="mb-0 text-base text-white! md:text-[24px]">Bet History</h4>
         </div>
 

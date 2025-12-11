@@ -29,7 +29,7 @@ const MSportsTab = ({
                 onClick={() => setActiveTab(item.eventType.id)}
               >
                 <div
-                  className={`flex flex-col text-center text-[12px] p-2 pb-[3px] min-w-max relative text-white
+                  className={`flex flex-col h-[55px] text-center text-[12px] p-2 pb-[3px] min-w-max relative text-white
                   ${
                     activeTab === item.eventType.id
                       ? "bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]"

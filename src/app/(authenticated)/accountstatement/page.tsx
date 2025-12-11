@@ -136,7 +136,7 @@ export default function AccountStatement() {
     <div className="md:mx-[5px] md:my-1.5">
       <div className="relative flex flex-col min-w-0 wrap-break-word bg-white md:border border-black/12.5 rounded">
         {/* Card Header */}
-        <div className="px-4 py-1 md:py-0 h-[37.8px] md:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5">
+        <div className="px-4 py-1 md:py-0 md:h-[37.8px] md:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5">
           <h4 className="mb-0 text-base text-white! md:text-[24px]">
             Account Statement
           </h4>
@@ -147,7 +147,7 @@ export default function AccountStatement() {
           {/* Filter Row */}
           <div className="flex flex-wrap items-center mt-[7px] -mx-[5px]">
             {/* Start Date */}
-            <div className="w-full md:w-1/6 px-[5px] md:pl-[5px] md:pr-[9px] mb-2 md:mb-0">
+            <div className="w-full md:w-1/6 px-[5px] md:pl-[5px] md:pr-[9px] mb-[6px] md:mb-0">
               <CustomCalendar
                 selected={startDate}
                 onChange={setStartDate}
@@ -157,7 +157,7 @@ export default function AccountStatement() {
             </div>
 
             {/* End Date */}
-            <div className="w-full md:w-1/6 px-[5px] md:px-[9px] mb-2  md:mb-0">
+            <div className="w-full md:w-1/6 px-[5px] md:px-[9px] mb-[11px]  md:mb-0">
               <CustomCalendar
                 selected={endDate}
                 onChange={setEndDate}
@@ -185,19 +185,19 @@ export default function AccountStatement() {
               <table className="w-full border-collapse border border-black/12.5">
                 <thead>
                   <tr>
-                    <th className="p-0.5 md:px-3 md:py-2 text-center text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 md:px-3 md:py-2 text-center h-[26px] md:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
                       Date / Time
                     </th>
-                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 md:px-3 md:py-2 text-center h-[26px] md:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
                       Credit
                     </th>
-                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 md:px-3 md:py-2 text-center h-[26px] md:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
                       Debit
                     </th>
-                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border-x border-black/12.5 font-bold text-sm md:text-base">
+                    <th className="p-0.5 md:px-3 md:py-2 text-center h-[26px] md:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 font-bold text-sm md:text-base">
                       Balance
                     </th>
-                    <th className="p-0.5 py-1 md:px-3 md:py-2 text-center  text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 md:px-3 md:py-2 text-center h-[26px] md:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
                       Remark
                     </th>
                   </tr>
@@ -232,7 +232,7 @@ export default function AccountStatement() {
                     <tr>
                       <td
                         colSpan={5}
-                        className="px-2 py-1.5 md:px-3 md:py-[9px] text-center border text-black border-black/12.5 bg-transparent text-xs md:text-base"
+                        className="p-[2px] md:px-3 md:py-[9px] text-center border text-black border-black/12.5 bg-transparent md:text-base"
                       >
                         No data available in table
                       </td>
@@ -244,7 +244,7 @@ export default function AccountStatement() {
           </div>
 
           {/* Mobile Pagination */}
-          <div className="flex md:hidden justify-between items-center gap-2 mt-2">
+          <div className="flex md:hidden justify-between items-center gap-2 mt-[6px] md:mt-2">
             <button
               className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
                 currentPage === 1
@@ -299,7 +299,7 @@ export default function AccountStatement() {
           {/* Desktop Pagination */}
           <div className="flex md:flex-row justify-between items-center mt-3 gap-2 md:gap-3 text-sm">
             {/* Left: Showing text */}
-            <div className="text-xs text-black md:text-sm">
+            <div className="text-[10px] text-black md:text-sm">
               <span>
                 Showing {startIndex} to -{endIndex} of {accountStatement?.length||0} entries
               </span>
@@ -359,7 +359,7 @@ export default function AccountStatement() {
             </div>
 
             {/* Jump to page */}
-            <div className="flex items-center gap-2 text-xs md:text-sm">
+            <div className="flex items-center gap-2 text-[10px] md:text-sm">
               <span className="whitespace-nowrap text-black mr-1">
                 Jump to page
               </span>

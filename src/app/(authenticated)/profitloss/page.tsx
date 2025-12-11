@@ -163,7 +163,7 @@ export default function ProfitLoss() {
     <div className="md:mx-[5px] md:my-1.5 ">
       <div className="relative flex flex-col min-w-0 wrap-break-word bg-white md:border border-black/12.5 rounded-sm">
         {/* Card Header */}
-        <div className="px-4 py-1 md:py-0 h-[37.8px] md:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5">
+        <div className="px-4 py-1 md:py-0 md:h-[37.8px] md:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5">
           <h4 className="mb-0 text-base text-white md:text-[24px]">Profit Loss</h4>
         </div>
 
@@ -172,7 +172,7 @@ export default function ProfitLoss() {
           {/* Filter Row */}
           <div className="flex flex-wrap items-end mt-[7px] -mx-[5px]">
             {/* Start Date */}
-            <div className="w-full md:w-1/6 pl-[5px] pr-[9px] mb-2 md:mb-0">
+            <div className="w-full md:w-1/6 px-[6px]  md:pr-[9px] mb-2 md:mb-0">
               <CustomCalendar
                 selected={startDate}
                 onChange={setStartDate}
@@ -182,7 +182,7 @@ export default function ProfitLoss() {
             </div>
 
             {/* End Date */}
-            <div className="w-full md:w-1/6 px-[9px] mb-2  md:mb-0">
+            <div className="w-full md:w-1/6 px-[6px] md:px-[9px] mb-[6px]  md:mb-0">
               <CustomCalendar
                 selected={endDate}
                 onChange={setEndDate}
@@ -196,7 +196,7 @@ export default function ProfitLoss() {
             {/* Submit Button */}
             <div className="w-full md:w-1/6 px-[9px]">
               <button
-                className=" w-full md:w-[76px] h-[38px] px-[9px] py-1.5 text-base font-normal text-black heading-clr  border border-black rounded cursor-pointer hover:opacity-90 bg-[#F4A500]"
+                className=" w-full md:w-[76px] h-[38px] px-[6px] md:px-[9px] py-1.5 text-base font-normal text-black heading-clr  border border-black rounded cursor-pointer hover:opacity-90 bg-[#F4A500]"
                 onClick={submitData}
               >
                 Submit

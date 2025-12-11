@@ -70,7 +70,7 @@ const MSingleMarket = () => {
                 className="text-black block no-underline cursor-pointer hover:bg-[#e5eef3]"
               >
                 <div className="bg-[#f1f5f8] border-b border-[#d6d8d7] px-3 pt-[5px] pb-[3px]">
-                  <div className="flex items-center">
+                  <div className="flex md:items-center">
                     <div className="w-2/3 flex flex-col">
                       <p className="mb-0 text-[13px] font-bold leading-tight">
                         {item?.event?.name}
@@ -79,9 +79,9 @@ const MSingleMarket = () => {
                         {formatDateStamp(item?.marketStartTime)}
                       </p>
                     </div>
-                    <div className="w-1/3 text-right">
+                    <div className="w-1/3 text-right relative top-[-4px] right-[5px]">
                       {item?.inplay && (
-                        <span className="inline-block font-bold text-[12px] animate-pulse">
+                        <span className="inline-block md:font-bold text-[12px] animate-pulse">
                           INPLAY
                         </span>
                       )}

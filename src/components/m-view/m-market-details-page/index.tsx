@@ -657,13 +657,13 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
       ) : (
         <div className="flex w-full">
           <div className="left-part overflow-y-auto w-full lg:w-[70%]">
-            <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[3.5px] px-2.5 lg:mb-[3px] lg:h-8 text-white">
-              <span className="text-sm lg:text-[15px] lg:uppercase font-medium lg:leading-normal">
+            <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[4px] px-[8px] md:py-[3.5px] md:px-2.5 lg:mb-[3px] h-8 text-white">
+              <span className="text-sm lg:text-[15px] lg:uppercase font-medium lg:leading-normal relative top-[1px] md:top-[0px]">
                 {apiData?.matchOddsData[0]?.event?.name || "Team A vs Team B"}
               </span>
               {apiData?.matchOddsData[0]?.inplay ? (
                 <span className=" game-iconinplay">
-                  <span className="text-[16px] py-1 rounded-full font-medium inline-block transition-all duration-300 heartbeat-anim">
+                  <span className="text-xs md:text-[16px] py-1 rounded-full font-medium inline-block transition-all duration-300 heartbeat-anim">
                     INPLAY
                   </span>
                 </span>

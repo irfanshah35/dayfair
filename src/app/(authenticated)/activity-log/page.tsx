@@ -84,10 +84,10 @@ export default function ActivityLog() {
 
   return (
     <>
-      <div className="flex items-center gap-2 mx-2">
+      <div className="flex items-center gap-[6px] md:gap-2 mx-[6px] md:mx-2">
         <button
           onClick={switchTab("activity")}
-          className={`w-full my-[9px] px-3.5 py-2.5 rounded-[30px] text-black text-[16px] font-semibold border cursor-pointer border-black ${
+          className={`w-full mt-2 mb-[7px] md:my-[9px] py-1 px-2 md:px-3.5 md:py-2.5 rounded-[30px] text-black text-[16px] font-semibold border cursor-pointer border-black ${
             activeTab === "activity"
               ? "bg-linear-to-b from-[#f4b501] to-[#f68700]"
               : ""
@@ -98,7 +98,7 @@ export default function ActivityLog() {
 
         <button
           onClick={switchTab("password")}
-          className={`w-full my-[9px] px-3.5 py-2.5 border-0 rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black ${
+          className={`w-full mt-2 mb-[7px] md:my-[9px] py-1 px-2 md:px-3.5 md:py-2.5 border rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black ${
             activeTab === "password"
               ? "bg-linear-to-b from-[#f4b501] to-[#f68700]"
               : ""
@@ -108,11 +108,11 @@ export default function ActivityLog() {
         </button>
       </div>
 
-      <div className="mx-1 my-1">
-        <div className="border border-gray-200 rounded-md text-white">
+      <div className="md:mx-1 md:my-1">
+        <div className="border border-gray-200 md:rounded-md text-white">
           {/* Header */}
-          <div className="px-4 py-[0.218px] border-b border-[rgba(0,0,0,0.175)] rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] h-[37.8px]">
-            <span className="text-[24px] font-semibold font-roboto ">
+          <div className="px-[6px] py-[4px] md:py-[0.218px] border-b border-[rgba(0,0,0,0.175)] md:rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] h-[34.59px] md:h-[37.8px]">
+            <span className="text-[18px] md:text-[24px] font-semibold font-roboto ">
               {activeTab === "activity" ? "Activity Log" : "Password History"}
             </span>
           </div>

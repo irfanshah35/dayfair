@@ -66,7 +66,7 @@ export default function PasswordHistory() {
       <div className="flex items-center gap-2 mx-2">
         <button
           onClick={switchTab("activity")}
-          className={`w-full my-[9px] px-3.5 py-2.5 border-0 rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black ${activeTab === "activity"
+          className={`w-full my-2 md:my-[9px] py-1 px-2 md:px-3.5 md:py-2.5 border rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black ${activeTab === "activity"
               ? "bg-linear-to-b from-[#f4b501] to-[#f68700]"
               : ""
             }`}
@@ -77,7 +77,7 @@ export default function PasswordHistory() {
         <button
           onClick={switchTab("password")}
           className={
-            `w-full my-[9px] px-3.5 py-2.5 border-0 rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black` +
+            `w-full my-2 md:my-[9px] py-1 px-2 md:px-3.5 md:py-2.5 border rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black` +
             (activeTab === "password"
               ? " bg-linear-to-b from-[#f4b501] to-[#f68700]"
               : "")
@@ -87,10 +87,10 @@ export default function PasswordHistory() {
         </button>
       </div>
 
-      <div className="mx-1 my-1">
-        <div className="border border-gray-200 rounded-md text-white">
+      <div className="md:mx-1 md:my-1">
+        <div className="border border-gray-200 md:rounded-md text-white">
           {/* Header */}
-          <div className="px-4 py-[0.218px] border-b border-[rgba(0,0,0,0.175)] rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] h-[37.8px] flex items-center">
+          <div className="px-4 py-[4px] md:py-[0.218px] border-b border-[rgba(0,0,0,0.175)] md:rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] md:h-[37.8px] flex items-center">
             <span className="mb-0 text-base text-white! md:text-[24px]">
               Password History
             </span>
