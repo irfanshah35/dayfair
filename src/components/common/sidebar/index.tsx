@@ -166,7 +166,7 @@ export default function Sidebar() {
           <nav className="bg-[#C3BDBD]  border-b border-[#9e9e9e]">
             <ul className="py-[5] px-3 ml-[-9] h-[24.5px]">
               <li className="list-none text-white ml-2.5">
-                <a className="relative top-[-1px]" href="#" onClick={handleCasinoClick}>
+                <a href="#" onClick={handleCasinoClick}>
                   Casino
                 </a>
               </li>
@@ -205,7 +205,7 @@ export default function Sidebar() {
                     className="cursor-pointer"
                     onClick={() => toggleSport(item?.sportId)}
                   >
-                    <span className="relative bottom-[1.7px] ">
+                    <span className="relative bottom-[1.7px]">
                       {open.sport === item?.sportId ? (
                         <FaRegSquareMinus className="inline-block w-3.5 h-[19px]" />
                       ) : (
@@ -218,11 +218,11 @@ export default function Sidebar() {
 
                   {/* Tournament list */}
                   {open.sport === item?.sportId && (
-                    <ul className="mb-0 ml-0 pl-0 relative bottom-0.5 mt-[1px]">
+                    <ul className="mb-0 ml-0 pl-0 relative bottom-0.5">
                       {tournamentList?.map((tour: any) => (
                         <li
                           key={tour?.tournamentId}
-                          className="list-none py-1 pl-[19px] mb-1 pr-0 leading-2.5"
+                          className="list-none py-1 pl-[19px] pr-0 leading-2.5"
                         >
                           {/* Tournament */}
                           <div
@@ -253,7 +253,7 @@ export default function Sidebar() {
                               {eventList?.map((event: any, idx: number) => (
                                 <li
                                   key={idx}
-                                  className="list-none py-1 pl-4 pr-0 pb-1"
+                                  className="list-none py-1 pl-4 pr-0"
                                   onClick={() =>
                                     handleMarketDetailsClick(event)
                                   }
