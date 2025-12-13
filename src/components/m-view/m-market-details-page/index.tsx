@@ -147,21 +147,24 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     fetchMarketPL();
   }, [eventId, sportId, fetchMarketPL]);
 
-  // Helper function to get PL for a specific runner
-  const getRunnerPL = (marketId: string, selectionId: number) => {
-    if (!marketPL || Object.keys(marketPL).length === 0) return null;
+// Helper function to get PL for a specific runner
+// Helper function to get PL for a specific runner
+const getRunnerPL = (marketId: string, selectionId: number) => {
+  if (!marketPL || Object.keys(marketPL).length === 0) return null;
 
-    const marketKey =
-      Object.keys(marketPL).find(
-        (key) => Math.abs(parseFloat(key) - parseFloat(marketId)) < 0.0001
-      ) || marketId;
+  // 🔹 STRICT: Only exact string match
+  const marketData = marketPL[String(marketId)];
+  
+  if (!marketData) return null;
 
-    const marketData = marketPL[marketKey];
-    if (!marketData) return null;
-
-    const selectionKey = String(selectionId);
-    return marketData[selectionKey] || 0;
-  };
+  const selectionKey = String(selectionId);
+  
+  if (selectionKey in marketData) {
+    return marketData[selectionKey];
+  }
+  
+  return null;
+};
 
   // 👇 Calculate preview PL for other runners when betslip is open
   const calculatePreviewPL = (
@@ -440,34 +443,36 @@ const formatPLValue = (value: number | null) => {
   );
 };
 
-  // Get combined PL (actual PL + preview PL)
-  const getCombinedPL = (marketId: string, selectionId: number) => {
-    const actualPL = getRunnerPL(marketId, selectionId) || 0;
 
-    if (
-      openSlip &&
-      betSlipData &&
-      openSlip.marketId === marketId &&
-      slipPreview.stake > 0
-    ) {
-      const previewPL = calculatePreviewPL(
-        openSlip.side,
-        slipPreview.price,
-        slipPreview.stake,
-        openSlip.selectionId,
-        selectionId
-      );
+const getCombinedPL = (marketId: string, selectionId: number) => {
+  const actualPL = getRunnerPL(marketId, selectionId);
+  
+  // 🔹 NEW: If actualPL is null (no PL data exists), don't show anything
+  if (actualPL === null) return null;
 
-      if (openSlip.selectionId === selectionId) {
-        return actualPL + previewPL;
-      } else {
-        return actualPL + previewPL;
-      }
+  if (
+    openSlip &&
+    betSlipData &&
+    openSlip.marketId === marketId &&
+    slipPreview.stake > 0
+  ) {
+    const previewPL = calculatePreviewPL(
+      openSlip.side,
+      slipPreview.price,
+      slipPreview.stake,
+      openSlip.selectionId,
+      selectionId
+    );
+
+    if (openSlip.selectionId === selectionId) {
+      return actualPL + previewPL;
+    } else {
+      return actualPL + previewPL;
     }
+  }
 
-    return actualPL;
-  };
-
+  return actualPL;
+};
   // Check if market has profit/loss
   const hasProfitAndLoss = (marketId: string) => {
     const marketKey = Object.keys(marketPL).find(

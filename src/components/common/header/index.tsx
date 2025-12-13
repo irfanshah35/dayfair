@@ -389,67 +389,67 @@ const { userBalance, setUserBalance } = useAppStore();
             </ul>
           </div>
 
-          {isLoggedIn && (
-            <>
-              <div className="absolute top-[9px] right-[3px] flex gap-0.5 justify-end md:hidden text-[13px]">
-                {/* BALANCE */}
-                <div className="">
-                  <span className="text-white">
-                    (BAL :{" "}
-                    <b className="userTotalBalance">
-                      {userBalance?.bankBalance?.toFixed(2) || " 0.00"}
-                    </b>
-                    )
-                  </span>
-                </div>
+         {isLoggedIn && (
+  <>
+    <div className="absolute top-[9px] right-[3px] flex gap-0.5 justify-end md:hidden text-[13px]">
+      {/* BALANCE */}
+      <div className="">
+        <span className="text-white">
+          (BAL :{" "}
+          <b className="userTotalBalance">
+            {((userBalance?.bankBalance || 0) - (userBalance?.exposure || 0)).toFixed(2)}
+          </b>
+          )
+        </span>
+      </div>
 
-                {/* EXPOSURE */}
-                <div
-                  className=""
-                  onClick={() => setExposureOpen(!isexposureopen)}
-                >
-                  <span className="text-white">
-                    <button className="underline-offset-2">
-                      (EXP :{" "}
-                      <b className="userTotalExposure">
-                        {userBalance?.exposure?.toFixed(2) || "0.00"}
-                      </b>
-                      )
-                    </button>
-                  </span>
-                </div>
-              </div>
+      {/* EXPOSURE */}
+      <div
+        className=""
+        onClick={() => setExposureOpen(!isexposureopen)}
+      >
+        <span className="text-white">
+          <button className="underline-offset-2">
+            (EXP :{" "}
+            <b className="userTotalExposure">
+              {userBalance?.exposure?.toFixed(2) || "0.00"}
+            </b>
+            )
+          </button>
+        </span>
+      </div>
+    </div>
 
-              <div className="float-left text-[16px] mr-[17px] hidden md:flex flex-col justify-center">
-                <div className="text-start leading-[23px]">
-                  <span>
-                    <b>BALANCE&nbsp;:&nbsp;</b>
-                  </span>
-                  <b>
-                    <span className="userTotalBalance relative left-[3px]">
-                      {userBalance?.bankBalance?.toFixed(2) || " 0.00"}
-                    </span>
-                  </b>
-                </div>
-                <div className="text-start leading-[23px]">
-                  <button
-                    onClick={() => setExposureOpen(!isexposureopen)}
-                    type="button"
-                    className="cursor-pointer"
-                  >
-                    <span>
-                      <b>EXPOSURE&nbsp;:&nbsp;</b>
-                    </span>
-                    <b>
-                      <span className="">
-                        {userBalance?.exposure?.toFixed(2) || "0.00"}
-                      </span>
-                    </b>
-                  </button>
-                </div>
-              </div>
-            </>
-          )}
+    <div className="float-left text-[16px] mr-[17px] hidden md:flex flex-col justify-center">
+      <div className="text-start leading-[23px]">
+        <span>
+          <b>BALANCE&nbsp;:&nbsp;</b>
+        </span>
+        <b>
+          <span className="userTotalBalance relative left-[3px]">
+            {((userBalance?.bankBalance || 0) - (userBalance?.exposure || 0)).toFixed(2)}
+          </span>
+        </b>
+      </div>
+      <div className="text-start leading-[23px]">
+        <button
+          onClick={() => setExposureOpen(!isexposureopen)}
+          type="button"
+          className="cursor-pointer"
+        >
+          <span>
+            <b>EXPOSURE&nbsp;:&nbsp;</b>
+          </span>
+          <b>
+            <span className="">
+              {userBalance?.exposure?.toFixed(2) || "0.00"}
+            </span>
+          </b>
+        </button>
+      </div>
+    </div>
+  </>
+)}
           <div className="w-[110%] gap-1 flex items-center md:flex">
             <div className="flex-1 md:hidden"></div>
             <div
