@@ -2,7 +2,7 @@ import React from "react";
 
 const Loader = () => {
   return (
-    <div className="flex absolute z-9999999 loderrr inset-0 items-center justify-center min-h-screen bg-white/10">
+    <div className="flex absolute z-9999999 loderrr inset-0 items-center justify-center min-h-screen bg-white/50">
       <div className="relative w-20 h-20  animate-spin">
         {[...Array(8)].map((_, index) => (
           <div
