@@ -424,23 +424,21 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     setFilteredMarketData(filterdData);
   }, [activeCategory]);
 
-  // Format PL value with + or -
-  const formatPLValue = (value: number | null) => {
-    if (value === null || value === undefined) return null;
-    if (value === 0) return "0.00";
+// Format PL value with + or -
+const formatPLValue = (value: number | null) => {
+  if (value === null || value === undefined) return null;
+  
+  const isPositive = value > 0; // Only positive if greater than 0
+  const formatted = Math.abs(value).toFixed(2).replace(/\.?0+$/, ''); // Remove trailing zeros
 
-    const isPositive = value > 0;
-    const absValue = Math.abs(value);
-    const formatted = absValue.toFixed(2);
-
-    return (
-      <span
-        className={` gap-1 ${isPositive ? "text-green-600" : "text-red-600"}`}
-      >
-        {isPositive ? <>{formatted}</> : <>{formatted}</>}
-      </span>
-    );
-  };
+  return (
+    <span
+      className={`gap-1 ${isPositive ? "text-green-600" : "text-red-600"}`}
+    >
+      {value === 0 ? formatted : (isPositive ? formatted : `-${formatted}`)}
+    </span>
+  );
+};
 
   // Get combined PL (actual PL + preview PL)
   const getCombinedPL = (marketId: string, selectionId: number) => {
