@@ -146,14 +146,14 @@ export default function ResponsiveLayout({ children }: { children: React.ReactNo
     <>
       {/* ---------------- MOBILE VIEW ---------------- */}
       {isMobile ? (
-        <div className="relative w-full h-screen overflow-hidden">
-          <div className="fixed top-0 left-0 w-full z-50 bg-white shadow">
+        <div className="relative w-full h-screen overflow-y-auto">
+          <div className="w-full bg-white shadow">
             <Header />
             {!hideMenuAndSports && <MMenuTabs />}
           </div>
 
-          <div className="overflow-y-auto h-full">
-            <div className={`${hideMenuAndSports ? "h-[100px]" : "h-[142px]"}`}></div>
+          <div className="overflow-y-auto">
+            {/* <div className={`${hideMenuAndSports ? "h-[100px]" : "h-[142px]"}`}></div> */}
             {children}
 
             <div className="fixed bottom-0 left-0 w-full z-50 bg-white shadow">

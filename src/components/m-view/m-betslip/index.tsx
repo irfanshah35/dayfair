@@ -287,7 +287,7 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
 
   if (!visible) return null;
 
-  const gradient = "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)";
+  const gradient = "linear-gradient(-180deg,#f4b501_0%,#f68700_100%)";
   const btnBg = "linear-gradient(180deg,#030a12,#444647 42%,#58595a)";
 
   const getBgColor = () => {
@@ -392,7 +392,7 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
                 id="betAmountMobile"
                 value={betAmount}
                 onChange={(e) => setBetAmount(e.target.value)}
-                placeholder="Stake"
+                placeholder="0"
                 className="w-full h-[30px] text-black text-center border border-white bg-white text-base opacity-80 font-bold"
                 style={{ fontSize: "16px" }}
               />
@@ -452,7 +452,7 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
                 fontSize: "16px",
                 background: (betAmount && parseFloat(priceInput) > 1 && !placing) ? gradient : "#E5AD56",
                 color: (betAmount && parseFloat(priceInput) > 1 && !placing) ? "black" : "white",
-                opacity: (betAmount && parseFloat(priceInput) > 1 && !placing) ? 1 : 0.65,
+                opacity: (betAmount && parseFloat(priceInput) > 1 && !placing) ? 1 : 0.90,
               }}
             >
               {placing ? "Placing..." : "Place Bet"}

@@ -147,24 +147,24 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     fetchMarketPL();
   }, [eventId, sportId, fetchMarketPL]);
 
-// Helper function to get PL for a specific runner
-// Helper function to get PL for a specific runner
-const getRunnerPL = (marketId: string, selectionId: number) => {
-  if (!marketPL || Object.keys(marketPL).length === 0) return null;
+  // Helper function to get PL for a specific runner
+  // Helper function to get PL for a specific runner
+  const getRunnerPL = (marketId: string, selectionId: number) => {
+    if (!marketPL || Object.keys(marketPL).length === 0) return null;
 
-  // 🔹 STRICT: Only exact string match
-  const marketData = marketPL[String(marketId)];
-  
-  if (!marketData) return null;
+    // 🔹 STRICT: Only exact string match
+    const marketData = marketPL[String(marketId)];
 
-  const selectionKey = String(selectionId);
-  
-  if (selectionKey in marketData) {
-    return marketData[selectionKey];
-  }
-  
-  return null;
-};
+    if (!marketData) return null;
+
+    const selectionKey = String(selectionId);
+
+    if (selectionKey in marketData) {
+      return marketData[selectionKey];
+    }
+
+    return null;
+  };
 
   // 👇 Calculate preview PL for other runners when betslip is open
   const calculatePreviewPL = (
@@ -211,7 +211,7 @@ const getRunnerPL = (marketId: string, selectionId: number) => {
 
   const calculateCashOut = (market: any) => {
     const marketId = market.marketId;
-    
+
     if (intrvlCashOutRef.current[marketId]) {
       clearInterval(intrvlCashOutRef.current[marketId]);
     }
@@ -222,7 +222,7 @@ const getRunnerPL = (marketId: string, selectionId: number) => {
     ) || marketId;
 
     const marketData = marketPL[marketKey];
-    
+
     if (!marketData || Object.keys(marketData).length === 0) {
       setCashoutValues(prev => ({ ...prev, [marketId]: "Cash Out" }));
       setShowCashoutValue(prev => ({ ...prev, [marketId]: false }));
@@ -231,7 +231,7 @@ const getRunnerPL = (marketId: string, selectionId: number) => {
 
     // Check if there's any profit/loss
     const hasPL = Object.values(marketData).some((val: any) => Math.abs(val) > 0);
-    
+
     if (!hasPL) {
       setCashoutValues(prev => ({ ...prev, [marketId]: "Cash Out" }));
       setShowCashoutValue(prev => ({ ...prev, [marketId]: false }));
@@ -247,7 +247,7 @@ const getRunnerPL = (marketId: string, selectionId: number) => {
   // 🔹 NEW: Cashout calculation logic
   const cashOutOnInterval = (market: any) => {
     const marketId = market.marketId;
-    
+
     // Get current market PL
     const marketKey = Object.keys(marketPL).find(
       (key) => Math.abs(parseFloat(key) - parseFloat(marketId)) < 0.0001
@@ -264,11 +264,11 @@ const getRunnerPL = (marketId: string, selectionId: number) => {
     runners.forEach((runner: any) => {
       const selectionId = runner.selectionId;
       const pl = marketData[String(selectionId)] || 0;
-      
+
       if (Math.abs(pl) > 0) {
         const backPrice = runner.ex?.availableToBack?.[0]?.price || 0;
         const layPrice = runner.ex?.availableToLay?.[0]?.price || 0;
-        
+
         if (backPrice > 0 && layPrice > 0) {
           // Simple cashout calculation
           const midPrice = (backPrice + layPrice) / 2;
@@ -325,7 +325,7 @@ const getRunnerPL = (marketId: string, selectionId: number) => {
         const marketKey = Object.keys(marketPL).find(
           (key) => Math.abs(parseFloat(key) - parseFloat(market.marketId)) < 0.0001
         );
-        
+
         if (marketKey && marketPL[marketKey]) {
           const hasPL = Object.values(marketPL[marketKey]).some((val: any) => Math.abs(val) > 0);
           if (hasPL && market.runners && market.runners.length < 3) {
@@ -427,52 +427,52 @@ const getRunnerPL = (marketId: string, selectionId: number) => {
     setFilteredMarketData(filterdData);
   }, [activeCategory]);
 
-// Format PL value with + or -
-const formatPLValue = (value: number | null) => {
-  if (value === null || value === undefined) return null;
-  
-  const isPositive = value > 0; // Only positive if greater than 0
-  const formatted = Math.abs(value).toFixed(2).replace(/\.?0+$/, ''); // Remove trailing zeros
+  // Format PL value with + or -
+  const formatPLValue = (value: number | null) => {
+    if (value === null || value === undefined) return null;
 
-  return (
-    <span
-      className={`gap-1 ${isPositive ? "text-green-600" : "text-red-600"}`}
-    >
-      {value === 0 ? formatted : (isPositive ? formatted : `-${formatted}`)}
-    </span>
-  );
-};
+    const isPositive = value > 0; // Only positive if greater than 0
+    const formatted = Math.abs(value).toFixed(2).replace(/\.?0+$/, ''); // Remove trailing zeros
 
-
-const getCombinedPL = (marketId: string, selectionId: number) => {
-  const actualPL = getRunnerPL(marketId, selectionId);
-  
-  // 🔹 NEW: If actualPL is null (no PL data exists), don't show anything
-  if (actualPL === null) return null;
-
-  if (
-    openSlip &&
-    betSlipData &&
-    openSlip.marketId === marketId &&
-    slipPreview.stake > 0
-  ) {
-    const previewPL = calculatePreviewPL(
-      openSlip.side,
-      slipPreview.price,
-      slipPreview.stake,
-      openSlip.selectionId,
-      selectionId
+    return (
+      <span
+        className={`gap-1 ${isPositive ? "text-green-600" : "text-red-600"}`}
+      >
+        {value === 0 ? formatted : (isPositive ? formatted : `-${formatted}`)}
+      </span>
     );
+  };
 
-    if (openSlip.selectionId === selectionId) {
-      return actualPL + previewPL;
-    } else {
-      return actualPL + previewPL;
+
+  const getCombinedPL = (marketId: string, selectionId: number) => {
+    const actualPL = getRunnerPL(marketId, selectionId);
+
+    // 🔹 NEW: If actualPL is null (no PL data exists), don't show anything
+    if (actualPL === null) return null;
+
+    if (
+      openSlip &&
+      betSlipData &&
+      openSlip.marketId === marketId &&
+      slipPreview.stake > 0
+    ) {
+      const previewPL = calculatePreviewPL(
+        openSlip.side,
+        slipPreview.price,
+        slipPreview.stake,
+        openSlip.selectionId,
+        selectionId
+      );
+
+      if (openSlip.selectionId === selectionId) {
+        return actualPL + previewPL;
+      } else {
+        return actualPL + previewPL;
+      }
     }
-  }
 
-  return actualPL;
-};
+    return actualPL;
+  };
   // Check if market has profit/loss
   const hasProfitAndLoss = (marketId: string) => {
     const marketKey = Object.keys(marketPL).find(
@@ -493,11 +493,10 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
           <div className="flex pt-[13px] pb-3">
             <a
               onClick={() => setActiveTab("odds")}
-              className={`relative block text-[12px] text-center border-r px-4 ${
-                activeTab === "odds"
+              className={`relative block text-[12px] text-center border-r px-4 ${activeTab === "odds"
                   ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
                   : ""
-              }`}
+                }`}
             >
               ODDS
             </a>
@@ -506,11 +505,10 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
           <div className="flex">
             <a
               onClick={() => setActiveTab("betList")}
-              className={`relative block text-[12px] text-center px-4 ${
-                activeTab === "betList"
+              className={`relative block text-[12px] text-center px-4 ${activeTab === "betList"
                   ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
                   : ""
-              }`}
+                }`}
             >
               BET LIST ( {matchedBets.length} )
             </a>
@@ -601,16 +599,14 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                       <React.Fragment key={bet.betId}>
                         <tr
                           onClick={() => toggleRow(bet.betId)}
-                          className={`border-b border-gray-400 h-[41px] cursor-pointer ${
-                            bet.side === "LAY" ? "bg-[#faa9ba]" : "bg-[#73bcf0]"
-                          }`}
+                          className={`border-b border-gray-400 h-[41px] cursor-pointer ${bet.side === "LAY" ? "bg-[#faa9ba]" : "bg-[#73bcf0]"
+                            }`}
                         >
                           <td className="p-0.5 border-r border-gray-400">
                             <div className="flex items-center gap-2">
                               <div
-                                className={`${
-                                  expandedRows[bet.betId] ? "rotate-180" : ""
-                                }`}
+                                className={`${expandedRows[bet.betId] ? "rotate-180" : ""
+                                  }`}
                               >
                                 <FaChevronDown className="w-3 h-3" />
                               </div>
@@ -658,7 +654,7 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
           )}
         </div>
       ) : (
-        <div className="flex w-full">
+        <div className="flex w-full mb-[45px]">
           <div className="left-part overflow-y-auto w-full lg:w-[70%]">
             <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[4px] px-[8px] md:py-[3.5px] md:px-2.5 lg:mb-[3px] h-8 text-white">
               <span className="text-sm lg:text-[15px] lg:uppercase font-medium lg:leading-normal relative top-[1px] md:top-[0px]">
@@ -671,7 +667,7 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                   </span>
                 </span>
               ) : (
-                <span className="text-xs py-1 rounded-full font-bold md:font-normal inline-block">
+                <span className="text-sm py-1 rounded-full md:font-normal inline-block">
                   {formatDateStamp(apiData?.matchOddsData[0]?.marketStartTime)}
                 </span>
               )}
@@ -711,11 +707,10 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                 {categories?.map((category: any, idx: number) => (
                   <li
                     key={idx}
-                    className={`px-2.5 py-[5px] whitespace-nowrap rounded-full ml-[5px] text-[12px] font-medium border border-white cursor-pointer ${
-                      activeCategory === category
+                    className={`px-2.5 py-[5px] whitespace-nowrap rounded-full ml-[5px] text-[12px] font-medium border border-white cursor-pointer ${activeCategory === category
                         ? "bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)] text-black"
                         : "hover:bg-gray-100 bg-transparent text-white"
-                    }`}
+                      }`}
                   >
                     <button onClick={() => setActiveCategory(category)}>
                       {category.toUpperCase()}
@@ -736,7 +731,7 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                       <span className="font-bold md:font-normal text-white text-[13px] lg:text-[14px]">
                         {market?.marketName}
                       </span>
-                      
+
                       {/* 🔹 NEW: Cashout Toggle */}
                       {market?.runners?.length < 3 && hasProfitAndLoss(market.marketId) && (
                         <div className="ml-1 h-[26px] relative top-[-2px]">
@@ -752,13 +747,12 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                                   <i className="fa fa-check"></i>
                                 )}
                               </span>
-                              <span className={`${
-                                showCashoutValue[market.marketId]
+                              <span className={`${showCashoutValue[market.marketId]
                                   ? typeof cashoutValues[market.marketId] === "number" && cashoutValues[market.marketId] < 0
                                     ? "font-bold text-[#ff0000]"
                                     : "font-bold text-[#008000]"
                                   : "font-normal text-black"
-                              }`}>
+                                }`}>
                                 {showCashoutValue[market.marketId]
                                   ? cashoutValues[market.marketId]
                                   : "Cash Out"}
@@ -799,10 +793,10 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                         </span>
                       </div>
                       <div className="w-[40%] flex">
-                        <div className="back flex justify-center items-center text-center w-[50%] text-[12px] font-semibold bg-[#72bbef]">
+                        <div className="back flex justify-center items-center text-center w-[50%] text-[12px] bg-[#72bbef]">
                           BACK
                         </div>
-                        <div className="lay flex justify-center items-center text-center w-[50%] text-[12px] font-semibold bg-[#faa9ba]">
+                        <div className="lay flex justify-center items-center text-center w-[50%] text-[12px] bg-[#faa9ba]">
                           LAY
                         </div>
                       </div>
@@ -852,37 +846,33 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                       return (
                         <React.Fragment key={runner?.selectionId}>
                           <div className="flex border-b border-[#aaa] lg:border-white bg-gray-50 h-[41px] lg:h-10 lg:bg-[#f2f2f2]">
-                            <div className="col-span-3 py-0.5 px-[5px] lg:border-l lg:border-white md:col-span-1 w-[60%] lg:w-[40%]">
+                            <div className="col-span-3 py-0.5 px-[5px] lg:border-l lg:border-white md:col-span-1 w-[60%] lg:w-[40%] h-[41px] md:h-auto">
                               <div className="flex justify-between items-center">
-                                <div className="w-full">
-                                  <span className=" ">
-                                    <b className="font-semibold md:font-normal text-[12px] lg:text-[14px] text-[#212529]">
-                                      {runnerName}
-                                    </b>
-                                    {displayPL && (
-                                      <div className="-m-1 ml-1 text-[12px]  ">
-                                        {displayPL}
-                                      </div>
-                                    )}
+                                <div className="w-full flex justify-between gap-1 md:gap-0 flex-col">
+                                  <span className="font-normal text-[12px] lg:text-[14px] text-[#212529]">
+                                    {runnerName}
                                   </span>
+                                  {displayPL && (
+                                    <div className="-m-1 ml-1 text-[12px]  ">
+                                      {displayPL}
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             </div>
 
                             <div
                               className={`relative w-[40%] lg:text-[#212529] lg:w-[60%] flex 
-                              ${
-                                isSuspended
+                              ${isSuspended
                                   ? "after:content-['SUSPENDED'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed"
                                   : ""
-                              }`}
+                                }`}
                             >
                               <div
-                                className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${
-                                  !isSuspended
+                                className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!isSuspended
                                     ? "cursor-pointer"
                                     : "cursor-not-allowed"
-                                }`}
+                                  }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -898,7 +888,7 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                                   })
                                 }
                               >
-                                <span className="odd block font-bold md:font-normal  leading-[1.1]">
+                                <span className="odd block md:font-normal  leading-[1.1]">
                                   {runner?.ex?.availableToBack[0]?.price || "0"}
                                 </span>
                                 <span className="block text-xs lg:text-[10px] md:font-normal">
@@ -910,11 +900,10 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                               </div>
 
                               <div
-                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
-                                  !isSuspended
+                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!isSuspended
                                     ? "cursor-pointer"
                                     : "cursor-not-allowed"
-                                }`}
+                                  }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -941,11 +930,10 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                                 </span>
                               </div>
                               <div
-                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
-                                  !isSuspended
+                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!isSuspended
                                     ? "cursor-pointer"
                                     : "cursor-not-allowed"
-                                }`}
+                                  }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -973,11 +961,10 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                               </div>
 
                               <div
-                                className={`text-center lg:border-l lg:border-white flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
-                                  !isSuspended
+                                className={`text-center lg:border-l lg:border-white flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!isSuspended
                                     ? "cursor-pointer"
                                     : "cursor-not-allowed"
-                                }`}
+                                  }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -992,7 +979,7 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                                   })
                                 }
                               >
-                                <span className="odd block font-bold md:font-normal leading-[1.1]">
+                                <span className="odd block md:font-normal leading-[1.1]">
                                   {runner?.ex?.availableToLay[0]?.price || "0"}
                                 </span>
                                 <span className="block text-xs lg:text-[10px]">
@@ -1003,11 +990,10 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                                 </span>
                               </div>
                               <div
-                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
-                                  !isSuspended
+                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!isSuspended
                                     ? "cursor-pointer"
                                     : "cursor-not-allowed"
-                                }`}
+                                  }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -1033,11 +1019,10 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                                 </span>
                               </div>
                               <div
-                                className={`text-center lg:border-l lg:border-white border-r hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
-                                  !isSuspended
+                                className={`text-center lg:border-l lg:border-white border-r hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!isSuspended
                                     ? "cursor-pointer"
                                     : "cursor-not-allowed"
-                                }`}
+                                  }`}
                                 onClick={() =>
                                   !isSuspended &&
                                   onPriceClick({
@@ -1069,31 +1054,31 @@ const getCombinedPL = (marketId: string, selectionId: number) => {
                             market?.marketId,
                             runner?.selectionId
                           ) && (
-                            <div ref={betslipRef} className="lg:hidden">
-                              {betSlipData && (
-                                <MBetSlip
-                                  visible={isSlipOpen}
-                                  backLayClsModal={betSlipData?.slipCls}
-                                  extraBgClass={betSlipData?.slipBgClass}
-                                  odds={betSlipData?.odds}
-                                  marketId={betSlipData?.marketId}
-                                  selectionId={betSlipData?.selectionId}
-                                  eventId={eventId}
-                                  sportId={sportId}
-                                  marketType={market?.marketType}
-                                  runnerName={betSlipData?.runnerName}
-                                  minStake={betSlipData?.min}
-                                  maxStake={betSlipData?.max}
-                                  onClose={closeInlineSlip}
-                                  onPlaced={() => {
-                                    closeInlineSlip();
-                                    fetchMarketPL();
-                                  }}
-                                  onPreviewChange={handleSlipPreview}
-                                />
-                              )}
-                            </div>
-                          )}
+                              <div ref={betslipRef} className="lg:hidden">
+                                {betSlipData && (
+                                  <MBetSlip
+                                    visible={isSlipOpen}
+                                    backLayClsModal={betSlipData?.slipCls}
+                                    extraBgClass={betSlipData?.slipBgClass}
+                                    odds={betSlipData?.odds}
+                                    marketId={betSlipData?.marketId}
+                                    selectionId={betSlipData?.selectionId}
+                                    eventId={eventId}
+                                    sportId={sportId}
+                                    marketType={market?.marketType}
+                                    runnerName={betSlipData?.runnerName}
+                                    minStake={betSlipData?.min}
+                                    maxStake={betSlipData?.max}
+                                    onClose={closeInlineSlip}
+                                    onPlaced={() => {
+                                      closeInlineSlip();
+                                      fetchMarketPL();
+                                    }}
+                                    onPreviewChange={handleSlipPreview}
+                                  />
+                                )}
+                              </div>
+                            )}
                         </React.Fragment>
                       );
                     })}
