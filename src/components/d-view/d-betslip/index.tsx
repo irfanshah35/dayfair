@@ -133,7 +133,18 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
       setIsPlaceBetOpen(true);
     }
   }, [visible]);
-
+// Group bets by marketName
+const groupBetsByMarket = (bets: any[]) => {
+  const grouped: Record<string, any[]> = {};
+  bets.forEach(bet => {
+    const marketName = bet.marketName || "Unknown Market";
+    if (!grouped[marketName]) {
+      grouped[marketName] = [];
+    }
+    grouped[marketName].push(bet);
+  });
+  return grouped;
+};
   const fetchBets = async () => {
     if (!eventId || !sportId) return;
 
@@ -699,47 +710,51 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
           </div>
         </div>
 
-        {/* UNMATCHED BETS LIST */}
-        {unmatchedBets.length > 0 && showUnmatched && (
-          <div className="w-full bg-white border-b border-[#ebebeb]">
-            <div className="py-1 px-3 bg-[linear-gradient(180deg,#030a12,#444647_42%)] text-white font-bold text-[14px]">
-              Unmatched Bets
-            </div>
+      {/* UNMATCHED BETS LIST - GROUPED BY MARKET */}
+{unmatchedBets.length > 0 && showUnmatched && (
+  <div className="w-full bg-white border-b border-[#ebebeb]">
+    {Object.entries(groupBetsByMarket(unmatchedBets)).map(([marketName, bets]) => (
+      <div key={marketName}>
+        <div className="py-1 px-3 bg-[linear-gradient(180deg,#030a12,#444647_42%)] text-white font-bold text-[14px]">
+          {marketName}
+        </div>
 
-            {unmatchedBets.map((bet) => {
-              const isExpanded = expandedBets.has(bet.betId);
-              const isLay = bet.side === "LAY";
+        {(bets as any[]).map((bet) => {
+          const isExpanded = expandedBets.has(bet.betId);
+          const isLay = bet.side === "LAY";
 
-              return (
-                <div key={bet.betId} className={`border-b border-[#ebebeb] ${isLay ? 'border-l-[3px] border-l-[#f18883]' : 'border-l-[3px] border-l-[#72bbef]'}`}>
-                  <div
-                    className="w-full bg-white px-2 py-1 cursor-pointer flex items-center gap-1"
-                    onClick={() => toggleBetExpansion(bet.betId)}
-                  >
-                    <span className="text-[10px] font-bold text-black shrink-0">
-                      {isExpanded ? <FaChevronDown /> : <FaChevronUp />}
-                    </span>
-                    <div className="flex-1">
-                      <div className={`text-[10px] font-bold ${isLay ? 'text-[#f56a6a]' : 'text-[#2a9df4]'}`}>
-                        {bet.side} {bet.selectionName}
-                      </div>
-                      <div className="text-[10px] text-black">
-                        for <span className="font-semibold">${bet.requestedSize}</span> @ <span className="font-semibold">{bet.requestedPrice}</span>
-                      </div>
-                    </div>
+          return (
+            <div key={bet.betId} className={`border-b border-[#ebebeb] ${isLay ? 'border-l-[3px] border-l-[#f18883]' : 'border-l-[3px] border-l-[#72bbef]'}`}>
+              <div
+                className="w-full bg-white px-2 py-1 cursor-pointer flex items-center gap-1"
+                onClick={() => toggleBetExpansion(bet.betId)}
+              >
+                <span className="text-[10px] font-bold text-black shrink-0">
+                  {isExpanded ? <FaChevronDown /> : <FaChevronUp />}
+                </span>
+                <div className="flex-1">
+                  <div className={`text-[10px] font-bold ${isLay ? 'text-[#f56a6a]' : 'text-[#2a9df4]'}`}>
+                    {bet.side} {bet.selectionName}
                   </div>
-
-                  {isExpanded && (
-                    <div className="px-2 py-1 bg-white text-[12px] text-gray-600">
-                      <div>Placed: <span>{formatDateTime(bet.placedDate)}</span></div>
-                      <div>Ref: <span>{bet.betId}</span></div>
-                    </div>
-                  )}
+                  <div className="text-[10px] text-black">
+                    for <span className="font-semibold">${bet.requestedPrice}</span> @ <span className="font-semibold">{bet.requestedSize}</span>
+                  </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
+              </div>
+
+              {isExpanded && (
+                <div className="px-2 py-1 bg-white text-[12px] text-gray-600">
+                  <div>Placed: <span>{formatDateTime(bet.placedDate)}</span></div>
+                  <div>Ref: <span>{bet.betId}</span></div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    ))}
+  </div>
+)}
         <hr className="text-[#dccceb] h-1"/>
 
         {/* MATCHED SUMMARY ROW */}
@@ -757,7 +772,7 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
           <div className="flex items-center gap-2">
             {matchedBets.length > 0 && (
               <>
-                <span className="text-[14px]">Average Odds</span>
+                <span className="text-[14px] text-[#555] ">Average Odds</span>
                 <div className="flex items-center">
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input type="checkbox" className="sr-only peer"
@@ -774,51 +789,54 @@ const DBetSlip: React.FC<DBetSlipProps> = ({
           </div>
         </div>
 
-        {/* MATCHED BETS LIST */}
-        {matchedBets.length > 0 && showMatched && (
-          <div className="w-full bg-white border-b border-[#ebebeb]">
-            <div className="px-2.5 h-[30px] flex items-center bg-[linear-gradient(180deg,#030a12,#444647_42%)] text-white font-bold text-[12px]">
-              Match Odds
-            </div>
+     {/* MATCHED BETS LIST - GROUPED BY MARKET */}
+{matchedBets.length > 0 && showMatched && (
+  <div className="w-full bg-white border-b border-[#ebebeb]">
+    {Object.entries(groupBetsByMarket(matchedBets)).map(([marketName, bets]) => (
+      <div key={marketName}>
+        <div className="px-2.5 h-[30px] flex items-center bg-[linear-gradient(180deg,#030a12,#444647_42%)] text-white font-bold text-[12px]">
+          {marketName}
+        </div>
 
-            {matchedBets.map((bet) => {
-              const isExpanded = expandedBets.has(bet.betId);
-              const isLay = bet.side === "LAY";
+        {(bets as any[]).map((bet) => {
+          const isExpanded = expandedBets.has(bet.betId);
+          const isLay = bet.side === "LAY";
 
-              return (
-                <div key={bet.betId} className={`border-b p-2 border-[#ebebeb] ${isLay ? 'border-l-[3px] border-l-[#f18883]' : 'border-l-[3px] border-l-[#72bbef]'}`}>
-                  <div
-                    className="w-full bg-white cursor-pointer flex items-center gap-2"
-                    onClick={() => toggleBetExpansion(bet.betId)}
-                  >
-                    {!isChecked && (
-                      <span className={`text-[11px] font-bold text-black shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
-                        <FaChevronDown />
-                      </span>
-                    )
-                    }
-                    <div className="flex-1 leading-[15px]">
-                      <div className={`text-[12px] font-bold ${isLay ? 'text-[#e99292]' : 'text-[#5fa4e2]'}`}>
-                        {bet.side} {bet.selectionName}
-                      </div>
-                      <div className="text-[12px] text-black">
-                        for <span className="font-semibold">${bet.requestedSize}</span> @ <span className="font-semibold">{bet.requestedPrice}</span>
-                      </div>
-                    </div>
+          return (
+            <div key={bet.betId} className={`border-b p-2 border-[#ebebeb] ${isLay ? 'border-l-[3px] border-l-[#f18883]' : 'border-l-[3px] border-l-[#72bbef]'}`}>
+              <div
+                className="w-full bg-white cursor-pointer flex items-center gap-2"
+                onClick={() => toggleBetExpansion(bet.betId)}
+              >
+                {!isChecked && (
+                  <span className={`text-[11px] font-bold text-black shrink-0 transition-transform ${isExpanded ? 'rotate-180' : ''}`}>
+                    <FaChevronDown />
+                  </span>
+                )}
+                <div className="flex-1 leading-[15px]">
+                  <div className={`text-[12px] font-bold ${isLay ? 'text-[#e99292]' : 'text-[#5fa4e2]'}`}>
+                    {bet.side} {bet.selectionName}
                   </div>
-
-                  {isExpanded && !isChecked && (
-                    <div className="mt-3 bg-white text-[12px] text-gray-600">
-                      <div>Placed: <span>{formatDateTime(bet.placedDate)}</span></div>
-                      <div>Matched: <span>{formatDateTime(bet.matchedDate)}</span></div>
-                      <div>Ref: <span>{bet.betId}</span></div>
-                    </div>
-                  )}
+                  <div className="text-[12px] text-black">
+                    for <span className="font-semibold">${bet.requestedPrice}</span> @ <span className="font-semibold">{bet.requestedSize}</span>
+                  </div>
                 </div>
-              );
-            })}
-          </div>
-        )}
+              </div>
+
+              {isExpanded && !isChecked && (
+                <div className="mt-3 bg-white text-[12px] text-gray-600">
+                  <div>Placed: <span>{formatDateTime(bet.placedDate)}</span></div>
+                  <div>Matched: <span>{formatDateTime(bet.matchedDate)}</span></div>
+                  <div>Ref: <span>{bet.betId}</span></div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    ))}
+  </div>
+)}
       </div>
     </div>
   );
