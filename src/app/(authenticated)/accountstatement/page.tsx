@@ -133,11 +133,11 @@ export default function AccountStatement() {
   };
 
   return (
-    <div className="md:mx-[5px] md:my-1.5">
-      <div className="relative flex flex-col min-w-0 wrap-break-word bg-white md:border border-black/12.5 rounded">
+    <div className="min-[992px]:mx-[5px] min-[992px]:my-1.5">
+      <div className="relative flex flex-col min-w-0 wrap-break-word bg-white min-[992px]:border border-black/12.5 rounded">
         {/* Card Header */}
-        <div className="px-4 py-1 md:py-0 md:h-[37.8px] md:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5">
-          <h4 className="mb-0 text-base text-white! md:text-[24px]">
+        <div className="px-4 py-1 min-[992px]:py-0 min-[992px]:h-[37.8px] min-[992px]:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5">
+          <h4 className="mb-0 text-base text-white! md:text-[17.604px] min-[992px]:text-[24px]">
             Account Statement
           </h4>
         </div>
@@ -185,19 +185,19 @@ export default function AccountStatement() {
               <table className="w-full border-collapse border border-black/12.5">
                 <thead>
                   <tr>
-                    <th className="p-0.5 md:px-3 md:py-2 text-center h-[26px] md:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-[26px] min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm min-[992px]:text-base">
                       Date / Time
                     </th>
-                    <th className="p-0.5 md:px-3 md:py-2 text-center h-[26px] md:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-[26px] min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm min-[992px]:text-base">
                       Credit
                     </th>
-                    <th className="p-0.5 md:px-3 md:py-2 text-center h-[26px] md:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-[26px] min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm min-[992px]:text-base">
                       Debit
                     </th>
-                    <th className="p-0.5 md:px-3 md:py-2 text-center h-[26px] md:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 font-bold text-sm md:text-base">
+                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-[26px] min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 font-bold text-sm min-[992px]:text-base">
                       Balance
                     </th>
-                    <th className="p-0.5 md:px-3 md:py-2 text-center h-[26px] md:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm md:text-base">
+                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-[26px] min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm min-[992px]:text-base">
                       Remark
                     </th>
                   </tr>
@@ -207,23 +207,23 @@ export default function AccountStatement() {
                   {accountStatement?.length > 0 ? (
                     accountStatement?.map((statement:any, index:number) => (
                       <tr key={index}>
-                        <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
                           {formatDateTime(statement.createdAt)}
                         </td>
-                        <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
                           {statement.deposit || "0"}
                         </td>
-                        <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
                           <span className="font-bold text-red-600">
                             {statement.withdraw || "0"}
                           </span>
                         </td>
-                        <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
                           <span className="font-bold">
                             {statement.bankBalance}
                           </span>
                         </td>
-                        <td className="px-2 py-1.5 md:px-3 md:p-[9px] text-center border text-black border-black/12.5 text-xs md:text-base">
+                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
                           {statement.remark || "NA"}
                         </td>
                       </tr>
@@ -232,7 +232,7 @@ export default function AccountStatement() {
                     <tr>
                       <td
                         colSpan={5}
-                        className="p-[2px] md:px-3 md:py-[9px] text-center border text-black border-black/12.5 bg-transparent md:text-base"
+                        className="p-[2px] min-[992px]:px-3 min-[992px]:py-[9px] text-center border text-black border-black/12.5 bg-transparent min-[992px]:text-base"
                       >
                         No data available in table
                       </td>

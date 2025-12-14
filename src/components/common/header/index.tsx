@@ -300,14 +300,14 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="relative min-h-[65px] md:min-h-20 overflow-x-clip bg-black text-white px-[5px]">
+    <header className="relative min-h-[65px] min-[992px]:min-h-20 overflow-x-clip bg-black text-white px-[5px]">
       {/* Top Row */}
       <div className="flex min-[345px]:items-center flex-col flex-wrap min-[345px]:flex-nowrap min-[345px]:flex-row">
         {/* Logo Section */}
-        <div className="flex items-center md:h-[66px] flex-1 pl-1.5 md:flex-[0_0_auto] md:w-1/4">
+        <div className="flex items-center min-[992px]:h-[66px] flex-1 pl-1.5 min-[992px]:flex-[0_0_auto] min-[992px]:w-1/4">
           <Link href={"/"} className="flex items-center gap-1.5 min-[992px]:mt-0.5">
             <FaHome
-              className="text-white relative bottom-px cursor-pointer mt-0.5 md:hidden"
+              className="text-white relative bottom-px cursor-pointer mt-0.5 min-[992px]:hidden"
               size={26}
               tabIndex={0}
             />
@@ -316,16 +316,16 @@ const Header = () => {
               alt="Logo"
               width={100}
               height={65}
-              className="h-[65px] w-[90px] min-[345px]:w-[100px] md:h-20 md:w-40 md:pt-2"
+              className="h-[65px] w-[90px] min-[345px]:w-[100px] min-[992px]:h-20 min-[992px]:w-40 min-[992px]:pt-2"
               tabIndex={0}
             />
           </Link>
         </div>
 
         {/* Login Button */}
-        <div className="flex flex-col md:flex-row justify-end w-full md:h-[66px] flex-1">
-          <div className="hidden md:flex md:ml-[17px] p-1 items-center justify-end flex-[0_0_auto] w-[83.33333333%] max-w-full">
-            <ul className="hidden md:flex list-none mt-2.5 mb-3 items-center pl-8">
+        <div className="flex flex-col min-[992px]:flex-row justify-end w-full min-[992px]:h-[66px] flex-1">
+          <div className="hidden min-[345px]:flex min-[992px]:ml-[17px] p-1 items-center justify-end flex-[0_0_auto] w-[83.33333333%] max-w-full">
+            <ul className="hidden min-[992px]:flex list-none mt-2.5 mb-3 items-center pl-8">
               <li
                 ref={wrapperRef}
                 className="mr-[21px] relative float-left flex items-start"
@@ -391,10 +391,10 @@ const Header = () => {
 
           {isLoggedIn && (
             <>
-              <div className=" relative min-[345px]:absolute mb-[18px] ml-8.5 min-[345px]:mb-0 top-[9px] right-[3px] flex gap-[3px] md:gap-0. min-[345px]:justify-end md:hidden text-[13px] tracking-[-0.15px]">
+              <div className=" relative min-[345px]:absolute mb-[18px] ml-8.5 min-[345px]:mb-0 top-[9px] right-[3px] flex gap-[3px] min-[992px]:gap-0. min-[345px]:justify-end min-[992px]:hidden text-[13px] tracking-[-0.15px]">
                 {/* BALANCE */}
                 <div className="">
-                  <span className="text-white font-bold md:font-normal">
+                  <span className="text-white font-bold min-[992px]:font-normal">
                     (BAL :{" "}
                     <b className="userTotalBalance">
                       {((userBalance?.bankBalance || 0) - (userBalance?.exposure || 0)).toFixed(2)}
@@ -409,7 +409,7 @@ const Header = () => {
                   onClick={() => setExposureOpen(!isexposureopen)}
                 >
                   <span className="text-white">
-                    <button className="underline-offset-2 font-bold md:font-normal">
+                    <button className="underline-offset-2 font-bold min-[992px]:font-normal">
                       (EXP :{" "}
                       <b className="userTotalExposure">
                         {userBalance?.exposure?.toFixed(2) || "0.00"}
@@ -420,7 +420,7 @@ const Header = () => {
                 </div>
               </div>
 
-              <div className="float-left text-[16px] mr-3 hidden md:flex flex-col justify-center font-light">
+              <div className="float-left text-[16px] mr-3 hidden min-[992px]:flex flex-col justify-center font-light">
                 <div className="text-start leading-[23px]">
                   <span>
                     <b>BALANCE&nbsp;:&nbsp;</b>
@@ -450,18 +450,18 @@ const Header = () => {
               </div>
             </>
           )}
-          <div className="w-[110%] gap-1 flex items-center md:flex">
-            <div className="flex-1 md:hidden"></div>
+          <div className="w-[110%] gap-1 flex items-center min-[992px]:flex">
+            <div className="flex-1 min-[992px]:hidden"></div>
             <div
-              className={`md:pe-3 md:p-[3px] md:flex-[0_0_auto]
+              className={`min-[992px]:pe-3 min-[992px]:p-[3px] min-[992px]:flex-[0_0_auto]
               ${!isLoggedIn
-                  ? "flex md:flex absolute right-[5px] md:relative md:right-0"
-                  : "hidden md:flex"
+                  ? "flex min-[992px]:flex absolute right-[5px] min-[992px]:relative min-[992px]:right-0"
+                  : "hidden min-[992px]:flex"
                 }`}
             >
               <button
                 onClick={goToLogin}
-                className="h-[32.5px] border w-[101.5px] border-black rounded-[5.875px] text-sm text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px] md:w-[101.91px]"
+                className="h-[32.5px] border w-[101.5px] border-black rounded-[5.875px] text-sm text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px] min-[992px]:w-[101.91px]"
                 style={{
                   background:
                     "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
@@ -475,7 +475,7 @@ const Header = () => {
         </div>
       </div>
 
-      <div className="relative flex min-h-[35px] ml-1 pb-2 md:hidden">
+      <div className="relative flex min-h-[35px] ml-1 pb-2 min-[992px]:hidden">
         {/* LEFT SIDE (50%) */}
         <div className="relative" ref={mobileSearchRef}>
           <div className="absolute left-0 top-[5px] z-10 w-[184px]">
@@ -555,7 +555,7 @@ const Header = () => {
         {isLoggedIn && (
           <button
             onClick={goToLogin}
-            className="cursor-pointer text-black border border-white text-[10px] min-[345px]:text-sm md:text-base hover:opacity-90 transition-opacity rounded-[3.875px] absolute right-px top-[-1px] min-[345px]:-top-1 w-[49.94px] h-[27px] min-[345px]:h-[31px] min-[345px]:w-[67.92px]"
+            className="cursor-pointer text-black border border-white text-[10px] min-[345px]:text-sm min-[992px]:text-base hover:opacity-90 transition-opacity rounded-[3.875px] absolute right-px top-[-1px] min-[345px]:-top-1 w-[49.94px] h-[27px] min-[345px]:h-[31px] min-[345px]:w-[67.92px]"
             style={{
               background: "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
             }}
@@ -640,9 +640,9 @@ const AccountDropDown = ({ closeDropdown }: any) => {
     <>
       <ul
         id="collapseForAccount"
-        className="absolute top-{100px} md:top-[82px] w-[172px] md:w-[170px] z-99999 text-[16px] md:text-[14px] right-0 overflow-hidden transition-all duration-300 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] rounded-sm"
+        className="absolute top-{100px} min-[992px]:top-[82px] w-[172px] min-[992px]:w-[170px] z-99999 text-[16px] min-[992px]:text-[14px] right-0 overflow-hidden transition-all duration-300 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] rounded-sm"
       >
-        <li className="md:hidden py-1.5 md:py-0 h-9 md:h-[25px] ">
+        <li className="min-[992px]:hidden py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-[25px] ">
           <Link
             href="/"
             onClick={closeDropdown}
@@ -657,7 +657,7 @@ const AccountDropDown = ({ closeDropdown }: any) => {
             <Link
               href={item.href}
               onClick={closeDropdown}
-              className="block px-3 py-1.5 md:py-0 h-9 md:h-[25px] items-center hover:bg-gray-800 transition-colors"
+              className="block px-3 py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-[25px] items-center hover:bg-gray-800 transition-colors"
             >
               {item.label}
             </Link>
@@ -665,7 +665,7 @@ const AccountDropDown = ({ closeDropdown }: any) => {
         ))}
 
         {/* Balance Switch */}
-        <li className="flex items-center py-1.5 md:py-0 h-9 md:h-[25px]  justify-between pl-3 pr-1 md:pr-[18px] cursor-pointer">
+        <li className="flex items-center py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-[25px]  justify-between pl-3 pr-1 min-[992px]:pr-[18px] cursor-pointer">
           <label htmlFor="checkBalance" className="cursor-pointer">
             Balance
           </label>
@@ -678,7 +678,7 @@ const AccountDropDown = ({ closeDropdown }: any) => {
         </li>
 
         {/* Exposure Switch */}
-        <li className="flex items-center justify-between pl-3 pr-1 md:pr-[18px] py-1.5 md:py-0 h-9 md:h-[25px] cursor-pointer">
+        <li className="flex items-center justify-between pl-3 pr-1 min-[992px]:pr-[18px] py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-[25px] cursor-pointer">
           <label htmlFor="checkExposure" className="cursor-pointer">
             Exposure
           </label>
@@ -689,10 +689,10 @@ const AccountDropDown = ({ closeDropdown }: any) => {
             className="h-[13px] w-[13px] accent-[#4D4E4F] cursor-pointer bg-[#4D4E4F] relative -top-0.5"
           />
         </li>
-        <li className="md:hidden">
+        <li className="min-[992px]:hidden">
           <Link
             href="/"
-            className="px-3 py-1.5 md:py-0 md:h-[25px]  h-[25px] flex items-center hover:bg-gray-800 transition-colors"
+            className="px-3 py-1.5 min-[992px]:py-0 min-[992px]:h-[25px]  h-[25px] flex items-center hover:bg-gray-800 transition-colors"
           >
             Rules
           </Link>
