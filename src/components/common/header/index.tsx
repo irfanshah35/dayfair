@@ -77,7 +77,7 @@ const matches: Match[] = [
 
 const Header = () => {
   const [searchActive, setSearchActive] = useState(false);
-const { userBalance, setUserBalance } = useAppStore(); 
+  const { userBalance, setUserBalance } = useAppStore();
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLLIElement | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -158,15 +158,15 @@ const { userBalance, setUserBalance } = useAppStore();
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
- useEffect(() => {
-  if (isLoggedIn) {
-    fetchData({
-      url: CONFIG.getUserBalance,
-      payload: { key: CONFIG.siteKey },
-      setFn: setUserBalance, // This now updates the global store
-    });
-  }
-}, [isLoggedIn]);
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetchData({
+        url: CONFIG.getUserBalance,
+        payload: { key: CONFIG.siteKey },
+        setFn: setUserBalance, // This now updates the global store
+      });
+    }
+  }, [isLoggedIn]);
 
 
   useEffect(() => {
@@ -302,7 +302,7 @@ const { userBalance, setUserBalance } = useAppStore();
   return (
     <header className="relative min-h-[65px] md:min-h-20 overflow-x-clip bg-black text-white px-[5px]">
       {/* Top Row */}
-      <div className="flex items-center">
+      <div className="flex min-[345px]:items-center flex-col flex-wrap min-[345px]:flex-nowrap min-[345px]:flex-row">
         {/* Logo Section */}
         <div className="flex items-center md:h-[66px] flex-1 pl-1.5 md:flex-[0_0_auto] md:w-1/4">
           <Link href={"/"} className="flex items-center gap-1.5 min-[992px]:mt-0.5">
@@ -316,7 +316,7 @@ const { userBalance, setUserBalance } = useAppStore();
               alt="Logo"
               width={100}
               height={65}
-              className="h-[65px] w-[100px] md:h-20 md:w-40 md:pt-2"
+              className="h-[65px] w-[90px] min-[345px]:w-[100px] md:h-20 md:w-40 md:pt-2"
               tabIndex={0}
             />
           </Link>
@@ -389,76 +389,75 @@ const { userBalance, setUserBalance } = useAppStore();
             </ul>
           </div>
 
-         {isLoggedIn && (
-  <>
-    <div className="absolute top-[9px] right-[3px] flex gap-0.5 justify-end md:hidden text-[13px]">
-      {/* BALANCE */}
-      <div className="">
-        <span className="text-white">
-          (BAL :{" "}
-          <b className="userTotalBalance">
-            {((userBalance?.bankBalance || 0) - (userBalance?.exposure || 0)).toFixed(2)}
-          </b>
-          )
-        </span>
-      </div>
+          {isLoggedIn && (
+            <>
+              <div className=" relative min-[345px]:absolute mb-[18px] ml-7 min-[345px]:mb-0 top-[9px] right-[3px] flex gap-[3px] md:gap-0. min-[345px]:justify-end md:hidden text-[13px] tracking-[-0.15px]">
+                {/* BALANCE */}
+                <div className="">
+                  <span className="text-white font-bold md:font-normal">
+                    (BAL :{" "}
+                    <b className="userTotalBalance">
+                      {((userBalance?.bankBalance || 0) - (userBalance?.exposure || 0)).toFixed(2)}
+                    </b>
+                    )
+                  </span>
+                </div>
 
-      {/* EXPOSURE */}
-      <div
-        className=""
-        onClick={() => setExposureOpen(!isexposureopen)}
-      >
-        <span className="text-white">
-          <button className="underline-offset-2">
-            (EXP :{" "}
-            <b className="userTotalExposure">
-              {userBalance?.exposure?.toFixed(2) || "0.00"}
-            </b>
-            )
-          </button>
-        </span>
-      </div>
-    </div>
+                {/* EXPOSURE */}
+                <div
+                  className=""
+                  onClick={() => setExposureOpen(!isexposureopen)}
+                >
+                  <span className="text-white">
+                    <button className="underline-offset-2 font-bold md:font-normal">
+                      (EXP :{" "}
+                      <b className="userTotalExposure">
+                        {userBalance?.exposure?.toFixed(2) || "0.00"}
+                      </b>
+                      )
+                    </button>
+                  </span>
+                </div>
+              </div>
 
-    <div className="float-left text-[16px] mr-3 hidden md:flex flex-col justify-center font-light">
-      <div className="text-start leading-[23px]">
-        <span>
-          <b>BALANCE&nbsp;:&nbsp;</b>
-        </span>
-        <b>
-          <span className="userTotalBalance relative left-[3px]">
-            {((userBalance?.bankBalance || 0) - (userBalance?.exposure || 0)).toFixed(2)}
-          </span>
-        </b>
-      </div>
-      <div className="text-start leading-[23px]">
-        <button
-          onClick={() => setExposureOpen(!isexposureopen)}
-          type="button"
-          className="cursor-pointer"
-        >
-          <span>
-            <b>EXPOSURE&nbsp;:&nbsp;</b>
-          </span>
-          <b>
-            <span className="">
-              {userBalance?.exposure?.toFixed(2) || "0.00"}
-            </span>
-          </b>
-        </button>
-      </div>
-    </div>
-  </>
-)}
+              <div className="float-left text-[16px] mr-3 hidden md:flex flex-col justify-center font-light">
+                <div className="text-start leading-[23px]">
+                  <span>
+                    <b>BALANCE&nbsp;:&nbsp;</b>
+                  </span>
+                  <b>
+                    <span className="userTotalBalance relative left-[3px]">
+                      {((userBalance?.bankBalance || 0) - (userBalance?.exposure || 0)).toFixed(2)}
+                    </span>
+                  </b>
+                </div>
+                <div className="text-start leading-[23px]">
+                  <button
+                    onClick={() => setExposureOpen(!isexposureopen)}
+                    type="button"
+                    className="cursor-pointer"
+                  >
+                    <span>
+                      <b>EXPOSURE&nbsp;:&nbsp;</b>
+                    </span>
+                    <b>
+                      <span className="">
+                        {userBalance?.exposure?.toFixed(2) || "0.00"}
+                      </span>
+                    </b>
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
           <div className="w-[110%] gap-1 flex items-center md:flex">
             <div className="flex-1 md:hidden"></div>
             <div
               className={`md:pe-3 md:p-[3px] md:flex-[0_0_auto]
-              ${
-                !isLoggedIn
+              ${!isLoggedIn
                   ? "flex md:flex absolute right-[5px] md:relative md:right-0"
                   : "hidden md:flex"
-              }`}
+                }`}
             >
               <button
                 onClick={goToLogin}
@@ -498,11 +497,10 @@ const { userBalance, setUserBalance } = useAppStore();
                 className={`
             bg-transparent text-black border-0 outline-0 h-[25px]
             transition-all duration-500 ease-linear text-[12px]  
-            ${
-              searchActive
-                ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
-                : "w-0 opacity-0 pl-0 pr-0"
-            }
+            ${searchActive
+                    ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
+                    : "w-0 opacity-0 pl-0 pr-0"
+                  }
           `}
               />
 
@@ -557,7 +555,7 @@ const { userBalance, setUserBalance } = useAppStore();
         {isLoggedIn && (
           <button
             onClick={goToLogin}
-            className="cursor-pointer text-black border border-white text-sm md:text-base hover:opacity-90 transition-opacity rounded-[3.875px] absolute right-px -top-1  h-[31px] w-[67.92px]"
+            className="cursor-pointer text-black border border-white text-[10px] min-[345px]:text-sm md:text-base hover:opacity-90 transition-opacity rounded-[3.875px] absolute right-px top-[-1px] min-[345px]:-top-1 w-[49.94px] h-[27px] min-[345px]:h-[31px] min-[345px]:w-[67.92px]"
             style={{
               background: "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
             }}
