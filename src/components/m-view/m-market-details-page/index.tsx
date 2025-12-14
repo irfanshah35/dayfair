@@ -804,9 +804,12 @@ const onPriceClick = ({
                         <span>
                           Min: {market?.min} Max: {market?.max}
                         </span>
-                        <span className=" ml-2">
-                          M:{(market?.totalMatched / 1000).toFixed(2)}K
-                        </span>
+                      <span className=" ml-2">
+  M:{market?.totalMatched >= 1000 
+    ? `${(market?.totalMatched / 1000).toFixed(2)}K`
+    : market?.totalMatched?.toFixed(2) || "0"
+  }
+</span>
                       </div>
                       <div className="w-[40%] flex">
                         <div className="back flex justify-center items-center text-center w-[50%] text-[12px] bg-[#72bbef]">
@@ -837,10 +840,13 @@ const onPriceClick = ({
                       <div className="leading-[15px] py-[5px] text-[16px] w-[10%] cursor-pointer bg-[#faa9ba] text-center text-[#212529]">
                         <b className="md:font-normal">LAY</b>
                       </div>
-                      <div className="leading-[15px] py-[5px] pr-[5px] text-[#212529] text-center font-bold text-[14px] border-r border-white w-[20%] md:font-normal">
-                        Matched:&nbsp;
-                        {(market?.totalMatched / 1000)?.toFixed(2)}K
-                      </div>
+                    <div className="leading-[15px] py-[5px] pr-[5px] text-[#212529] text-center font-bold text-[14px] border-r border-white w-[20%] md:font-normal">
+  Matched:&nbsp;
+  {market?.totalMatched >= 1000 
+    ? `${(market?.totalMatched / 1000).toFixed(2)}K`
+    : market?.totalMatched?.toFixed(2) || "0"
+  }
+</div>
                     </div>
                   </div>
 
@@ -981,7 +987,7 @@ onClick={() =>
                               </div>
 
                               <div
-                               className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
+                               className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#faa9ba] flex ${!(isSuspended || isClosed)
     ? "cursor-pointer"
     : "cursor-not-allowed"
   }`}
@@ -1010,7 +1016,7 @@ onClick={() =>
                                 </span>
                               </div>
                               <div
-                               className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
+                               className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#faa9ba] flex ${!(isSuspended || isClosed)
     ? "cursor-pointer"
     : "cursor-not-allowed"
   }`}
@@ -1039,7 +1045,7 @@ onClick={() =>
                                 </span>
                               </div>
                               <div
-                             className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
+                             className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#faa9ba] flex ${!(isSuspended || isClosed)
     ? "cursor-pointer"
     : "cursor-not-allowed"
   }`}
