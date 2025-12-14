@@ -79,7 +79,7 @@ const MSingleMarket = () => {
                         {formatDateStamp(item?.marketStartTime)}
                       </p>
                     </div>
-                    <div className="w-1/3 text-right relative top-[-4px] right-[5px]">
+                    <div className="w-1/3 text-right relative -top-1 right-[5px]">
                       {item?.inplay && (
                         <span className="inline-block md:font-bold text-[12px] animate-pulse">
                           INPLAY

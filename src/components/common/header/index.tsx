@@ -305,7 +305,7 @@ const { userBalance, setUserBalance } = useAppStore();
       <div className="flex items-center">
         {/* Logo Section */}
         <div className="flex items-center md:h-[66px] flex-1 pl-1.5 md:flex-[0_0_auto] md:w-1/4">
-          <Link href={"/"} className="flex items-center gap-1.5">
+          <Link href={"/"} className="flex items-center gap-1.5 min-[992px]:mt-0.5">
             <FaHome
               className="text-white relative bottom-px cursor-pointer mt-0.5 md:hidden"
               size={26}
@@ -328,7 +328,7 @@ const { userBalance, setUserBalance } = useAppStore();
             <ul className="hidden md:flex list-none mt-2.5 mb-3 items-center pl-8">
               <li
                 ref={wrapperRef}
-                className="mr-5 relative float-left flex items-start"
+                className="mr-[21px] relative float-left flex items-start"
               >
                 <input
                   type="text"
@@ -380,8 +380,8 @@ const { userBalance, setUserBalance } = useAppStore();
                     )}
                   </ul>
                 )}
-              </li>
-              <li className="mr-3 ml-[15px] float-left cursor-pointer hover:underline">
+              </li >
+              <li className="mr-3.5 ml-[15px] float-left cursor-pointer hover:underline font-light">
                 <b className="text-[14px]" onClick={() => setRulesOpen(true)}>
                   Rules
                 </b>
@@ -420,7 +420,7 @@ const { userBalance, setUserBalance } = useAppStore();
       </div>
     </div>
 
-    <div className="float-left text-[16px] mr-[17px] hidden md:flex flex-col justify-center">
+    <div className="float-left text-[16px] mr-3 hidden md:flex flex-col justify-center font-light">
       <div className="text-start leading-[23px]">
         <span>
           <b>BALANCE&nbsp;:&nbsp;</b>
@@ -462,7 +462,7 @@ const { userBalance, setUserBalance } = useAppStore();
             >
               <button
                 onClick={goToLogin}
-                className="h-[30.5px] border w-[101.5px] border-black rounded-[3.875px] text-sm text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px] md:w-[99.91px]"
+                className="h-[32.5px] border w-[101.5px] border-black rounded-[5.875px] text-sm text-black cursor-pointer hover:opacity-90 transition-opacity max-[322px]:text-[10px] md:w-[101.91px]"
                 style={{
                   background:
                     "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
