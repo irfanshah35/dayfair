@@ -391,7 +391,7 @@ const Header = () => {
 
           {isLoggedIn && (
             <>
-              <div className=" relative min-[345px]:absolute mb-[18px] ml-7 min-[345px]:mb-0 top-[9px] right-[3px] flex gap-[3px] md:gap-0. min-[345px]:justify-end md:hidden text-[13px] tracking-[-0.15px]">
+              <div className=" relative min-[345px]:absolute mb-[18px] ml-8.5 min-[345px]:mb-0 top-[9px] right-[3px] flex gap-[3px] md:gap-0. min-[345px]:justify-end md:hidden text-[13px] tracking-[-0.15px]">
                 {/* BALANCE */}
                 <div className="">
                   <span className="text-white font-bold md:font-normal">
