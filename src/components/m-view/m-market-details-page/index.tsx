@@ -295,24 +295,21 @@ const getMarketStatus = (market: any) => {
     }
   };
 
-  // 🔹 NEW: Toggle cashout for a market
-  const toggleCashout = (market: any) => {
-    const marketId = market.marketId;
-    const isActive = showCashoutValue[marketId];
+const toggleCashout = (market: any) => {
+  const marketId = market.marketId;
 
-    if (isActive) {
-      // Turn off cashout
-      if (intrvlCashOutRef.current[marketId]) {
-        clearInterval(intrvlCashOutRef.current[marketId]);
-        delete intrvlCashOutRef.current[marketId];
-      }
-      setCashoutValues(prev => ({ ...prev, [marketId]: "Cash Out" }));
-      setShowCashoutValue(prev => ({ ...prev, [marketId]: false }));
-    } else {
-      // Turn on cashout
-      calculateCashOut(market);
-    }
-  };
+  if (!hasProfitAndLoss(marketId)) return;
+
+  if (showCashoutValue[marketId]) {
+    clearInterval(intrvlCashOutRef.current[marketId]);
+    setShowCashoutValue(p => ({ ...p, [marketId]: false }));
+    setCashoutValues(p => ({ ...p, [marketId]: "Cash Out" }));
+  } else {
+                calculateCashOut(market);
+
+  }
+};
+
 
   // 🔹 Cleanup intervals on unmount
   useEffect(() => {
@@ -336,7 +333,7 @@ const getMarketStatus = (market: any) => {
         if (marketKey && marketPL[marketKey]) {
           const hasPL = Object.values(marketPL[marketKey]).some((val: any) => Math.abs(val) > 0);
           if (hasPL && market.runners && market.runners.length < 3) {
-            calculateCashOut(market);
+
           }
         }
       });
@@ -489,17 +486,15 @@ const onPriceClick = ({
 
     return actualPL;
   };
-  // Check if market has profit/loss
-  const hasProfitAndLoss = (marketId: string) => {
-    const marketKey = Object.keys(marketPL).find(
-      (key) => Math.abs(parseFloat(key) - parseFloat(marketId)) < 0.0001
-    ) || marketId;
+const hasProfitAndLoss = (marketId: string) => {
+  const pl = marketPL?.[marketId];
+  if (!pl) return false;
 
-    const marketData = marketPL[marketKey];
-    if (!marketData) return false;
+  return Object.values(pl).some(
+    (value: any) => value !== 0
+  );
+};
 
-    return Object.values(marketData).some((val: any) => Math.abs(val) > 0);
-  };
 
   return (
     <div className="lg:m-[5px] lg:mt-1.5">
@@ -737,46 +732,78 @@ const onPriceClick = ({
             </div>
 
             {(isMobile ? filteredMarketData : apiData?.matchOddsData)?.map(
-              (market: any) => (
+              (market: any) => {
+             const hasPL = hasProfitAndLoss(market.marketId);
+const isActive = hasPL && showCashoutValue[market.marketId];
+
+
+                    return (
+
                 <div
                   key={market?.marketId}
                   className="bg-[linear-gradient(180deg,#000000,#ccc1c1)]"
                 >
-                  <div className=" mt-0 py-1 pl-2 pr-1.5 lg:py-[3px] flex justify-between items-center h-[36px]">
+<div
+  className={`mt-0 pl-2 pr-1.5 flex justify-between items-center
+    ${hasPL ? "h-9 py-1 lg:py-[3px]" : "h-[26px] py-0"}
+  `}
+>
                     <div className="flex gap-2 items-center">
                       <span className="font-bold md:font-normal text-white text-[13px] lg:text-[14px]">
                         {market?.marketName}
                       </span>
 
                       {/* 🔹 NEW: Cashout Toggle */}
-                      {market?.runners?.length < 3 && hasProfitAndLoss(market.marketId) && (
-                        <div className="ml-1 h-[26px] relative top-[-2px]">
-                          <div
-                            onClick={() => toggleCashout(market)}
-                            className="bg-[#ccc] text-black rounded-[4px] py-[3px] px-[10px] my-[2px] leading-[18px] inline-block ml-2 align-middle font-normal cursor-pointer"
-                          >
-                            <span className="ml-[5px] text-sm">
-                              <span className="w-[18px] relative h-[18px] rounded-[2px] float-left bg-[#ffb900] flex items-center justify-center text-black">
-                                {!showCashoutValue[market.marketId] ? (
-                                  <span className="w-[13px] h-[13px] bg-black rounded-full absolute mr-1.5 z-20 top-[3px] left-[3px]"></span>
-                                ) : (
-                                  <i className="fa fa-check"></i>
-                                )}
-                              </span>
-                              <span className={`${showCashoutValue[market.marketId]
-                                  ? typeof cashoutValues[market.marketId] === "number" && cashoutValues[market.marketId] < 0
-                                    ? "font-bold text-[#ff0000]"
-                                    : "font-bold text-[#008000]"
-                                  : "font-normal text-black"
-                                }`}>
-                                {showCashoutValue[market.marketId]
-                                  ? cashoutValues[market.marketId]
-                                  : "Cash Out"}
-                              </span>
-                            </span>
-                          </div>
-                        </div>
-                      )}
+{market?.runners?.length < 3 && ( 
+  <div className="ml-1 h-[26px] relative top-[-2px]"> 
+    <div 
+      onClick={() => hasPL && toggleCashout(market)} 
+      className={` 
+        rounded-[4px] py-[3px] px-[10px] my-[2px] leading-[18px] 
+        inline-flex items-center gap-1 select-none 
+        ${hasPL ? "bg-[#ccc] cursor-pointer" : "cursor-default"} 
+      `} 
+    > 
+      {/* Icon */}
+      <span 
+        className="w-[18px] h-[18px] rounded-[2px] border-2 border-[#ffb900] flex items-center justify-center bg-[#ffb900]"
+      > 
+        {hasPL && isActive && ( 
+          <svg 
+            xmlns="http://www.w3.org/2000/svg" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="5" 
+            strokeLinecap="round" 
+            strokeLinejoin="round" 
+            className="w-[13px] h-[13px] text-black"
+          >
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        )}
+        { !isActive && ( 
+          <span className="w-[13px] h-[13px] bg-black rounded-full"></span> 
+        )}
+      </span> 
+ 
+      {/* Text */} 
+      <span 
+        className={`text-sm ${ 
+          isActive 
+            ? Number(cashoutValues[market.marketId]) < 0 
+              ? "font-bold text-[#ff0000]" 
+              : "font-bold text-[#008000]" 
+            : hasPL 
+            ? "text-black" 
+            : "text-white" 
+        }`} 
+      > 
+        {isActive ? cashoutValues[market.marketId] : "Cash Out"} 
+      </span> 
+    </div> 
+  </div> 
+)}
                     </div>
                     <button
                       onClick={() => {
@@ -1110,7 +1137,7 @@ onClick={() =>
                     })}
                   </div>
                 </div>
-              )
+            )}
             )}
           </div>
 
