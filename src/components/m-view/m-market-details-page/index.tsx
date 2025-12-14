@@ -96,6 +96,13 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     });
   };
 
+const getMarketStatus = (market: any) => {
+  const status = market?.status?.toUpperCase();
+  if (status === "CLOSED") return "CLOSED";
+  if (status === "SUSPENDED") return "SUSPENDED";
+  return "OPEN";
+};
+
   // 👇 Fetch Bets API
   const fetchBets = async () => {
     if (!eventId || !sportId) return;
@@ -337,56 +344,65 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   }, [marketPL]);
 
   // Handle price click (BACK / LAY)
-  const onPriceClick = ({
-    marketId,
-    min,
-    max,
-    selectionId,
-    runnerName,
-    price,
-    column,
-  }: {
-    marketId: string;
-    min?: number;
-    max?: number;
-    selectionId: number;
-    runnerName?: string;
-    price: number;
-    column: "BACK" | "LAY";
-  }) => {
-    const raw = Number(price || 0);
+const onPriceClick = ({
+  marketId,
+  min,
+  max,
+  selectionId,
+  runnerName,
+  price,
+  column,
+}: {
+  marketId: string;
+  min?: number;
+  max?: number;
+  selectionId: number;
+  runnerName?: string;
+  price: number;
+  column: "BACK" | "LAY";
+}) => {
+  // Check market status first to prevent clicks on SUSPENDED/CLOSED markets
+  const currentMarket = (isMobile ? filteredMarketData : apiData?.matchOddsData)?.find(
+    (m: any) => m.marketId === marketId
+  );
+  const marketStatus = currentMarket?.status?.toUpperCase();
+  if (marketStatus === "SUSPENDED" || marketStatus === "CLOSED") {
+    return; // Block the click
+  }
 
-    if (!Number.isFinite(raw) || raw <= 0) {
-      return;
-    }
+  const raw = Number(price || 0);
 
-    const finalPrice = Number(raw.toFixed(2));
+  if (!Number.isFinite(raw) || raw <= 0) {
+    return;
+  }
 
-    const cls: "slip-back" | "slip-lay" =
-      column === "BACK" ? "slip-back" : "slip-lay";
+  const finalPrice = Number(raw.toFixed(2));
 
-    const bg = cls === "slip-back" ? "betbg--back" : "betbg--lay";
+  const cls: "slip-back" | "slip-lay" =
+    column === "BACK" ? "slip-back" : "slip-lay";
 
-    const minStake = Number.isFinite(min as number) ? (min as number) : 1;
-    const maxStake = Number.isFinite(max as number)
-      ? (max as number)
-      : 99999999;
+  const bg = cls === "slip-back" ? "betbg--back" : "betbg--lay";
 
-    setBetSlipData({
-      marketId: marketId || "",
-      selectionId: selectionId || 0,
-      runnerName: runnerName || String(selectionId),
-      odds: finalPrice,
-      slipCls: cls,
-      slipBgClass: bg,
-      min: minStake,
-      max: maxStake,
-      side: column,
-    });
+  const minStake = Number.isFinite(min as number) ? (min as number) : 1;
+  const maxStake = Number.isFinite(max as number)
+    ? (max as number)
+    : 99999999;
 
-    setIsSlipOpen(true);
-    setOpenSlip({ marketId, selectionId, side: column });
-  };
+  setBetSlipData({
+    marketId: marketId || "",
+    selectionId: selectionId || 0,
+    runnerName: runnerName || String(selectionId),
+    odds: finalPrice,
+    slipCls: cls,
+    slipBgClass: bg,
+    min: minStake,
+    max: maxStake,
+    side: column,
+  });
+
+  setIsSlipOpen(true);
+  setOpenSlip({ marketId, selectionId, side: column });
+};
 
   // Close inline slip (mobile only)
   const closeInlineSlip = () => {
@@ -683,9 +699,9 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
               <div className="">
                 <div className="flex flex-col justify-between items-center px-3 pt-1.5 h-[90px]">
                   <div className="flex justify-between w-full">
-                    <div className=" text-white text-[12px] font-bold md:font-normal [text-shadow:#fc0_1px_0_10px]">
-                      {apiData?.matchOddsData[0]?.status}
-                    </div>
+                 <div className=" text-white text-[12px] font-bold md:font-normal [text-shadow:#fc0_1px_0_10px]">
+  {apiData?.matchOddsData[0]?.status}
+</div>
                     <div className=" text-white text-[12px] tracking-[-0.2px] font-bold md:font-normal  [text-shadow:#fc0_1px_0_10px]">
                       <span className=" text-[#ffff55]">Game time</span>{" "}
                       {formatDateDetail(
@@ -830,9 +846,13 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
 
                   <div className="lg:mb-0.5">
                     {market?.runners?.map((runner: any) => {
-                      const isSuspended =
-                        runner?.status === "SUSPENDED" ||
-                        market?.status === "SUSPENDED";
+                     const isSuspended =
+  runner?.status === "SUSPENDED" ||
+  market?.status === "SUSPENDED";
+const isClosed = 
+  runner?.status === "CLOSED" ||
+  market?.status === "CLOSED";
+const statusText = isClosed ? "CLOSED" : isSuspended ? "SUSPENDED" : "";
                       const runnerName = market?.runnersName?.find(
                         (item: any) => item?.selectionId === runner?.selectionId
                       )?.runnerName;
@@ -861,21 +881,21 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                               </div>
                             </div>
 
-                            <div
-                              className={`relative w-[40%] lg:text-[#212529] lg:w-[60%] flex 
-                              ${isSuspended
-                                  ? "after:content-['SUSPENDED'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed"
-                                  : ""
-                                }`}
-                            >
+                          <div
+  className={`relative w-[40%] lg:text-[#212529] lg:w-[60%] flex 
+  ${(isSuspended || isClosed)
+      ? `after:content-['${statusText}'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed`
+      : ""
+    }`}
+>
                               <div
-                                className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!isSuspended
-                                    ? "cursor-pointer"
-                                    : "cursor-not-allowed"
-                                  }`}
-                                onClick={() =>
-                                  !isSuspended &&
-                                  onPriceClick({
+                              className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
+    ? "cursor-pointer"
+    : "cursor-not-allowed"
+  }`}
+onClick={() =>
+  !(isSuspended || isClosed) &&
+  onPriceClick({
                                     marketId: market?.marketId,
                                     min: market?.min,
                                     max: market?.max,
@@ -900,13 +920,13 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                               </div>
 
                               <div
-                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!isSuspended
-                                    ? "cursor-pointer"
-                                    : "cursor-not-allowed"
-                                  }`}
-                                onClick={() =>
-                                  !isSuspended &&
-                                  onPriceClick({
+                              className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
+    ? "cursor-pointer"
+    : "cursor-not-allowed"
+  }`}
+onClick={() =>
+  !(isSuspended || isClosed) &&
+  onPriceClick({
                                     marketId: market?.marketId,
                                     min: market?.min,
                                     max: market?.max,
@@ -930,13 +950,13 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                 </span>
                               </div>
                               <div
-                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!isSuspended
-                                    ? "cursor-pointer"
-                                    : "cursor-not-allowed"
-                                  }`}
-                                onClick={() =>
-                                  !isSuspended &&
-                                  onPriceClick({
+                            className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
+    ? "cursor-pointer"
+    : "cursor-not-allowed"
+  }`}
+onClick={() =>
+  !(isSuspended || isClosed) &&
+  onPriceClick({
                                     marketId: market?.marketId,
                                     min: market?.min,
                                     max: market?.max,
@@ -961,13 +981,13 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                               </div>
 
                               <div
-                                className={`text-center lg:border-l lg:border-white flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!isSuspended
-                                    ? "cursor-pointer"
-                                    : "cursor-not-allowed"
-                                  }`}
-                                onClick={() =>
-                                  !isSuspended &&
-                                  onPriceClick({
+                               className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
+    ? "cursor-pointer"
+    : "cursor-not-allowed"
+  }`}
+onClick={() =>
+  !(isSuspended || isClosed) &&
+  onPriceClick({
                                     marketId: market?.marketId,
                                     min: market?.min,
                                     max: market?.max,
@@ -990,13 +1010,13 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                 </span>
                               </div>
                               <div
-                                className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!isSuspended
-                                    ? "cursor-pointer"
-                                    : "cursor-not-allowed"
-                                  }`}
-                                onClick={() =>
-                                  !isSuspended &&
-                                  onPriceClick({
+                               className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
+    ? "cursor-pointer"
+    : "cursor-not-allowed"
+  }`}
+onClick={() =>
+  !(isSuspended || isClosed) &&
+  onPriceClick({
                                     marketId: market?.marketId,
                                     min: market?.min,
                                     max: market?.max,
@@ -1019,13 +1039,13 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                 </span>
                               </div>
                               <div
-                                className={`text-center lg:border-l lg:border-white border-r hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!isSuspended
-                                    ? "cursor-pointer"
-                                    : "cursor-not-allowed"
-                                  }`}
-                                onClick={() =>
-                                  !isSuspended &&
-                                  onPriceClick({
+                             className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
+    ? "cursor-pointer"
+    : "cursor-not-allowed"
+  }`}
+onClick={() =>
+  !(isSuspended || isClosed) &&
+  onPriceClick({
                                     marketId: market?.marketId,
                                     min: market?.min,
                                     max: market?.max,
