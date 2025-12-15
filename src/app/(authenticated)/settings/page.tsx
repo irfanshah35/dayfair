@@ -81,13 +81,13 @@ export default function Settings() {
   };
 
   return (
-    <div className="md:mx-[5px] md:my-[6px]">
+    <div className="min-[992px]:mx-[5px] min-[992px]:my-[6px]">
       <div className="bg-white shadow rounded ">
         <div
           className="bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]
-                        text-white h-[33px] flex items-center px-3.5 md:rounded-t"
+                        text-white h-[33px] flex items-center px-3.5 min-[992px]:rounded-t"
         >
-          <h4 className="text-[20px] font-bold font-roboto bottom-0.5">
+          <h4 className=" text-[18px] min-[992px]:text-[20px] font-bold font-roboto bottom-0.5">
             Update Stake
           </h4>
         </div>
