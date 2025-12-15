@@ -953,13 +953,13 @@ onClick={() =>
                               </div>
 
                               <div
-                              className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
-    ? "cursor-pointer"
-    : "cursor-not-allowed"
-  }`}
-onClick={() =>
+                   className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!(isSuspended || isClosed)
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                  }`}
+                                onClick={() =>
   !(isSuspended || isClosed) &&
-  onPriceClick({
+                                  onPriceClick({
                                     marketId: market?.marketId,
                                     min: market?.min,
                                     max: market?.max,
@@ -983,13 +983,13 @@ onClick={() =>
                                 </span>
                               </div>
                               <div
-                            className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
-    ? "cursor-pointer"
-    : "cursor-not-allowed"
-  }`}
-onClick={() =>
+               className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!(isSuspended || isClosed)
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                  }`}
+                                onClick={() =>
   !(isSuspended || isClosed) &&
-  onPriceClick({
+                                  onPriceClick({
                                     marketId: market?.marketId,
                                     min: market?.min,
                                     max: market?.max,
@@ -1014,13 +1014,13 @@ onClick={() =>
                               </div>
 
                               <div
-                               className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#faa9ba] flex ${!(isSuspended || isClosed)
-    ? "cursor-pointer"
-    : "cursor-not-allowed"
-  }`}
-onClick={() =>
+               className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!(isSuspended || isClosed)
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                  }`}
+                                onClick={() =>
   !(isSuspended || isClosed) &&
-  onPriceClick({
+                                  onPriceClick({
                                     marketId: market?.marketId,
                                     min: market?.min,
                                     max: market?.max,
@@ -1072,20 +1072,20 @@ onClick={() =>
                                 </span>
                               </div>
                               <div
-                             className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#faa9ba] flex ${!(isSuspended || isClosed)
-    ? "cursor-pointer"
-    : "cursor-not-allowed"
-  }`}
-onClick={() =>
-  !(isSuspended || isClosed) &&
-  onPriceClick({
+                     className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!(isSuspended || isClosed)
+                                    ? "cursor-pointer"
+                                    : "cursor-not-allowed"
+                                  }`}
+                                onClick={() =>
+                                  onPriceClick({
                                     marketId: market?.marketId,
                                     min: market?.min,
                                     max: market?.max,
                                     selectionId: runner?.selectionId,
                                     runnerName: runnerName,
                                     price:
-                                      runner?.ex?.availableToLay[1]?.price || 0,
+                   !(isSuspended || isClosed) &&
+                     runner?.ex?.availableToLay[1]?.price || 0,
                                     column: "LAY",
                                   })
                                 }
