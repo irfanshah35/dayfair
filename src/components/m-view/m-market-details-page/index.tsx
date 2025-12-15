@@ -839,10 +839,10 @@ const isActive = hasPL && showCashoutValue[market.marketId];
 </span>
                       </div>
                       <div className="w-[40%] flex">
-                        <div className="back flex justify-center items-center text-center w-[50%] text-[12px] bg-[#72bbef]">
+                        <div className="back flex justify-center items-center text-center w-[50%]  text-[#212529] text-[12px] bg-[#72bbef]">
                           BACK
                         </div>
-                        <div className="lay flex justify-center items-center text-center w-[50%] text-[12px] bg-[#faa9ba]">
+                        <div className="lay flex justify-center items-center text-center w-[50%]  text-[#212529] text-[12px] bg-[#faa9ba]">
                           LAY
                         </div>
                       </div>
@@ -922,7 +922,7 @@ const statusText = isClosed ? "CLOSED" : isSuspended ? "SUSPENDED" : "";
     }`}
 >
                               <div
-                              className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
+                              className={`text-center flex-col lg:border-l  text-[#212529] lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
     ? "cursor-pointer"
     : "cursor-not-allowed"
   }`}
@@ -953,7 +953,7 @@ onClick={() =>
                               </div>
 
                               <div
-                   className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!(isSuspended || isClosed)
+                   className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%]  bg-[#72bbef] ${!(isSuspended || isClosed)
                                     ? "cursor-pointer"
                                     : "cursor-not-allowed"
                                   }`}
@@ -1014,7 +1014,7 @@ onClick={() =>
                               </div>
 
                               <div
-               className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!(isSuspended || isClosed)
+               className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center  text-[#212529] w-[50%] bg-[#faa9ba] ${!(isSuspended || isClosed)
                                     ? "cursor-pointer"
                                     : "cursor-not-allowed"
                                   }`}
@@ -1043,7 +1043,7 @@ onClick={() =>
                                 </span>
                               </div>
                               <div
-                               className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#faa9ba] flex ${!(isSuspended || isClosed)
+                               className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#faa9ba]  text-[#212529] flex ${!(isSuspended || isClosed)
     ? "cursor-pointer"
     : "cursor-not-allowed"
   }`}
@@ -1061,7 +1061,7 @@ onClick={() =>
                                   })
                                 }
                               >
-                                <span className="odd block font-bold md:font-normal leading-[1.1]">
+                                <span className="odd block  md:font-normal  leading-[1.1]">
                                   {runner?.ex?.availableToLay[2]?.price || "0"}
                                 </span>
                                 <span className="block text-xs lg:text-[10px]">
