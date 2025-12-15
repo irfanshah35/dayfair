@@ -287,7 +287,7 @@ const MBetSlip: React.FC<MBetSlipProps> = ({
 
   if (!visible) return null;
 
-  const gradient = "linear-gradient(-180deg,#f4b501_0%,#f68700_100%)";
+  const gradient = "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)";
   const btnBg = "linear-gradient(180deg,#030a12,#444647 42%,#58595a)";
 
   const getBgColor = () => {
