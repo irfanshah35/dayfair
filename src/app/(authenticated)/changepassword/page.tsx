@@ -173,8 +173,8 @@ export default function ChangePassword() {
         </a>
       </div>
 
-      <div className="w-full flex justify-center items-center mt-px md:mt-18 md:ml-6 mb-10 px-1.5">
-        <div className="mt-4 w-full md:w-[323.75px] p-[22px] px-[17px]">
+      <div className="w-full flex justify-center items-center mt-px min-[992px]:mt-18 min-[992px]:ml-6 mb-10 px-1.5">
+        <div className="mt-4 w-full min-[992px]:w-[323.75px] p-[22px] px-[17px]">
           {/* Current Password */}
           <div className="mt-2 relative">
             <input
