@@ -751,13 +751,13 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
       ) : (
         <div className="flex w-full mb-[45px]">
           <div className="left-part overflow-y-auto w-full lg:w-[70%]">
-            <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[4px] px-[8px] md:py-[3.5px] md:px-2.5 lg:mb-[3px] h-8 text-white">
-              <span className="text-sm lg:text-[15px] lg:uppercase font-medium lg:leading-normal relative top-[1px] md:top-[0px]">
+            <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[4px] px-[8px] min-[992px]:py-[3.5px] min-[992px]:px-2.5 lg:mb-[3px] h-8 text-white">
+              <span className="text-sm lg:text-[15px] lg:uppercase font-medium lg:leading-normal relative top-[1px] min-[992px]:top-[0px]">
                 {apiData?.matchOddsData[0]?.event?.name || "Team A vs Team B"}
               </span>
               {apiData?.matchOddsData[0]?.inplay ? (
                 <span className=" game-iconinplay">
-                  <span className="text-xs md:text-[16px] py-1 rounded-full font-medium inline-block transition-all duration-300 heartbeat-anim">
+                  <span className="text-xs min-[992px]:text-[16px] py-1 rounded-full font-medium inline-block transition-all duration-300 heartbeat-anim">
                     INPLAY
                   </span>
                 </span>
@@ -797,7 +797,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
               </div>
             </div>
 
-            <div className="md:hidden">
+            <div className="min-[992px]:hidden">
               <ul className="flex overflow-x-auto no-scrollbar p-[5px] bg-[linear-gradient(180deg,#000000,#000000_42%,#000000)] text-white">
                 {categories?.map((category: any, idx: number) => (
                   <li
@@ -920,7 +920,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                       </button>
                     </div>
 
-                    <div className="text-[12px] border-b border-[#aaa] lg:hidden">
+                    <div className="text-[12px] border-b border-[#aaa] md:hidden">
                       <div className="flex bg-gray-100">
                         <div className="py-0.5 text-black px-[5px] flex justify-between items-center border-b border-[#aaa] w-[60%] md:font-normal">
                           <span>
@@ -944,25 +944,25 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                       </div>
                     </div>
 
-                    <div className="hidden lg:block text-[12px] border-b border-[#aaa] lg:border-none bg-white">
+                    <div className="hidden md:block text-[12px] border-b border-[#aaa] md:border-none bg-white">
                       <div className="border-b border-white flex">
-                        <div className="ps-1.5 pe-[5px] py-[5px] leading-[15px] w-[40%]">
-                          <b className="text-[14px] text-[#0dcaf0] md:font-normal">
+                        <div className="ps-1.5 pe-[5px] py-[2px] min-[992px]:py-[5px] leading-[15px] w-[40%] h-[22px] min-[992px]:h-auto">
+                          <b className="text-[12px] min-[992px]:text-[14px] text-[#0dcaf0] md:font-normal">
                             <span>
                               Min: {market?.min} Max: {market?.max}
                             </span>
                           </b>
                         </div>
 
-                        <div className="leading-[15px] py-[5px] text-[16px] w-[10%]"></div>
-                        <div className="leading-[15px] py-[5px] text-[16px] w-[10%]"></div>
-                        <div className="leading-[15px] py-[5px] text-[16px] w-[10%] cursor-pointer bg-[#72bbef] text-center text-[#212529]">
+                        <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%]"></div>
+                        <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%]"></div>
+                        <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%] cursor-pointer bg-[#72bbef] text-center text-[#212529] h-[22px] flex items-center justify-center min-[992px]:h-auto">
                           <b className="md:font-normal">BACK</b>
                         </div>
-                        <div className="leading-[15px] py-[5px] text-[16px] w-[10%] cursor-pointer bg-[#faa9ba] text-center text-[#212529]">
+                        <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%] cursor-pointer bg-[#faa9ba] text-center text-[#212529] md:border-l md:border-white h-[22px] flex items-center justify-center min-[992px]:h-auto">
                           <b className="md:font-normal">LAY</b>
                         </div>
-                        <div className="leading-[15px] py-[5px] pr-[5px] text-[#212529] text-center font-bold text-[14px] border-r border-white w-[20%] md:font-normal">
+                        <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] pr-[5px] text-[#212529] text-center font-bold text-[12px] min-[992px]:text-[14px] border-r border-white w-[20%] md:font-normal h-[22px] flex items-center justify-center min-[992px]:h-auto">
                           Matched:&nbsp;
                           {market?.totalMatched >= 1000
                             ? `${(market?.totalMatched / 1000).toFixed(2)}K`
@@ -997,8 +997,8 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
 
                         return (
                           <React.Fragment key={runner?.selectionId}>
-                            <div className="flex border-b border-[#aaa] lg:border-white bg-gray-50 h-[41px] lg:h-10 lg:bg-[#f2f2f2]">
-                              <div className="col-span-3 py-0.5 px-[5px] lg:border-l lg:border-white md:col-span-1 w-[60%] lg:w-[40%] h-[41px] md:h-auto">
+                            <div className="flex border-b border-[#aaa] md:border-white bg-gray-50 h-[41px] md:h-10 md:bg-[#f2f2f2]">
+                              <div className="col-span-3 py-0.5 px-[5px] md:border-l md:border-white md:col-span-1 w-[60%] md:w-[40%] h-[41px] md:h-auto">
                                 <div className="flex justify-between items-center">
                                   <div className="w-full flex justify-between gap-1 md:gap-0 flex-col">
                                     <span className="font-normal text-[12px] lg:text-[14px] text-[#212529]">
@@ -1014,7 +1014,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                               </div>
 
                               <div
-                                className={`relative w-[40%] lg:text-[#212529] lg:w-[60%] flex 
+                                className={`relative w-[40%] md:text-[#212529] md:w-[60%] flex 
   ${
     isSuspended || isClosed
       ? `after:content-['${statusText}'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed`
@@ -1022,7 +1022,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   }`}
                               >
                                 <div
-                                  className={`text-center flex-col lg:border-l  text-[#212529] lg:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${
+                                  className={`text-center flex-col md:border-l  text-[#212529] md:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${
                                     !(isSuspended || isClosed)
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed"
@@ -1055,7 +1055,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                 </div>
 
                                 <div
-                                  className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%]  bg-[#72bbef] ${
+                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%]  bg-[#72bbef] ${
                                     !(isSuspended || isClosed)
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed"
@@ -1087,7 +1087,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                   </span>
                                 </div>
                                 <div
-                                  className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
+                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
                                     !(isSuspended || isClosed)
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed"
@@ -1120,7 +1120,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                 </div>
 
                                 <div
-                                  className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center  text-[#212529] w-[50%] bg-[#faa9ba] ${
+                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center  text-[#212529] w-[50%] bg-[#faa9ba] ${
                                     !(isSuspended || isClosed)
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed"
@@ -1152,7 +1152,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                   </span>
                                 </div>
                                 <div
-                                  className={`text-center flex-col lg:border-l lg:border-white justify-center items-center w-[50%] bg-[#faa9ba]  text-[#212529] flex ${
+                                  className={`text-center flex-col md:border-l md:border-white justify-center items-center w-[50%] bg-[#faa9ba]  text-[#212529] flex ${
                                     !(isSuspended || isClosed)
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed"
@@ -1184,7 +1184,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                   </span>
                                 </div>
                                 <div
-                                  className={`text-center lg:border-l lg:border-white hidden lg:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
+                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
                                     !(isSuspended || isClosed)
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed"
