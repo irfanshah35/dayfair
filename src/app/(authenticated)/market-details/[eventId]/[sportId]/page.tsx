@@ -1,7 +1,13 @@
 import { getServerSideData } from "@/lib/server-action";
 import { CONFIG } from "@/lib/config";
-import MMarketDetailsPage from "@/components/m-view/m-market-details-page";
+import dynamic from "next/dynamic";
 
+const MMarketDetailsPage = dynamic(
+  () => import("@/components/m-view/m-market-details-page"),
+  {
+    loading: () => <></>,
+  }
+);
 
 interface MarketDetailsProps {
   params: Promise<{ sportId: string; eventId: string }>;
@@ -17,7 +23,7 @@ const MarketDetailsPage = async ({ params }: MarketDetailsProps) => {
 
   return (
     <div>
-      <MMarketDetailsPage apiData={marketDetailData}/>
+      <MMarketDetailsPage apiData={marketDetailData} />
     </div>
   );
 };

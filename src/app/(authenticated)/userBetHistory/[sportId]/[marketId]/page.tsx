@@ -1,8 +1,12 @@
 "use client";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import dynamic from "next/dynamic";
 import { CONFIG } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
+
+// Lazy load the loading component
+const Loading = dynamic(() => import("../../../../loading"));
 
 interface EventType {
     id: string;
@@ -57,6 +61,7 @@ export default function UserBetHistory() {
     const [limit] = useState(25);
     const [betData, setBetData] = useState<BetItem[]>([]);
     const [mounted, setMounted] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         if (marketId) {
@@ -77,6 +82,7 @@ export default function UserBetHistory() {
             return;
         }
 
+        setIsLoading(true);
         const payload = {
             page: currentPage,
             limit: limit,
@@ -97,10 +103,12 @@ export default function UserBetHistory() {
                     } else if (Array.isArray(data)) {
                         setBetData(data);
                     }
+                    setIsLoading(false);
                 },
             });
         } catch (error) {
             console.error("Error fetching bet history data:", error);
+            setIsLoading(false);
         }
     };
 
@@ -152,6 +160,10 @@ export default function UserBetHistory() {
             isNegative: pl < 0
         };
     };
+
+    if (isLoading) {
+        return <Loading />;
+    }
 
     return (
         <div className="md:mx-[5px] md:my-[6px]">
