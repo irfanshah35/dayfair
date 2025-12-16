@@ -1,8 +1,14 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import CustomCalendar from "../../../components/common/custom-calendar";
+// import CustomCalendar from "../../../components/common/custom-calendar";
 import { CONFIG } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
+import dynamic from "next/dynamic";
+
+const CustomCalendar = dynamic(() => import("../../../components/common/custom-calendar"), {
+  loading: () => <></>,
+  ssr: false,
+});
 
 interface StatementItem {
   description: string;

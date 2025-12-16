@@ -3,7 +3,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import MBetSlip from "../m-betslip";
 import DBetSlip from "@/components/d-view/d-betslip";
-import RulesModal from "@/components/modals/rules-modal";
+// import RulesModal from "@/components/modals/rules-modal";
 import { formatDateStamp } from "@/lib/functions";
 import { formatDateDetail } from "@/lib/functions";
 import { FaChevronDown } from "react-icons/fa";
@@ -12,6 +12,13 @@ import { fetchData } from "@/lib/functions";
 import { useToast } from "@/components/common/toast/toast-context";
 import { useAppStore } from "@/lib/store/store";
 import { useParams } from "next/navigation";
+import dynamic from "next/dynamic";
+
+
+const RulesModal = dynamic(() => import("../../modals/rules-modal"), {
+  loading: () => <></>,
+  ssr: false,
+});
 
 export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   const [activeTab, setActiveTab] = useState("odds");

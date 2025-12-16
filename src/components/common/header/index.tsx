@@ -4,12 +4,23 @@ import Image from "next/image";
 import { FaHome, FaSearch, FaSearchPlus, FaTimes } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import RulesModal from "@/components/modals/rules-modal";
+// import RulesModal from "@/components/modals/rules-modal";
 import { useAuthStore } from "@/lib/store/authStore";
 import { CONFIG } from "@/lib/config";
 import { fetchData, formatDateStamp } from "@/lib/functions";
-import ExposureModal from "@/components/modals/exposure-modal";
+// import ExposureModal from "@/components/modals/exposure-modal";
 import { useAppStore } from "@/lib/store/store";
+import dynamic from "next/dynamic";
+
+const RulesModal = dynamic(() => import("../../modals/rules-modal"), {
+  loading: () => <></>,
+  ssr: false,
+})
+
+const ExposureModal = dynamic(() => import("../../modals/exposure-modal"), {
+  loading: () => <></>,
+  ssr: false,
+})
 
 interface Match {
   sport: string;

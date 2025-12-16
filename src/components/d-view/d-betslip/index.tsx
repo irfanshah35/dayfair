@@ -6,7 +6,13 @@ import { fetchData } from "@/lib/functions";
 import { useToast } from "@/components/common/toast/toast-context";
 import { useAppStore } from "@/lib/store/store";
 import { useRouter } from "next/navigation";
-import Loader from "@/components/common/loader";
+// import Loader from "@/components/common/loader";
+import dynamic from "next/dynamic";
+
+const Loader = dynamic(() => import("../../common/loader"), {
+  loading: () => <></>,
+  ssr: false,
+});
 
 interface DBetSlipProps {
   visible?: boolean;

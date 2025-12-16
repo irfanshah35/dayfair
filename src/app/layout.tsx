@@ -1,9 +1,14 @@
 import { Geist, Geist_Mono, Roboto_Condensed, Roboto  } from "next/font/google";
 import "./globals.css";
-import ResponsiveLayout from "./responsive-layout";
+// import ResponsiveLayout from "./responsive-layout";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
 import { ToastProvider } from "@/components/common/toast/toast-context";
+
+const ResponsiveLayout = dynamic(() => import("./responsive-layout"), {
+  loading: () => <></>,
+  ssr: false,
+});
 
 const ToastContainer = dynamic(
   () => import("@/components/common/toast/toast-container")

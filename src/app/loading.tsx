@@ -1,6 +1,12 @@
 "use client"
-import Loader from '@/components/common/loader'
+// import Loader from '@/components/common/loader'
 import React from 'react'
+import dynamic from "next/dynamic";
+
+const Loader = dynamic(() => import("../components/common/loader"), {
+  loading: () => <></>,
+  ssr: false,
+});
 
 export default function Loading() {
   return (
