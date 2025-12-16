@@ -25,7 +25,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   const [activeCategory, setActiveCategory] = useState("Popular");
   const [filteredMarketData, setFilteredMarketData] = useState<any[]>([]);
   const betslipRef = useRef<HTMLDivElement>(null);
-  const { showToast } = useToast(); 
+  const { showToast } = useToast();
 
   // INLINE (mobile) slip open or not
   const [isSlipOpen, setIsSlipOpen] = useState(false);
@@ -33,7 +33,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(
     null
   );
-    const { userBalance, setUserBalance } = useAppStore();  
+  const { userBalance, setUserBalance } = useAppStore();
 
   // 👇 State for Real Data
   const [matchedBets, setMatchedBets] = useState<any[]>([]);
@@ -101,20 +101,20 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   };
 
   const refreshUserBalance = async () => {
-     try {
-       await fetchData({
-         url: CONFIG.getUserBalance,
-         payload: { key: CONFIG.siteKey },
-         setFn: (res: any) => {
-           console.log("Balance refreshed:", res);
-           // Update global store so Header shows new balance immediately
-           setUserBalance(res);
-         }
-       });
-     } catch (error) {
-       console.error("Balance refresh error:", error);
-     }
-   };
+    try {
+      await fetchData({
+        url: CONFIG.getUserBalance,
+        payload: { key: CONFIG.siteKey },
+        setFn: (res: any) => {
+          console.log("Balance refreshed:", res);
+          // Update global store so Header shows new balance immediately
+          setUserBalance(res);
+        }
+      });
+    } catch (error) {
+      console.error("Balance refresh error:", error);
+    }
+  };
   // 👇 Fetch Bets API
   const fetchBets = async () => {
     if (!eventId || !sportId) return;
@@ -319,7 +319,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
       const otherSel = Number(keys(other)[0]);
       const diff = Math.abs(
         Number(userProfitLoss[fav.selectionId]) -
-          Number(userProfitLoss[otherSel])
+        Number(userProfitLoss[otherSel])
       );
 
       if (favPL > userProfitLoss[otherSel]) {
@@ -379,43 +379,43 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     setShowCashoutValue((p) => ({ ...p, [marketId]: false }));
     setCashoutValues((p) => ({ ...p, [marketId]: "Cash Out" }));
   };
- const onCashOutConfirm = async () => {
-  if (!cashOutAPIData?.stake) {
-    return;
-  }
-
-  try {
-    setCashoutLoader(true);
-
-    const res = await fetchData({
-      url: CONFIG.placeBetURL,
-      payload: cashOutAPIData,
-    });
-
-    if (res?.meta?.status === false) {
-      throw new Error(res?.meta?.message || "Cashout Failed");
+  const onCashOutConfirm = async () => {
+    if (!cashOutAPIData?.stake) {
+      return;
     }
 
-    // Clear cashout states
-    setCashoutValues({});
-    setShowCashoutValue({});
-    setCashOutAPIData(null);
+    try {
+      setCashoutLoader(true);
 
-    // Refresh data
-    fetchMarketPL();
-    fetchBets();
-    refreshUserBalance();
+      const res = await fetchData({
+        url: CONFIG.placeBetURL,
+        payload: cashOutAPIData,
+      });
 
-    // Show success toast
-    showToast("success", "Cashout Successful", "Your bet has been cashed out successfully");
-    
-  } catch (err: any) {
-    // Show error toast
-    showToast("error", "Cashout Failed", err?.message || "Failed to process cashout. Please try again");
-  } finally {
-    setCashoutLoader(false);
-  }
-};
+      if (res?.meta?.status === false) {
+        throw new Error(res?.meta?.message || "Cashout Failed");
+      }
+
+      // Clear cashout states
+      setCashoutValues({});
+      setShowCashoutValue({});
+      setCashOutAPIData(null);
+
+      // Refresh data
+      fetchMarketPL();
+      fetchBets();
+      refreshUserBalance();
+
+      // Show success toast
+      showToast("success", "Cashout Successful", "Your bet has been cashed out successfully");
+
+    } catch (err: any) {
+      // Show error toast
+      showToast("error", "Cashout Failed", err?.message || "Failed to process cashout. Please try again");
+    } finally {
+      setCashoutLoader(false);
+    }
+  };
   useEffect(() => {
     return () => {
       Object.values(cashoutIntervalRef.current).forEach((i) =>
@@ -606,11 +606,10 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
           <div className="flex pt-[13px] pb-3">
             <a
               onClick={() => setActiveTab("odds")}
-              className={`relative block text-[12px] text-center border-r px-4 ${
-                activeTab === "odds"
+              className={`relative block text-[12px] text-center border-r px-4 ${activeTab === "odds"
                   ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
                   : ""
-              }`}
+                }`}
             >
               ODDS
             </a>
@@ -619,11 +618,10 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
           <div className="flex">
             <a
               onClick={() => setActiveTab("betList")}
-              className={`relative block text-[12px] text-center px-4 ${
-                activeTab === "betList"
+              className={`relative block text-[12px] text-center px-4 ${activeTab === "betList"
                   ? "after:content-[''] after:absolute after:-top-3 after:left-0 after:w-full after:h-0.5 after:bg-black"
                   : ""
-              }`}
+                }`}
             >
               BET LIST ( {matchedBets.length} )
             </a>
@@ -714,16 +712,14 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                       <React.Fragment key={bet.betId}>
                         <tr
                           onClick={() => toggleRow(bet.betId)}
-                          className={`border-b border-gray-400 h-[41px] cursor-pointer ${
-                            bet.side === "LAY" ? "bg-[#faa9ba]" : "bg-[#73bcf0]"
-                          }`}
+                          className={`border-b border-gray-400 h-[41px] cursor-pointer ${bet.side === "LAY" ? "bg-[#faa9ba]" : "bg-[#73bcf0]"
+                            }`}
                         >
                           <td className="p-0.5 border-r border-gray-400">
                             <div className="flex items-center gap-2">
                               <div
-                                className={`${
-                                  expandedRows[bet.betId] ? "rotate-180" : ""
-                                }`}
+                                className={`${expandedRows[bet.betId] ? "rotate-180" : ""
+                                  }`}
                               >
                                 <FaChevronDown className="w-3 h-3" />
                               </div>
@@ -824,11 +820,10 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                 {categories?.map((category: any, idx: number) => (
                   <li
                     key={idx}
-                    className={`px-2.5 py-[5px] whitespace-nowrap rounded-full ml-[5px] text-[12px] font-medium border border-white cursor-pointer ${
-                      activeCategory === category
+                    className={`px-2.5 py-[5px] whitespace-nowrap rounded-full ml-[5px] text-[12px] font-medium border border-white cursor-pointer ${activeCategory === category
                         ? "bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)] text-black"
                         : "hover:bg-gray-100 bg-transparent text-white"
-                    }`}
+                      }`}
                   >
                     <button onClick={() => setActiveCategory(category)}>
                       {category.toUpperCase()}
@@ -850,7 +845,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                   >
                     <div
                       className={`mt-0 pl-2 pr-1.5 flex justify-between items-center
-    ${hasPL ? "h-9 py-1 lg:py-[3px]" : "h-[26px] py-0"}
+    ${hasPL ? "h-9 py-1 lg:py-[3px]" : "h-[27.56px] min-[992px]:h-[26px] py-1"}
   `}
                     >
                       <div className="flex gap-2 items-center">
@@ -860,67 +855,66 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
 
                         {/* 🔹 NEW: Cashout Toggle */}
                         {/* 🔹 CASHOUT TOGGLE WITH CONFIRM */}
-                       {market?.runners?.length < 3 && (
-  <div className="ml-1 h-[26px] relative top-[-2px]">
-    <div
-      onClick={() => {
-        if (hasPL) {
-          if (showCashoutValue[market.marketId]) {
-            // Directly call the cashout API when clicking on the calculated value
-            onCashOutConfirm(market.marketId);
-          } else {
-            // Show the cashout value on first click
-            toggleCashout(market);
-          }
-        }
-      }}
-      className={`
+                        {market?.runners?.length < 3 && (
+                          <div className="ml-1 h-[26px] relative top-[-2px]">
+                            <div
+                              onClick={() => {
+                                if (hasPL) {
+                                  if (showCashoutValue[market.marketId]) {
+                                    // Directly call the cashout API when clicking on the calculated value
+                                    onCashOutConfirm(market.marketId);
+                                  } else {
+                                    // Show the cashout value on first click
+                                    toggleCashout(market);
+                                  }
+                                }
+                              }}
+                              className={`
         rounded-[4px] py-[3px] px-[10px] my-[2px] leading-[18px]
         inline-flex items-center gap-1 select-none
         ${hasPL ? "bg-[#ccc] cursor-pointer" : "cursor-default"}
       `}
-    >
-      {/* Icon */}
-      <span className="w-[18px] h-[18px] rounded-[2px] border-2 border-[#ffb900] flex items-center justify-center bg-[#ffb900]">
-        {showCashoutValue[market.marketId] && (
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="w-[13px] h-[13px] text-black"
-          >
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        )}
+                            >
+                              {/* Icon */}
+                              <span className="w-[18px] h-[18px] rounded-[2px] border-2 border-[#ffb900] flex items-center justify-center bg-[#ffb900]">
+                                {showCashoutValue[market.marketId] && (
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="5"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    className="w-[13px] h-[13px] text-black"
+                                  >
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                  </svg>
+                                )}
 
-        {!showCashoutValue[market.marketId] && (
-          <span className="w-[13px] h-[13px] bg-black rounded-full"></span>
-        )}
-      </span>
+                                {!showCashoutValue[market.marketId] && (
+                                  <span className="w-[13px] h-[13px] bg-black rounded-full"></span>
+                                )}
+                              </span>
 
-      {/* Text */}
-      <span
-        className={`text-sm ${
-          showCashoutValue[market.marketId]
-            ? Number(cashoutValues[market.marketId]) < 0
-              ? "font-bold text-[#ff0000]"
-              : "font-bold text-[#008000]"
-            : hasPL
-            ? "text-black"
-            : "text-white"
-        }`}
-      >
-        {showCashoutValue[market.marketId]
-          ? cashoutValues[market.marketId]
-          : "Cash Out"}
-      </span>
-    </div>
-  </div>
-)}
+                              {/* Text */}
+                              <span
+                                className={`text-sm ${showCashoutValue[market.marketId]
+                                    ? Number(cashoutValues[market.marketId]) < 0
+                                      ? "font-bold text-[#ff0000]"
+                                      : "font-bold text-[#008000]"
+                                    : hasPL
+                                      ? "text-black"
+                                      : "text-white"
+                                  }`}
+                              >
+                                {showCashoutValue[market.marketId]
+                                  ? cashoutValues[market.marketId]
+                                  : "Cash Out"}
+                              </span>
+                            </div>
+                          </div>
+                        )}
                       </div>
                       <button
                         onClick={() => {
@@ -1004,8 +998,8 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                         const statusText = isClosed
                           ? "CLOSED"
                           : isSuspended
-                          ? "SUSPENDED"
-                          : "";
+                            ? "SUSPENDED"
+                            : "";
                         const runnerName = market?.runnersName?.find(
                           (item: any) =>
                             item?.selectionId === runner?.selectionId
@@ -1037,18 +1031,16 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
 
                               <div
                                 className={`relative w-[40%] md:text-[#212529] md:w-[60%] flex 
-  ${
-    isSuspended || isClosed
-      ? `after:content-['${statusText}'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed`
-      : ""
-  }`}
+  ${isSuspended || isClosed
+                                    ? `after:content-['${statusText}'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed`
+                                    : ""
+                                  }`}
                               >
                                 <div
-                                  className={`text-center flex-col md:border-l  text-[#212529] md:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${
-                                    !(isSuspended || isClosed)
+                                  className={`text-center flex-col md:border-l  text-[#212529] md:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed"
-                                  }`}
+                                    }`}
                                   onClick={() =>
                                     !(isSuspended || isClosed) &&
                                     onPriceClick({
@@ -1077,11 +1069,10 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                 </div>
 
                                 <div
-                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%]  bg-[#72bbef] ${
-                                    !(isSuspended || isClosed)
+                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%]  bg-[#72bbef] ${!(isSuspended || isClosed)
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed"
-                                  }`}
+                                    }`}
                                   onClick={() =>
                                     !(isSuspended || isClosed) &&
                                     onPriceClick({
@@ -1109,11 +1100,10 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                   </span>
                                 </div>
                                 <div
-                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${
-                                    !(isSuspended || isClosed)
+                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!(isSuspended || isClosed)
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed"
-                                  }`}
+                                    }`}
                                   onClick={() =>
                                     !(isSuspended || isClosed) &&
                                     onPriceClick({
@@ -1142,11 +1132,10 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                 </div>
 
                                 <div
-                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center  text-[#212529] w-[50%] bg-[#faa9ba] ${
-                                    !(isSuspended || isClosed)
+                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center  text-[#212529] w-[50%] bg-[#faa9ba] ${!(isSuspended || isClosed)
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed"
-                                  }`}
+                                    }`}
                                   onClick={() =>
                                     !(isSuspended || isClosed) &&
                                     onPriceClick({
@@ -1174,11 +1163,10 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                   </span>
                                 </div>
                                 <div
-                                  className={`text-center flex-col md:border-l md:border-white justify-center items-center w-[50%] bg-[#faa9ba]  text-[#212529] flex ${
-                                    !(isSuspended || isClosed)
+                                  className={`text-center flex-col md:border-l md:border-white justify-center items-center w-[50%] bg-[#faa9ba]  text-[#212529] flex ${!(isSuspended || isClosed)
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed"
-                                  }`}
+                                    }`}
                                   onClick={() =>
                                     !(isSuspended || isClosed) &&
                                     onPriceClick({
@@ -1206,11 +1194,10 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                                   </span>
                                 </div>
                                 <div
-                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${
-                                    !(isSuspended || isClosed)
+                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!(isSuspended || isClosed)
                                       ? "cursor-pointer"
                                       : "cursor-not-allowed"
-                                  }`}
+                                    }`}
                                   onClick={() =>
                                     onPriceClick({
                                       marketId: market?.marketId,
@@ -1245,31 +1232,31 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
                               market?.marketId,
                               runner?.selectionId
                             ) && (
-                              <div ref={betslipRef} className="lg:hidden">
-                                {betSlipData && (
-                                  <MBetSlip
-                                    visible={isSlipOpen}
-                                    backLayClsModal={betSlipData?.slipCls}
-                                    extraBgClass={betSlipData?.slipBgClass}
-                                    odds={betSlipData?.odds}
-                                    marketId={betSlipData?.marketId}
-                                    selectionId={betSlipData?.selectionId}
-                                    eventId={eventId}
-                                    sportId={sportId}
-                                    marketType={market?.marketType}
-                                    runnerName={betSlipData?.runnerName}
-                                    minStake={betSlipData?.min}
-                                    maxStake={betSlipData?.max}
-                                    onClose={closeInlineSlip}
-                                    onPlaced={() => {
-                                      closeInlineSlip();
-                                      fetchMarketPL();
-                                    }}
-                                    onPreviewChange={handleSlipPreview}
-                                  />
-                                )}
-                              </div>
-                            )}
+                                <div ref={betslipRef} className="lg:hidden">
+                                  {betSlipData && (
+                                    <MBetSlip
+                                      visible={isSlipOpen}
+                                      backLayClsModal={betSlipData?.slipCls}
+                                      extraBgClass={betSlipData?.slipBgClass}
+                                      odds={betSlipData?.odds}
+                                      marketId={betSlipData?.marketId}
+                                      selectionId={betSlipData?.selectionId}
+                                      eventId={eventId}
+                                      sportId={sportId}
+                                      marketType={market?.marketType}
+                                      runnerName={betSlipData?.runnerName}
+                                      minStake={betSlipData?.min}
+                                      maxStake={betSlipData?.max}
+                                      onClose={closeInlineSlip}
+                                      onPlaced={() => {
+                                        closeInlineSlip();
+                                        fetchMarketPL();
+                                      }}
+                                      onPreviewChange={handleSlipPreview}
+                                    />
+                                  )}
+                                </div>
+                              )}
                           </React.Fragment>
                         );
                       })}

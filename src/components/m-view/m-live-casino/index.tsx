@@ -38,7 +38,7 @@ const MLiveCasino = () => {
         pathname === "/live-casino" ? "lg:pt-1" : "lg:pt-8"
       } lg:px-3`}
     >
-      <div className="relative shadow-[0_8px_8px_-7px_rgb(33,37,41)] flex items-center md-mt-[1px] min-[992px]:mt-[3px] justify-between bg-linear-to-b from-[#030a12] via-[#444647] to-[#58595a] overflow-hidden lg:mb-3 h-[33px]">
+      <div className="relative shadow-[0_8px_8px_-7px_rgb(33,37,41)] flex items-center md-mt-[1px] min-[992px]:mt-[3px] justify-between bg-linear-to-b from-[#030a12] via-[#444647] to-[#58595a] overflow-hidden lg:mb-3 h-[32px] min-[992px]:h-[33px]">
         {/* Menu Items */}
         <ul className="flex overflow-x-auto no-scrollbar">
           {casinoEvents?.menu?.map((item: any, index: number) => (
