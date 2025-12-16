@@ -18,6 +18,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   const [activeCategory, setActiveCategory] = useState("Popular");
   const [filteredMarketData, setFilteredMarketData] = useState<any[]>([]);
   const betslipRef = useRef<HTMLDivElement>(null);
+  const { showToast } = useToast(); 
 
   // INLINE (mobile) slip open or not
   const [isSlipOpen, setIsSlipOpen] = useState(false);
@@ -25,6 +26,7 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(
     null
   );
+    const { userBalance, setUserBalance } = useAppStore();  
 
   // 👇 State for Real Data
   const [matchedBets, setMatchedBets] = useState<any[]>([]);
@@ -91,13 +93,21 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     });
   };
 
-  const getMarketStatus = (market: any) => {
-    const status = market?.status?.toUpperCase();
-    if (status === "CLOSED") return "CLOSED";
-    if (status === "SUSPENDED") return "SUSPENDED";
-    return "OPEN";
-  };
-
+  const refreshUserBalance = async () => {
+     try {
+       await fetchData({
+         url: CONFIG.getUserBalance,
+         payload: { key: CONFIG.siteKey },
+         setFn: (res: any) => {
+           console.log("Balance refreshed:", res);
+           // Update global store so Header shows new balance immediately
+           setUserBalance(res);
+         }
+       });
+     } catch (error) {
+       console.error("Balance refresh error:", error);
+     }
+   };
   // 👇 Fetch Bets API
   const fetchBets = async () => {
     if (!eventId || !sportId) return;
@@ -362,38 +372,43 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     setShowCashoutValue((p) => ({ ...p, [marketId]: false }));
     setCashoutValues((p) => ({ ...p, [marketId]: "Cash Out" }));
   };
-  const onCashOutConfirm = async () => {
-    if (!cashOutAPIData?.stake) {
-      return;
+ const onCashOutConfirm = async () => {
+  if (!cashOutAPIData?.stake) {
+    return;
+  }
+
+  try {
+    setCashoutLoader(true);
+
+    const res = await fetchData({
+      url: CONFIG.placeBetURL,
+      payload: cashOutAPIData,
+    });
+
+    if (res?.meta?.status === false) {
+      throw new Error(res?.meta?.message || "Cashout Failed");
     }
 
-    try {
-      setCashoutLoader(true);
+    // Clear cashout states
+    setCashoutValues({});
+    setShowCashoutValue({});
+    setCashOutAPIData(null);
 
-      const res = await fetchData({
-        url: CONFIG.placeBetURL,
-        payload: cashOutAPIData,
-      });
+    // Refresh data
+    fetchMarketPL();
+    fetchBets();
+    refreshUserBalance();
 
-      if (res?.meta?.status === false) {
-        throw new Error(res?.meta?.message || "Cashout Failed");
-      }
-
-      setCashoutValues({});
-      setShowCashoutValue({});
-      setCashOutAPIData(null);
-
-      fetchMarketPL();
-      fetchBets();
-      // refreshBalance();
-
-      // showToast("success", "Cashout", "Cashout Successful");
-    } catch (err: any) {
-      // showToast("error", "Cashout Failed", err?.message || "Try again");
-    } finally {
-      setCashoutLoader(false);
-    }
-  };
+    // Show success toast
+    showToast("success", "Cashout Successful", "Your bet has been cashed out successfully");
+    
+  } catch (err: any) {
+    // Show error toast
+    showToast("error", "Cashout Failed", err?.message || "Failed to process cashout. Please try again");
+  } finally {
+    setCashoutLoader(false);
+  }
+};
   useEffect(() => {
     return () => {
       Object.values(cashoutIntervalRef.current).forEach((i) =>
