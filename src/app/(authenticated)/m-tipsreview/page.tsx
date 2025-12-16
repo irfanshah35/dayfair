@@ -1,10 +1,14 @@
-import MTipsPreview from '@/components/m-view/m-tipsPreview'
-import React from 'react'
+import dynamic from "next/dynamic";
+import React from "react";
+
+const MTipsPreview = dynamic(() => import("@/components/m-view/m-tipsPreview"), {
+  loading: () => <></>,
+});
 
 export default function MTipsReview() {
   return (
     <div>
-        <MTipsPreview />
+      <MTipsPreview />
     </div>
-  )
+  );
 }

@@ -1,10 +1,14 @@
-import MLoginPage from '@/components/m-view/m-login'
-import React from 'react'
+import dynamic from "next/dynamic";
+import React from "react";
+
+const MLoginPage = dynamic(() => import("@/components/m-view/m-login"), {
+  loading: () => <></>,
+});
 
 export default function Login() {
   return (
     <div>
-        <MLoginPage />
+      <MLoginPage />
     </div>
-  )
+  );
 }
