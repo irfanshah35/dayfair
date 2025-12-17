@@ -49,7 +49,7 @@ export default function RulesModal({
 
   return (
     <div>
-      <div className="fixed text-black inset-0 pt-3.5 bg-black/50 flex items-center min-[992px]:items-start justify-center z-50">
+      <div className="fixed text-black inset-0 pt-3.5 bg-black/50 flex items-center min-[992px]:items-start justify-center z-51">
         <div
           ref={modalRef}
           className={`
@@ -70,7 +70,7 @@ export default function RulesModal({
           </div>
 
           {/* Dynamic Content */}
-          <div className="p-3 pt-9 md:pt-14 pb-9 md:pb-3 text-[15px] [@media(min-width:992px)]:text-[12px] [@media(min-width:992px)]:pt-[13px]">
+          <div className="p-3 pt-[13px] min-[992px]:pt-14 pb-9 min-[992px]:pb-3 text-[15px] [@media(min-width:992px)]:text-[12px] [@media(min-width:992px)]:pt-[13px]">
             {rules ? (
               <div
                 className="rules-content"
