@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAppStore } from "@/lib/store/store";
@@ -7,19 +7,25 @@ import { useAppStore } from "@/lib/store/store";
 const DTopnav = () => {
   const pathname = usePathname();
   const { menuList } = useAppStore();
+  
   const [navItems, setNavItems] = useState([
     { href: "/", label: "HOME" },
     { href: "/inplay", label: "In-Play" },
   ]);
-
   const navData = ["cricket", "soccer", "tennis"];
 
   useEffect(() => {
     const eventsType = menuList?.eventTypes;
+    const staticItems = [
+      { href: "/", label: "HOME" },
+      { href: "/inplay", label: "In-Play" },
+    ];
 
-    if (!eventsType) return;
+    if (!eventsType) {
+        setNavItems(staticItems);
+        return;
+    }
 
-    // Create new items from eventTypes
     const newItems = eventsType
       .filter((item: any) =>
         navData?.includes(item?.eventType?.name?.toLowerCase())
@@ -29,13 +35,24 @@ const DTopnav = () => {
         label: item?.eventType?.name?.toUpperCase(),
       }));
 
-    // Set new state by merging old + new
-    setNavItems((prev) => [...prev, ...newItems]);
+    setNavItems([...staticItems, ...newItems]);
+
   }, [menuList]);
 
-  const isActive = (href: string) => {
-    return pathname === href;
-  };
+  const isActive = useCallback((href: string) => {
+    if (!href) return false;
+
+    if (pathname === href) return true;
+
+    if (href === '/' && pathname.includes('/market-detail')) {
+      return true;
+    }
+    if (href !== '/' && pathname.startsWith(href)) {
+      return true;
+    }
+
+    return false;
+  }, [pathname]);
 
   return (
     <div className="hidden md:block">
@@ -53,10 +70,13 @@ const DTopnav = () => {
               className="nav-link px-[15px] uppercase tracking-[-0.1] py-0 h-text flex items-center text-black text-[14px] transition-opacity relative group"
             >
               {item.label}
+              
+              {/* Active Indicator */}
               {isActive(item.href) && (
                 <span className="absolute bottom-[-3px] left-0 right-0 h-0.5 bg-black"></span>
               )}
 
+              {/* Hover Effect */}
               {!isActive(item.href) && (
                 <span className="absolute bottom-[-3px] left-1/2 right-1/2 h-0.5 bg-white transition-all duration-500 ease-out group-hover:left-0 group-hover:right-0"></span>
               )}

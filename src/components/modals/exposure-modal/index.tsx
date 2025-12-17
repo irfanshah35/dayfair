@@ -58,11 +58,11 @@ export default function ExposureModal({ open, onClose }: ExposureModalProps) {
 
   return (
     <div>
-      <div className="fixed text-black inset-0 pt-3.5 bg-black/50 flex items-center min-[992px]:items-start justify-center z-50">
+      <div className="fixed text-black inset-0 pt-2 md:pt-5.5 min-[992px]:pt-3.5 bg-black/50 flex items-baseline min-[992px]:items-start justify-center z-50">
         <div
           ref={modalRef}
           className={`
-          bg-white mx-[7px] max-[768px]:w-[500px] max-h-screen [@media(min-width:992px)]:w-[71.5%] shadow-lg overflow-y-auto no-scrollbar
+          bg-white mx-[7px] max-[768px]:w-[500px] md:w-[498px] max-h-screen [@media(min-width:992px)]:w-[71.5%] shadow-lg overflow-y-auto no-scrollbar
           transform transition-all duration-300 ease-out
           ${open ? "translate-y-0 opacity-100" : "-translate-y-full opacity-0"}
         `}
@@ -84,16 +84,16 @@ export default function ExposureModal({ open, onClose }: ExposureModalProps) {
             <table className="w-full border-collapse border border-black/12.5">
               <thead>
                 <tr>
-                  <th className="p-0.5 md:px-3 md:py-[7px] h-10 text-center text-black border border-black/12.5 text-sm md:text-base">
+                  <th className="p-0.5 md:px-3 min-[992px]:py-[7px] h-[26px] min-[992px]:h-10 text-center text-black border border-black/12.5 text-sm min-[992px]:text-base">
                     Sport Name
                   </th>
-                  <th className="p-0.5 md:px-3 md:py-[7px] h-10 text-center text-black border border-black/12.5 text-sm md:text-base">
+                  <th className="p-0.5 md:px-3 min-[992px]:py-[7px] h-[26px] min-[992px]:h-10 text-center text-black border border-black/12.5 text-sm min-[992px]:text-base">
                     Event Name
                   </th>
-                  <th className="p-0.5 md:px-3 md:py-[7px] h-10 text-center text-black border border-black/12.5 text-sm md:text-base">
+                  <th className="p-0.5 md:px-3 min-[992px]:py-[7px] h-[26px] min-[992px]:h-10 text-center text-black border border-black/12.5 text-sm min-[992px]:text-base">
                     Market Name
                   </th>
-                  <th className="p-0.5 md:px-3 md:py-[7px] h-10 text-center text-black border border-black/12.5 text-sm md:text-base">
+                  <th className="p-0.5 md:px-3 min-[992px]:py-[7px] h-[26px] min-[992px]:h-10 text-center text-black border border-black/12.5 text-sm min-[992px]:text-base">
                     Trade
                   </th>
                 </tr>
@@ -126,7 +126,7 @@ export default function ExposureModal({ open, onClose }: ExposureModalProps) {
                   <tr>
                     <td
                       colSpan={4}
-                      className="px-2 py-1.5 md:px-3 md:py-[7px] h-10 text-center border text-black border-black/12.5 bg-transparent text-xs md:text-base"
+                      className="px-2 py-[2px] min-[992px]:py-1.5 md:px-3 min-[992px]:py-[7px] h-[23px] min-[992px]:h-10 text-center border text-black border-black/12.5 bg-transparent text-xs min-[992px]:text-base"
                     >
                       No real-time records found
                     </td>
