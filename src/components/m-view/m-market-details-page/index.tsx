@@ -320,6 +320,8 @@ useEffect(() => {
 //socket code end
   // Shared betslip data (used by both mobile + desktop)
   const [isMobile, setIsMobile] = useState(false);
+  const [isvolume, setIsVolume] = useState(false);
+  const [iswatchlive, setIsWatchLive] = useState(false);
   const [betSlipData, setBetSlipData] = useState<{
     marketId: string;
     selectionId: number;
@@ -898,8 +900,12 @@ useEffect(() => {
 
         <div>
           <div className="absolute top-3 right-11">
-            <button className="flex items-center gap-1 text-black">
-              <svg
+            <button className="flex items-center gap-1 text-black" onClick={()=> setIsVolume(!isvolume)}>
+
+              {isvolume ? (
+                <svg className="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><path d="M533.6 96.5C523.3 88.1 508.2 89.7 499.8 100C491.4 110.3 493 125.4 503.3 133.8C557.5 177.8 592 244.8 592 320C592 395.2 557.5 462.2 503.3 506.3C493 514.7 491.5 529.8 499.8 540.1C508.1 550.4 523.3 551.9 533.6 543.6C598.5 490.7 640 410.2 640 320C640 229.8 598.5 149.2 533.6 96.5zM473.1 171C462.8 162.6 447.7 164.2 439.3 174.5C430.9 184.8 432.5 199.9 442.8 208.3C475.3 234.7 496 274.9 496 320C496 365.1 475.3 405.3 442.8 431.8C432.5 440.2 431 455.3 439.3 465.6C447.6 475.9 462.8 477.4 473.1 469.1C516.3 433.9 544 380.2 544 320.1C544 260 516.3 206.3 473.1 171.1zM412.6 245.5C402.3 237.1 387.2 238.7 378.8 249C370.4 259.3 372 274.4 382.3 282.8C393.1 291.6 400 305 400 320C400 335 393.1 348.4 382.3 357.3C372 365.7 370.5 380.8 378.8 391.1C387.1 401.4 402.3 402.9 412.6 394.6C434.1 376.9 448 350.1 448 320C448 289.9 434.1 263.1 412.6 245.5zM80 416L128 416L262.1 535.2C268.5 540.9 276.7 544 285.2 544C304.4 544 320 528.4 320 509.2L320 130.8C320 111.6 304.4 96 285.2 96C276.7 96 268.5 99.1 262.1 104.8L128 224L80 224C53.5 224 32 245.5 32 272L32 368C32 394.5 53.5 416 80 416z"/></svg>
+              ):(
+                <svg
                 className="w-5 h-5"
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
@@ -907,11 +913,12 @@ useEffect(() => {
               >
                 <path d="M5.88889 16.0001H2C1.44772 16.0001 1 15.5524 1 15.0001V9.00007C1 8.44778 1.44772 8.00007 2 8.00007H5.88889L11.1834 3.66821C11.3971 3.49335 11.7121 3.52485 11.887 3.73857C11.9601 3.8279 12 3.93977 12 4.05519V19.9449C12 20.2211 11.7761 20.4449 11.5 20.4449C11.3846 20.4449 11.2727 20.405 11.1834 20.3319L5.88889 16.0001ZM20.4142 12.0001L23.9497 15.5356L22.5355 16.9498L19 13.4143L15.4645 16.9498L14.0503 15.5356L17.5858 12.0001L14.0503 8.46454L15.4645 7.05032L19 10.5859L22.5355 7.05032L23.9497 8.46454L20.4142 12.0001Z"></path>
               </svg>
+              )}
             </button>
           </div>
 
           <div className="absolute top-2.5 right-2">
-            <p className="mb-0 text-black">
+            <p className="mb-0 text-black" onClick={()=> setIsWatchLive(!iswatchlive)}>
               <svg
                 className="w-6 h-[22px]"
                 xmlns="http://www.w3.org/2000/svg"
@@ -1054,6 +1061,9 @@ useEffect(() => {
               )}
             </div>
 
+            {iswatchlive ? (
+              <div className="w-full min-w-50 py-[9px] px-2.5 text-xs h-9 bg-[linear-gradient(360deg,#030a12,#444647_60%,#58595a)] flex justify-center items-center text-white"> Watch Live </div>
+            ): (
             <div
               className="p-0 mb-[3px] bg-no-repeat bg-cover bg-center w-full h-[90px]"
               style={{
@@ -1081,8 +1091,8 @@ useEffect(() => {
                   </div>
                 </div>
               </div>
-            </div>
-
+            </div> 
+            )}
             <div className="min-[992px]:hidden">
               <ul className="flex overflow-x-auto no-scrollbar p-[5px] bg-[linear-gradient(180deg,#000000,#000000_42%,#000000)] text-white">
                 {categories?.map((category: any, idx: number) => (
