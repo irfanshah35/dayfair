@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-//new prokject on which i am working
-"use client";
+:qa"use client";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import MBetSlip from "../m-betslip";
 import DBetSlip from "@/components/d-view/d-betslip";
