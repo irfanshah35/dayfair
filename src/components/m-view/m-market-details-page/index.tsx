@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+:qa"use client";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import MBetSlip from "../m-betslip";
 import DBetSlip from "@/components/d-view/d-betslip";
@@ -13,6 +13,7 @@ import { useToast } from "@/components/common/toast/toast-context";
 import { useAppStore } from "@/lib/store/store";
 import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
+import { webSocketService } from "@/lib/websocket.service";
 
 
 const RulesModal = dynamic(() => import("../../modals/rules-modal"), {
@@ -42,7 +43,11 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     Record<string, Record<number, number>>
   >({});
   const [slipPreview, setSlipPreview] = useState({ stake: 0, price: 0 });
-
+  const socketCleanupRef = useRef<(() => void) | null>(null);
+// Add these with your other state declarations
+const [allMarkets, setAllMarkets] = useState<Market[]>([]);
+const activeSocketIdsRef = useRef<string[]>([]);
+const initialFilterAppliedRef = useRef(false);
   const params = useParams();
   const eventId = (params as any)?.eventId || "";
   const sportId = (params as any)?.sportId || "";
@@ -54,6 +59,264 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     side: "BACK" | "LAY";
   } | null>(null);
 
+//socket code  starts
+
+
+  useEffect(() => {
+    return () => {
+      socketCleanupRef.current?.();
+    };
+  }, []);
+
+const areIdsSame = (a: string[], b: string[]) => {
+  if (a.length !== b.length) return false;
+  const setA = new Set(a);
+  for (const id of b) {
+    if (!setA.has(id)) return false;
+  }
+  return true;
+};
+
+// 🔹 Helper: Subscribe to markets
+const subscribeForMarkets = (marketIds: string[]) => {
+  // Normalize and deduplicate
+  const cleaned = Array.from(
+    new Set(
+      (marketIds || [])
+        .filter((id) => !!id)
+        .map((id) => String(id))
+    )
+  );
+
+  // ⚠️ If same IDs, skip re-subscribe
+  if (areIdsSame(cleaned, activeSocketIdsRef.current)) {
+    return;
+  }
+
+  // UNSUBSCRIBE old subscriptions
+  if (activeSocketIdsRef.current.length > 0) {
+    webSocketService.unsubscribeMarket(activeSocketIdsRef.current);
+  }
+
+  // SAVE + SUBSCRIBE new
+  activeSocketIdsRef.current = cleaned;
+  if (cleaned.length > 0) {
+    webSocketService.subscribeMarket(cleaned, "market-details");
+  }
+};
+
+    const mergeSide = (prevSide: any[], incoming: any): any[] => {
+              const base: any[] = Array.isArray(prevSide) ? [...prevSide] : [];
+
+              const write = (idx: number, val: any) => {
+                base[idx] = {
+                  price: val?.price ?? 0,
+                  size: val?.size ?? 0,
+                };
+              };
+
+              if (Array.isArray(incoming)) {
+                incoming.forEach((val, idx) => {
+                  if (val) write(idx, val);
+                });
+              } else if (incoming && typeof incoming === "object") {
+                Object.keys(incoming).forEach((k) => {
+                  const idx = Number(k);
+                  if (Number.isNaN(idx)) return;
+                  write(idx, incoming[k]);
+                });
+              }
+
+              for (let i = 0; i < 3; i++) {
+                if (!base[i]) base[i] = { price: 0, size: 0 };
+              }
+              return base;
+            };
+
+
+
+const [matchOddsData, setMatchOddsData] = useState<any[]>([]);
+
+
+useEffect(() => {
+  if (apiData?.matchOddsData?.length > 0) {
+    console.log("🔄 Initializing matchOddsData from apiData");
+    setMatchOddsData(apiData.matchOddsData);
+  }
+}, [apiData?.matchOddsData]);
+
+useEffect(() => {
+  if (!matchOddsData || matchOddsData.length === 0) {
+    return;
+  }
+
+  try {
+    const marketIds: string[] = matchOddsData
+      .map((m: any) => m?.exMarketId || m?.marketId)
+      .filter(
+        (id: any): id is string =>
+          typeof id === "string" && id.length > 0
+      );
+
+    if (marketIds.length === 0) return;
+
+    // 1) Connect
+    webSocketService.connect();
+
+    // 2) Subscribe
+    webSocketService.subscribeMarket(marketIds, "market-details");
+
+    // 3) Listen for updates
+    const offOdds = webSocketService.onEvent<any>("odds", (raw) => {
+      try {
+        let payload: any = raw;
+        if (typeof raw === "string") {
+          payload = JSON.parse(raw);
+        } else if (Array.isArray(raw) && raw.length >= 2) {
+          const maybe = raw[1];
+          payload = typeof maybe === "string" ? JSON.parse(maybe) : maybe;
+        }
+
+        const marketId = payload?.marketId;
+        if (!marketId) return;
+
+        const exMap: Record<string, any> = payload.ex || {};
+
+        console.log("📊 Socket update for market:", marketId);
+
+        // 🔥 UPDATE matchOddsData
+        setMatchOddsData((prev: any[]) => {
+          return prev.map((m) => {
+            const id = m.exMarketId || m.marketId;
+            if (String(id) !== String(marketId)) return m;
+
+            const runners = (m.runners || []).map((r: any) => {
+              const key = String(r.selectionId);
+              let exEntry = exMap[key] ?? exMap[r.selectionId];
+
+              if (!exEntry) {
+                for (const k in exMap) {
+                  const val = exMap[k];
+                  if (val && String(val.selectionId) === key) {
+                    exEntry = val;
+                    break;
+                  }
+                }
+              }
+
+              if (!exEntry) return r;
+
+              const prevEx = r.ex || {};
+              const newEx = {
+                ...prevEx,
+                availableToBack: mergeSide(
+                  prevEx.availableToBack,
+                  exEntry.availableToBack
+                ),
+                availableToLay: mergeSide(
+                  prevEx.availableToLay,
+                  exEntry.availableToLay
+                ),
+              };
+
+              return { 
+                ...r, 
+                ex: newEx,
+                _updateKey: Date.now()
+              };
+            });
+
+            return { 
+              ...m, 
+              runners,
+              _updateKey: Date.now()
+            };
+          });
+        });
+      } catch (e) {
+        console.error("❌ Socket update failed:", e);
+      }
+    });
+
+    // 4) Cleanup
+    socketCleanupRef.current = () => {
+      webSocketService.unsubscribeMarket(marketIds);
+      offOdds();
+    };
+
+    return () => {
+      socketCleanupRef.current?.();
+    };
+  } catch (e) {
+    console.warn("Socket setup failed:", e);
+  }
+}, [matchOddsData]); // ✅ Dependency on matchOddsData
+
+// ========================================
+// 4️⃣ UPDATE setMarketType TO USE matchOddsData
+// ========================================
+const setMarketType = (type: string, ...args: any[]) => {
+  const marketid: string = String(args[3] ?? args[args.length - 1] ?? "");
+
+  const isDesktop =
+    typeof window !== "undefined" && (window.innerWidth ?? 0) >= 1024;
+
+  if (isDesktop) {
+    type = "ALL";
+  }
+
+  setActiveCategory(type);
+
+  let filtered: any[] = [];
+
+  if (type === "Popular") {
+    filtered = (matchOddsData || []) // ✅ Use matchOddsData
+      .filter((m: any) => m.popular && m.status !== "CLOSED")
+      .sort((a: any, b: any) => a.sequence - b.sequence);
+
+    const ids = filtered.map((m) => m.exMarketId || m.marketId);
+
+    if (!isDesktop) {
+      subscribeForMarkets(ids);
+    }
+  } else if (type === "ALL" || type === "All Market") {
+    filtered = [...(matchOddsData || [])].sort( // ✅ Use matchOddsData
+      (a: any, b: any) => a.sequence - b.sequence
+    );
+
+    const ids = filtered.map((m) => m.exMarketId || m.marketId);
+
+    if (!isDesktop) {
+      subscribeForMarkets(ids);
+    }
+  } else {
+    filtered = (matchOddsData || []) // ✅ Use matchOddsData
+      .filter(
+        (market: any) =>
+          market.marketId === marketid && market.status !== "CLOSED"
+      )
+      .sort((a: any, b: any) => a.sequence - b.sequence);
+
+    const ids = filtered.map((m) => m.exMarketId || m.marketId);
+
+    if (!isDesktop) {
+      subscribeForMarkets(ids);
+    }
+  }
+
+  setFilteredMarketData(filtered);
+};
+
+// ========================================
+// 5️⃣ UPDATE YOUR INITIAL FILTER EFFECT
+// ========================================
+useEffect(() => {
+  if (matchOddsData?.length > 0 && !initialFilterAppliedRef.current) {
+    initialFilterAppliedRef.current = true;
+    setMarketType("Popular", "", "Popular", 1, "");
+  }
+}, [matchOddsData]); // ✅ Changed from apiData.matchOddsData
+//socket code end
   // Shared betslip data (used by both mobile + desktop)
   const [isMobile, setIsMobile] = useState(false);
   const [isvolume, setIsVolume] = useState(false);
@@ -537,20 +800,24 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  useEffect(() => {
-    const allMarkets = apiData?.matchOddsData || [];
-    let filterdData = [];
-    if (activeCategory === "Popular") {
-      filterdData = allMarkets?.filter((market: any) => market?.popular);
-    } else if (activeCategory === "All Market") {
-      filterdData = allMarkets;
-    } else {
-      filterdData = allMarkets?.filter(
-        (market: any) => market?.marketName === activeCategory
-      );
-    }
-    setFilteredMarketData(filterdData);
-  }, [activeCategory]);
+useEffect(() => {
+  if (!apiData?.matchOddsData || filteredMarketData.length > 0) return;
+  
+  const allMarkets = apiData.matchOddsData || [];
+  let filterdData = [];
+  
+  if (activeCategory === "Popular") {
+    filterdData = allMarkets.filter((market: any) => market?.popular);
+  } else if (activeCategory === "All Market") {
+    filterdData = allMarkets;
+  } else {
+    filterdData = allMarkets.filter(
+      (market: any) => market?.marketName === activeCategory
+    );
+  }
+  
+  setFilteredMarketData(filterdData);
+}, [apiData?.matchOddsData]); // ✅ Only depend on initial data load
 
   // Format PL value with + or -
   const formatPLValue = (value: number | null) => {
@@ -843,438 +1110,520 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
               </ul>
             </div>
 
-            {(isMobile ? filteredMarketData : apiData?.matchOddsData)?.map(
-              (market: any) => {
-                const hasPL = hasProfitAndLoss(market.marketId);
-                const isActive = hasPL && showCashoutValue[market.marketId];
 
-                return (
-                  <div
-                    key={market?.marketId}
-                    className="bg-[linear-gradient(180deg,#000000,#ccc1c1)]"
+
+{(isMobile ? filteredMarketData : matchOddsData)?.map(  
+  (market: any) => {
+    const hasPL = hasProfitAndLoss(market.marketId);
+    const isActive = hasPL && showCashoutValue[market.marketId];
+
+    return (
+      <div
+        key={market?.marketId}
+        className="bg-[linear-gradient(180deg,#000000,#ccc1c1)]"
+      >
+        <div
+          className={`mt-0 pl-2 pr-1.5 flex justify-between items-center
+${hasPL ? "h-9 py-1 lg:py-[3px]" : "h-[27.56px] min-[992px]:h-[26px] py-1"}
+`}
+        >
+          <div className="flex gap-2 items-center">
+            <span className="font-bold md:font-normal text-white text-[13px] lg:text-[14px]">
+              {market?.marketName}
+            </span>
+
+            {/* 🔹 NEW: Cashout Toggle */}
+            {/* 🔹 CASHOUT TOGGLE WITH CONFIRM */}
+            {market?.runners?.length < 3 && (
+              <div className="ml-1 h-[26px] relative top-[-2px]">
+                <div
+                  onClick={() => {
+                    if (hasPL) {
+                      if (showCashoutValue[market.marketId]) {
+                        // Directly call the cashout API when clicking on the calculated value
+                        onCashOutConfirm(market.marketId);
+                      } else {
+                        // Show the cashout value on first click
+                        toggleCashout(market);
+                      }
+                    }
+                  }}
+                  className={`
+rounded-[4px] py-[3px] px-[10px] my-[2px] leading-[18px]
+inline-flex items-center gap-1 select-none
+${hasPL ? "bg-[#ccc] cursor-pointer" : "cursor-default"}
+`}
+                >
+                  {/* Icon */}
+                  <span className="w-[18px] h-[18px] rounded-[2px] border-2 border-[#ffb900] flex items-center justify-center bg-[#ffb900]">
+                    {showCashoutValue[market.marketId] && (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="w-[13px] h-[13px] text-black"
+                      >
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                      </svg>
+                    )}
+
+                    {!showCashoutValue[market.marketId] && (
+                      <span className="w-[13px] h-[13px] bg-black rounded-full"></span>
+                    )}
+                  </span>
+
+                  {/* Text */}
+                  <span
+                    className={`text-sm ${showCashoutValue[market.marketId]
+                        ? Number(cashoutValues[market.marketId]) < 0
+                          ? "font-bold text-[#ff0000]"
+                          : "font-bold text-[#008000]"
+                        : hasPL
+                          ? "text-black"
+                          : "text-white"
+                      }`}
                   >
-                    <div
-                      className={`mt-0 pl-2 pr-1.5 flex justify-between items-center
-    ${hasPL ? "h-9 py-1 lg:py-[3px]" : "h-[27.56px] min-[992px]:h-[26px] py-1"}
-  `}
-                    >
-                      <div className="flex gap-2 items-center">
-                        <span className="font-bold md:font-normal text-white text-[13px] lg:text-[14px]">
-                          {market?.marketName}
+                    {showCashoutValue[market.marketId]
+                      ? cashoutValues[market.marketId]
+                      : "Cash Out"}
+                  </span>
+                </div>
+              </div>
+            )}
+          </div>
+          <button
+            onClick={() => {
+              setSelectedMarketRules(
+                market?.description?.rules || null
+              );
+              setRulesOpen(true);
+            }}
+            className="text-white mr-px mb-px"
+          >
+            <svg
+              className="w-4 h-4 relative"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 9.5C12.8284 9.5 13.5 8.82843 13.5 8C13.5 7.17157 12.8284 6.5 12 6.5C11.1716 6.5 10.5 7.17157 10.5 8C10.5 8.82843 11.1716 9.5 12 9.5ZM14 15H13V10.5H10V12.5H11V15H10V17H14V15Z"></path>
+            </svg>
+          </button>
+        </div>
+
+        {/* MOBILE HEADER */}
+        <div className="text-[12px] border-b border-[#aaa] md:hidden">
+          <div className="flex bg-gray-100">
+            <div className="py-0.5 text-black px-[5px] flex justify-between items-center border-b border-[#aaa] w-[60%] md:font-normal">
+              <span>
+                Min: {market?.min} Max: {market?.max}
+              </span>
+              <span className=" ml-2">
+                M:
+                {market?.totalMatched >= 1000
+                  ? `${(market?.totalMatched / 1000).toFixed(2)}K`
+                  : market?.totalMatched?.toFixed(2) || "0"}
+              </span>
+            </div>
+            <div className="w-[40%] flex">
+              <div className="back flex justify-center items-center text-center w-[50%]  text-[#212529] text-[12px] bg-[#72bbef]">
+                BACK
+              </div>
+              <div className="lay flex justify-center items-center text-center w-[50%]  text-[#212529] text-[12px] bg-[#faa9ba]">
+                LAY
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* DESKTOP HEADER */}
+        <div className="hidden md:block text-[12px] border-b border-[#aaa] md:border-none bg-white">
+          <div className="border-b border-white flex">
+            <div className="ps-1.5 pe-[5px] py-[2px] min-[992px]:py-[5px] leading-[15px] w-[40%] h-[22px] min-[992px]:h-auto">
+              <b className="text-[12px] min-[992px]:text-[14px] text-[#0dcaf0] md:font-normal">
+                <span>
+                  Min: {market?.min} Max: {market?.max}
+                </span>
+              </b>
+            </div>
+
+            <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%]"></div>
+            <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%]"></div>
+            <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%] cursor-pointer bg-[#72bbef] text-center text-[#212529] h-[22px] flex items-center justify-center min-[992px]:h-auto">
+              <b className="md:font-normal">BACK</b>
+            </div>
+            <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%] cursor-pointer bg-[#faa9ba] text-center text-[#212529] md:border-l md:border-white h-[22px] flex items-center justify-center min-[992px]:h-auto">
+              <b className="md:font-normal">LAY</b>
+            </div>
+            <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] pr-[5px] text-[#212529] text-center font-bold text-[12px] min-[992px]:text-[14px] border-r border-white w-[20%] md:font-normal h-[22px] flex items-center justify-center min-[992px]:h-auto">
+              Matched:&nbsp;
+              {market?.totalMatched >= 1000
+                ? `${(market?.totalMatched / 1000).toFixed(2)}K`
+                : market?.totalMatched?.toFixed(2) || "0"}
+            </div>
+          </div>
+        </div>
+
+        {/* RUNNERS */}
+        <div className="lg:mb-0.5">
+          {market?.runners?.map((runner: any) => {
+            const isSuspended =
+              runner?.status === "SUSPENDED" ||
+              market?.status === "SUSPENDED";
+            const isClosed =
+              runner?.status === "CLOSED" ||
+              market?.status === "CLOSED";
+            const statusText = isClosed
+              ? "CLOSED"
+              : isSuspended
+                ? "SUSPENDED"
+                : "";
+            const runnerName = market?.runnersName?.find(
+              (item: any) =>
+                item?.selectionId === runner?.selectionId
+            )?.runnerName;
+
+            const runnerPL = getCombinedPL(
+              market.marketId,
+              runner.selectionId
+            );
+            const displayPL = formatPLValue(runnerPL);
+
+            return (
+              <React.Fragment key={runner?.selectionId}>
+                <div className="flex border-b border-[#aaa] md:border-white bg-gray-50 h-[41px] md:h-10 md:bg-[#f2f2f2]">
+                  {/* RUNNER NAME + PL */}
+                  <div className="col-span-3 py-0.5 px-[5px] md:border-l md:border-white md:col-span-1 w-[60%] md:w-[40%] h-[41px] md:h-auto">
+                    <div className="flex justify-between items-center">
+                      <div className="w-full flex justify-between gap-1 md:gap-0 flex-col">
+                        <span className="font-normal text-[12px] lg:text-[14px] text-[#212529]">
+                          {runnerName}
                         </span>
-
-                        {/* 🔹 NEW: Cashout Toggle */}
-                        {/* 🔹 CASHOUT TOGGLE WITH CONFIRM */}
-                        {market?.runners?.length < 3 && (
-                          <div className="ml-1 h-[26px] relative top-[-2px]">
-                            <div
-                              onClick={() => {
-                                if (hasPL) {
-                                  if (showCashoutValue[market.marketId]) {
-                                    // Directly call the cashout API when clicking on the calculated value
-                                    onCashOutConfirm(market.marketId);
-                                  } else {
-                                    // Show the cashout value on first click
-                                    toggleCashout(market);
-                                  }
-                                }
-                              }}
-                              className={`
-        rounded-[4px] py-[3px] px-[10px] my-[2px] leading-[18px]
-        inline-flex items-center gap-1 select-none
-        ${hasPL ? "bg-[#ccc] cursor-pointer" : "cursor-default"}
-      `}
-                            >
-                              {/* Icon */}
-                              <span className="w-[18px] h-[18px] rounded-[2px] border-2 border-[#ffb900] flex items-center justify-center bg-[#ffb900]">
-                                {showCashoutValue[market.marketId] && (
-                                  <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeWidth="5"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    className="w-[13px] h-[13px] text-black"
-                                  >
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                  </svg>
-                                )}
-
-                                {!showCashoutValue[market.marketId] && (
-                                  <span className="w-[13px] h-[13px] bg-black rounded-full"></span>
-                                )}
-                              </span>
-
-                              {/* Text */}
-                              <span
-                                className={`text-sm ${showCashoutValue[market.marketId]
-                                    ? Number(cashoutValues[market.marketId]) < 0
-                                      ? "font-bold text-[#ff0000]"
-                                      : "font-bold text-[#008000]"
-                                    : hasPL
-                                      ? "text-black"
-                                      : "text-white"
-                                  }`}
-                              >
-                                {showCashoutValue[market.marketId]
-                                  ? cashoutValues[market.marketId]
-                                  : "Cash Out"}
-                              </span>
-                            </div>
+                        {displayPL && (
+                          <div className="-m-1 ml-1 text-[12px]  ">
+                            {displayPL}
                           </div>
                         )}
                       </div>
-                      <button
-                        onClick={() => {
-                          setSelectedMarketRules(
-                            market?.description?.rules || null
-                          );
-                          setRulesOpen(true);
-                        }}
-                        className="text-white mr-px mb-px"
-                      >
-                        <svg
-                          className="w-4 h-4 relative"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="currentColor"
-                        >
-                          <path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 9.5C12.8284 9.5 13.5 8.82843 13.5 8C13.5 7.17157 12.8284 6.5 12 6.5C11.1716 6.5 10.5 7.17157 10.5 8C10.5 8.82843 11.1716 9.5 12 9.5ZM14 15H13V10.5H10V12.5H11V15H10V17H14V15Z"></path>
-                        </svg>
-                      </button>
-                    </div>
-
-                    <div className="text-[12px] border-b border-[#aaa] md:hidden">
-                      <div className="flex bg-gray-100">
-                        <div className="py-0.5 text-black px-[5px] flex justify-between items-center border-b border-[#aaa] w-[60%] md:font-normal">
-                          <span>
-                            Min: {market?.min} Max: {market?.max}
-                          </span>
-                          <span className=" ml-2">
-                            M:
-                            {market?.totalMatched >= 1000
-                              ? `${(market?.totalMatched / 1000).toFixed(2)}K`
-                              : market?.totalMatched?.toFixed(2) || "0"}
-                          </span>
-                        </div>
-                        <div className="w-[40%] flex">
-                          <div className="back flex justify-center items-center text-center w-[50%]  text-[#212529] text-[12px] bg-[#72bbef]">
-                            BACK
-                          </div>
-                          <div className="lay flex justify-center items-center text-center w-[50%]  text-[#212529] text-[12px] bg-[#faa9ba]">
-                            LAY
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="hidden md:block text-[12px] border-b border-[#aaa] md:border-none bg-white">
-                      <div className="border-b border-white flex">
-                        <div className="ps-1.5 pe-[5px] py-[2px] min-[992px]:py-[5px] leading-[15px] w-[40%] h-[22px] min-[992px]:h-auto">
-                          <b className="text-[12px] min-[992px]:text-[14px] text-[#0dcaf0] md:font-normal">
-                            <span>
-                              Min: {market?.min} Max: {market?.max}
-                            </span>
-                          </b>
-                        </div>
-
-                        <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%]"></div>
-                        <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%]"></div>
-                        <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%] cursor-pointer bg-[#72bbef] text-center text-[#212529] h-[22px] flex items-center justify-center min-[992px]:h-auto">
-                          <b className="md:font-normal">BACK</b>
-                        </div>
-                        <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%] cursor-pointer bg-[#faa9ba] text-center text-[#212529] md:border-l md:border-white h-[22px] flex items-center justify-center min-[992px]:h-auto">
-                          <b className="md:font-normal">LAY</b>
-                        </div>
-                        <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] pr-[5px] text-[#212529] text-center font-bold text-[12px] min-[992px]:text-[14px] border-r border-white w-[20%] md:font-normal h-[22px] flex items-center justify-center min-[992px]:h-auto">
-                          Matched:&nbsp;
-                          {market?.totalMatched >= 1000
-                            ? `${(market?.totalMatched / 1000).toFixed(2)}K`
-                            : market?.totalMatched?.toFixed(2) || "0"}
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="lg:mb-0.5">
-                      {market?.runners?.map((runner: any) => {
-                        const isSuspended =
-                          runner?.status === "SUSPENDED" ||
-                          market?.status === "SUSPENDED";
-                        const isClosed =
-                          runner?.status === "CLOSED" ||
-                          market?.status === "CLOSED";
-                        const statusText = isClosed
-                          ? "CLOSED"
-                          : isSuspended
-                            ? "SUSPENDED"
-                            : "";
-                        const runnerName = market?.runnersName?.find(
-                          (item: any) =>
-                            item?.selectionId === runner?.selectionId
-                        )?.runnerName;
-
-                        const runnerPL = getCombinedPL(
-                          market.marketId,
-                          runner.selectionId
-                        );
-                        const displayPL = formatPLValue(runnerPL);
-
-                        return (
-                          <React.Fragment key={runner?.selectionId}>
-                            <div className="flex border-b border-[#aaa] md:border-white bg-gray-50 h-[41px] md:h-10 md:bg-[#f2f2f2]">
-                              <div className="col-span-3 py-0.5 px-[5px] md:border-l md:border-white md:col-span-1 w-[60%] md:w-[40%] h-[41px] md:h-auto">
-                                <div className="flex justify-between items-center">
-                                  <div className="w-full flex justify-between gap-1 md:gap-0 flex-col">
-                                    <span className="font-normal text-[12px] lg:text-[14px] text-[#212529]">
-                                      {runnerName}
-                                    </span>
-                                    {displayPL && (
-                                      <div className="-m-1 ml-1 text-[12px]  ">
-                                        {displayPL}
-                                      </div>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-
-                              <div
-                                className={`relative w-[40%] md:text-[#212529] md:w-[60%] flex 
-  ${isSuspended || isClosed
-                                    ? `after:content-['${statusText}'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed`
-                                    : ""
-                                  }`}
-                              >
-                                <div
-                                  className={`text-center flex-col md:border-l  text-[#212529] md:border-white justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
-                                      ? "cursor-pointer"
-                                      : "cursor-not-allowed"
-                                    }`}
-                                  onClick={() =>
-                                    !(isSuspended || isClosed) &&
-                                    onPriceClick({
-                                      marketId: market?.marketId,
-                                      min: market?.min,
-                                      max: market?.max,
-                                      selectionId: runner?.selectionId,
-                                      runnerName: runnerName,
-                                      price:
-                                        runner?.ex?.availableToBack[0]?.price ||
-                                        0,
-                                      column: "BACK",
-                                    })
-                                  }
-                                >
-                                  <span className="odd block md:font-normal  leading-[1.1]">
-                                    {runner?.ex?.availableToBack[0]?.price ||
-                                      "0"}
-                                  </span>
-                                  <span className="block text-xs lg:text-[10px] md:font-normal">
-                                    {(
-                                      (runner?.ex?.availableToBack[0]?.size ||
-                                        0) / 1000
-                                    )?.toFixed(2)}
-                                  </span>
-                                </div>
-
-                                <div
-                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%]  bg-[#72bbef] ${!(isSuspended || isClosed)
-                                      ? "cursor-pointer"
-                                      : "cursor-not-allowed"
-                                    }`}
-                                  onClick={() =>
-                                    !(isSuspended || isClosed) &&
-                                    onPriceClick({
-                                      marketId: market?.marketId,
-                                      min: market?.min,
-                                      max: market?.max,
-                                      selectionId: runner?.selectionId,
-                                      runnerName: runnerName,
-                                      price:
-                                        runner?.ex?.availableToBack[2]?.price ||
-                                        0,
-                                      column: "BACK",
-                                    })
-                                  }
-                                >
-                                  <span className="odd block font-bold md:font-normal leading-[1.1]">
-                                    {runner?.ex?.availableToBack[2]?.price ||
-                                      "0"}
-                                  </span>
-                                  <span className="block text-xs lg:text-[10px]">
-                                    {(
-                                      (runner?.ex?.availableToBack[2]?.size ||
-                                        0) / 1000
-                                    )?.toFixed(2)}
-                                  </span>
-                                </div>
-                                <div
-                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!(isSuspended || isClosed)
-                                      ? "cursor-pointer"
-                                      : "cursor-not-allowed"
-                                    }`}
-                                  onClick={() =>
-                                    !(isSuspended || isClosed) &&
-                                    onPriceClick({
-                                      marketId: market?.marketId,
-                                      min: market?.min,
-                                      max: market?.max,
-                                      selectionId: runner?.selectionId,
-                                      runnerName: runnerName,
-                                      price:
-                                        runner?.ex?.availableToBack[1]?.price ||
-                                        0,
-                                      column: "BACK",
-                                    })
-                                  }
-                                >
-                                  <span className="odd block font-bold md:font-normal leading-[1.1]">
-                                    {runner?.ex?.availableToBack[1]?.price ||
-                                      "0"}
-                                  </span>
-                                  <span className="block text-xs lg:text-[10px]">
-                                    {(
-                                      (runner?.ex?.availableToBack[1]?.size ||
-                                        0) / 1000
-                                    )?.toFixed(2)}
-                                  </span>
-                                </div>
-
-                                <div
-                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center  text-[#212529] w-[50%] bg-[#faa9ba] ${!(isSuspended || isClosed)
-                                      ? "cursor-pointer"
-                                      : "cursor-not-allowed"
-                                    }`}
-                                  onClick={() =>
-                                    !(isSuspended || isClosed) &&
-                                    onPriceClick({
-                                      marketId: market?.marketId,
-                                      min: market?.min,
-                                      max: market?.max,
-                                      selectionId: runner?.selectionId,
-                                      runnerName: runnerName,
-                                      price:
-                                        runner?.ex?.availableToLay[0]?.price ||
-                                        0,
-                                      column: "LAY",
-                                    })
-                                  }
-                                >
-                                  <span className="odd block md:font-normal leading-[1.1]">
-                                    {runner?.ex?.availableToLay[0]?.price ||
-                                      "0"}
-                                  </span>
-                                  <span className="block text-xs lg:text-[10px]">
-                                    {(
-                                      (runner?.ex?.availableToLay[0]?.size ||
-                                        0) / 1000
-                                    )?.toFixed(2)}
-                                  </span>
-                                </div>
-                                <div
-                                  className={`text-center flex-col md:border-l md:border-white justify-center items-center w-[50%] bg-[#faa9ba]  text-[#212529] flex ${!(isSuspended || isClosed)
-                                      ? "cursor-pointer"
-                                      : "cursor-not-allowed"
-                                    }`}
-                                  onClick={() =>
-                                    !(isSuspended || isClosed) &&
-                                    onPriceClick({
-                                      marketId: market?.marketId,
-                                      min: market?.min,
-                                      max: market?.max,
-                                      selectionId: runner?.selectionId,
-                                      runnerName: runnerName,
-                                      price:
-                                        runner?.ex?.availableToLay[2]?.price ||
-                                        0,
-                                      column: "LAY",
-                                    })
-                                  }
-                                >
-                                  <span className="odd block  md:font-normal  leading-[1.1]">
-                                    {runner?.ex?.availableToLay[2]?.price ||
-                                      "0"}
-                                  </span>
-                                  <span className="block text-xs lg:text-[10px]">
-                                    {(
-                                      (runner?.ex?.availableToLay[2]?.size ||
-                                        0) / 1000
-                                    )?.toFixed(2)}
-                                  </span>
-                                </div>
-                                <div
-                                  className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!(isSuspended || isClosed)
-                                      ? "cursor-pointer"
-                                      : "cursor-not-allowed"
-                                    }`}
-                                  onClick={() =>
-                                    onPriceClick({
-                                      marketId: market?.marketId,
-                                      min: market?.min,
-                                      max: market?.max,
-                                      selectionId: runner?.selectionId,
-                                      runnerName: runnerName,
-                                      price:
-                                        (!(isSuspended || isClosed) &&
-                                          runner?.ex?.availableToLay[1]
-                                            ?.price) ||
-                                        0,
-                                      column: "LAY",
-                                    })
-                                  }
-                                >
-                                  <span className="odd block font-bold md:font-normal leading-[1.1]">
-                                    {runner?.ex?.availableToLay[1]?.price ||
-                                      "0"}
-                                  </span>
-                                  <span className="block text-xs lg:text-[10px]">
-                                    {(
-                                      (runner?.ex?.availableToLay[1]?.size ||
-                                        0) / 1000
-                                    )?.toFixed(2)}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-
-                            {isRowSlipOpen(
-                              market?.marketId,
-                              runner?.selectionId
-                            ) && (
-                                <div ref={betslipRef} className="lg:hidden">
-                                  {betSlipData && (
-                                    <MBetSlip
-                                      visible={isSlipOpen}
-                                      backLayClsModal={betSlipData?.slipCls}
-                                      extraBgClass={betSlipData?.slipBgClass}
-                                      odds={betSlipData?.odds}
-                                      marketId={betSlipData?.marketId}
-                                      selectionId={betSlipData?.selectionId}
-                                      eventId={eventId}
-                                      sportId={sportId}
-                                      marketType={market?.marketType}
-                                      runnerName={betSlipData?.runnerName}
-                                      minStake={betSlipData?.min}
-                                      maxStake={betSlipData?.max}
-                                      onClose={closeInlineSlip}
-                                      onPlaced={() => {
-                                        closeInlineSlip();
-                                        fetchMarketPL();
-                                      }}
-                                      onPreviewChange={handleSlipPreview}
-                                    />
-                                  )}
-                                </div>
-                              )}
-                          </React.Fragment>
-                        );
-                      })}
                     </div>
                   </div>
-                );
-              }
-            )}
+
+                  {/* ODDS BUTTONS */}
+                  <div
+                    className={`relative w-[40%] md:text-[#212529] md:w-[60%] flex 
+${isSuspended || isClosed
+                        ? `after:content-['${statusText}'] after:absolute after:inset-0 after:bg-black/60 after:text-[#ff3c3c] after:flex after:items-center after:justify-center after:uppercase after:font-extralight after:text-[15px] after:cursor-not-allowed`
+                        : ""
+                      }`}
+                  >
+                    {/* ========== MOBILE BACK (Shows [0] only) ========== */}
+                    <div
+                      className={`text-center flex-col md:hidden text-[#212529] justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
+                          ? "cursor-pointer"
+                          : "cursor-not-allowed"
+                        }`}
+                      onClick={() =>
+                        !(isSuspended || isClosed) &&
+                        onPriceClick({
+                          marketId: market?.marketId,
+                          min: market?.min,
+                          max: market?.max,
+                          selectionId: runner?.selectionId,
+                          runnerName: runnerName,
+                          price:
+                            runner?.ex?.availableToBack[0]?.price ||
+                            0,
+                          column: "BACK",
+                        })
+                      }
+                    >
+                      <span className="odd block md:font-normal  leading-[1.1]">
+                        {runner?.ex?.availableToBack[0]?.price ||
+                          "0"}
+                      </span>
+                      <span className="block text-xs lg:text-[10px] md:font-normal">
+                        {(
+                          (runner?.ex?.availableToBack[0]?.size ||
+                            0) / 1000
+                        )?.toFixed(2)}
+                      </span>
+                    </div>
+
+                    {/* ========== DESKTOP BACK 3 (Weakest - Shows [2]) ========== */}
+                    <div
+                      className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%]  bg-[#72bbef] ${!(isSuspended || isClosed)
+                          ? "cursor-pointer"
+                          : "cursor-not-allowed"
+                        }`}
+                      onClick={() =>
+                        !(isSuspended || isClosed) &&
+                        onPriceClick({
+                          marketId: market?.marketId,
+                          min: market?.min,
+                          max: market?.max,
+                          selectionId: runner?.selectionId,
+                          runnerName: runnerName,
+                          price:
+                            runner?.ex?.availableToBack[2]?.price ||
+                            0,
+                          column: "BACK",
+                        })
+                      }
+                    >
+                      <span className="odd block font-bold md:font-normal leading-[1.1]">
+                        {runner?.ex?.availableToBack[2]?.price ||
+                          "0"}
+                      </span>
+                      <span className="block text-xs lg:text-[10px]">
+                        {(
+                          (runner?.ex?.availableToBack[2]?.size ||
+                            0) / 1000
+                        )?.toFixed(2)}
+                      </span>
+                    </div>
+
+                    {/* ========== DESKTOP BACK 2 (Medium - Shows [1]) ========== */}
+                    <div
+                      className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!(isSuspended || isClosed)
+                          ? "cursor-pointer"
+                          : "cursor-not-allowed"
+                        }`}
+                      onClick={() =>
+                        !(isSuspended || isClosed) &&
+                        onPriceClick({
+                          marketId: market?.marketId,
+                          min: market?.min,
+                          max: market?.max,
+                          selectionId: runner?.selectionId,
+                          runnerName: runnerName,
+                          price:
+                            runner?.ex?.availableToBack[1]?.price ||
+                            0,
+                          column: "BACK",
+                        })
+                      }
+                    >
+                      <span className="odd block font-bold md:font-normal leading-[1.1]">
+                        {runner?.ex?.availableToBack[1]?.price ||
+                          "0"}
+                      </span>
+                      <span className="block text-xs lg:text-[10px]">
+                        {(
+                          (runner?.ex?.availableToBack[1]?.size ||
+                            0) / 1000
+                        )?.toFixed(2)}
+                      </span>
+                    </div>
+
+                    {/* ========== DESKTOP BACK 1 (Strongest - Shows [0]) ========== */}
+                    <div
+                      className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!(isSuspended || isClosed)
+                          ? "cursor-pointer"
+                          : "cursor-not-allowed"
+                        }`}
+                      onClick={() =>
+                        !(isSuspended || isClosed) &&
+                        onPriceClick({
+                          marketId: market?.marketId,
+                          min: market?.min,
+                          max: market?.max,
+                          selectionId: runner?.selectionId,
+                          runnerName: runnerName,
+                          price:
+                            runner?.ex?.availableToBack[0]?.price ||
+                            0,
+                          column: "BACK",
+                        })
+                      }
+                    >
+                      <span className="odd block font-bold md:font-normal leading-[1.1]">
+                        {runner?.ex?.availableToBack[0]?.price ||
+                          "0"}
+                      </span>
+                      <span className="block text-xs lg:text-[10px]">
+                        {(
+                          (runner?.ex?.availableToBack[0]?.size ||
+                            0) / 1000
+                        )?.toFixed(2)}
+                      </span>
+                    </div>
+
+                    {/* ========== DESKTOP LAY 1 (Strongest - Shows [0]) ========== */}
+                    <div
+                      className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center  text-[#212529] w-[50%] bg-[#faa9ba] ${!(isSuspended || isClosed)
+                          ? "cursor-pointer"
+                          : "cursor-not-allowed"
+                        }`}
+                      onClick={() =>
+                        !(isSuspended || isClosed) &&
+                        onPriceClick({
+                          marketId: market?.marketId,
+                          min: market?.min,
+                          max: market?.max,
+                          selectionId: runner?.selectionId,
+                          runnerName: runnerName,
+                          price:
+                            runner?.ex?.availableToLay[0]?.price ||
+                            0,
+                          column: "LAY",
+                        })
+                      }
+                    >
+                      <span className="odd block md:font-normal leading-[1.1]">
+                        {runner?.ex?.availableToLay[0]?.price ||
+                          "0"}
+                      </span>
+                      <span className="block text-xs lg:text-[10px]">
+                        {(
+                          (runner?.ex?.availableToLay[0]?.size ||
+                            0) / 1000
+                        )?.toFixed(2)}
+                      </span>
+                    </div>
+
+                    {/* ========== MOBILE LAY (Shows [2]) ========== */}
+                    <div
+                      className={`text-center flex-col md:hidden justify-center items-center w-[50%] bg-[#faa9ba]  text-[#212529] flex ${!(isSuspended || isClosed)
+                          ? "cursor-pointer"
+                          : "cursor-not-allowed"
+                        }`}
+                      onClick={() =>
+                        !(isSuspended || isClosed) &&
+                        onPriceClick({
+                          marketId: market?.marketId,
+                          min: market?.min,
+                          max: market?.max,
+                          selectionId: runner?.selectionId,
+                          runnerName: runnerName,
+                          price:
+                            runner?.ex?.availableToLay[2]?.price ||
+                            0,
+                          column: "LAY",
+                        })
+                      }
+                    >
+                      <span className="odd block  md:font-normal  leading-[1.1]">
+                        {runner?.ex?.availableToLay[2]?.price ||
+                          "0"}
+                      </span>
+                      <span className="block text-xs lg:text-[10px]">
+                        {(
+                          (runner?.ex?.availableToLay[2]?.size ||
+                            0) / 1000
+                        )?.toFixed(2)}
+                      </span>
+                    </div>
+
+                    {/* ========== DESKTOP LAY 2 (Medium - Shows [1]) ========== */}
+                    <div
+                      className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!(isSuspended || isClosed)
+                          ? "cursor-pointer"
+                          : "cursor-not-allowed"
+                        }`}
+                      onClick={() =>
+                        !(isSuspended || isClosed) &&
+                        onPriceClick({
+                          marketId: market?.marketId,
+                          min: market?.min,
+                          max: market?.max,
+                          selectionId: runner?.selectionId,
+                          runnerName: runnerName,
+                          price:
+                            runner?.ex?.availableToLay[1]?.price ||
+                            0,
+                          column: "LAY",
+                        })
+                      }
+                    >
+                      <span className="odd block font-bold md:font-normal leading-[1.1]">
+                        {runner?.ex?.availableToLay[1]?.price ||
+                          "0"}
+                      </span>
+                      <span className="block text-xs lg:text-[10px]">
+                        {(
+                          (runner?.ex?.availableToLay[1]?.size ||
+                            0) / 1000
+                        )?.toFixed(2)}
+                      </span>
+                    </div>
+
+                    {/* ========== DESKTOP LAY 3 (Weakest - Shows [2]) ========== */}
+                    <div
+                      className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!(isSuspended || isClosed)
+                          ? "cursor-pointer"
+                          : "cursor-not-allowed"
+                        }`}
+                      onClick={() =>
+                        !(isSuspended || isClosed) &&
+                        onPriceClick({
+                          marketId: market?.marketId,
+                          min: market?.min,
+                          max: market?.max,
+                          selectionId: runner?.selectionId,
+                          runnerName: runnerName,
+                          price:
+                            runner?.ex?.availableToLay[2]?.price ||
+                            0,
+                          column: "LAY",
+                        })
+                      }
+                    >
+                      <span className="odd block font-bold md:font-normal leading-[1.1]">
+                        {runner?.ex?.availableToLay[2]?.price ||
+                          "0"}
+                      </span>
+                      <span className="block text-xs lg:text-[10px]">
+                        {(
+                          (runner?.ex?.availableToLay[2]?.size ||
+                            0) / 1000
+                        )?.toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* INLINE BETSLIP (Mobile only) */}
+                {isRowSlipOpen(
+                  market?.marketId,
+                  runner?.selectionId
+                ) && (
+                    <div ref={betslipRef} className="lg:hidden">
+                      {betSlipData && (
+                        <MBetSlip
+                          visible={isSlipOpen}
+                          backLayClsModal={betSlipData?.slipCls}
+                          extraBgClass={betSlipData?.slipBgClass}
+                          odds={betSlipData?.odds}
+                          marketId={betSlipData?.marketId}
+                          selectionId={betSlipData?.selectionId}
+                          eventId={eventId}
+                          sportId={sportId}
+                          marketType={market?.marketType}
+                          runnerName={betSlipData?.runnerName}
+                          minStake={betSlipData?.min}
+                          maxStake={betSlipData?.max}
+                          onClose={closeInlineSlip}
+                          onPlaced={() => {
+                            closeInlineSlip();
+                            fetchMarketPL();
+                          }}
+                          onPreviewChange={handleSlipPreview}
+                        />
+                      )}
+                    </div>
+                  )}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </div>
+    );
+  }
+)}
           </div>
 
           <div className="right-part hidden lg:block lg:w-[30%] ml-[5px]">
