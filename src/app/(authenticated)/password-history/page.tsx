@@ -5,6 +5,12 @@ import React, { useState, useEffect } from "react";
 import { CONFIG } from "@/lib/config";
 import { fetchData } from "@/lib/functions";
 
+interface PasswordHistoryItem {
+  createdAt: string;
+  remark: string;
+}
+
+
 export default function PasswordHistory() {
   // just for date display
   const fmtDate = (iso?: string) => {
@@ -30,13 +36,10 @@ export default function PasswordHistory() {
   };
 
   const [activeTab, setActiveTab] = useState("password");
-  const [passwordData, setPasswordData] = useState<any>([]);
+  const [passwordData, setPasswordData] = useState<PasswordHistoryItem[]>([]);
   const router = useRouter();
 
-  // 🔥 API CALL on page load
-  useEffect(() => {
-    fetchPasswordHistory();
-  }, []);
+  
 
   const fetchPasswordHistory = () => {
     fetchData({
@@ -45,11 +48,16 @@ export default function PasswordHistory() {
         type: "PASSWORD_HISTORY_LOGS",
         key: CONFIG.siteKey,
       },
-      setFn: (res: any) => {
+      setFn: (res: { passwordHistoryLogs: PasswordHistoryItem[] }) => {
         setPasswordData(res?.passwordHistoryLogs ?? []);
       },
     });
   };
+
+  // 🔥 API CALL on page load
+  useEffect(() => {
+    fetchPasswordHistory();
+  }, []);
 
   const switchTab = (tab: string) => () => {
     if (tab === "activity") {
@@ -90,7 +98,7 @@ export default function PasswordHistory() {
       <div className="min-[992px]:mx-1 min-[992px]:my-1">
         <div className="border border-gray-200 min-[992px]:rounded-min-[992px]: text-white">
           {/* Header */}
-          <div className="px-4 py-[4px] min-[992px]:py-[0.218px] border-b border-[rgba(0,0,0,0.175)] min-[992px]:rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] min-[992px]:h-[37.8px] flex items-center">
+          <div className="px-4 py-1 min-[992px]:py-[0.218px] border-b border-[rgba(0,0,0,0.175)] min-[992px]:rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] min-[992px]:h-[37.8px] flex items-center">
             <span className="mb-0 text-base text-white! min-[992px]:text-[24px]">
               Password History
             </span>
@@ -98,7 +106,7 @@ export default function PasswordHistory() {
 
           {/* Table Wrapper */}
           <div className="py-3 min-[992px]:py-4 px-2 min-[992px]:px-[5px]">
-            <div className="overflow-x-auto md:mt-[4px] min-[992px]:mt-0">
+            <div className="overflow-x-auto md:mt-1 min-[992px]:mt-0">
               <table className="w-full border border-[#C8CED3]">
                 <thead>
                   <tr>
@@ -113,7 +121,7 @@ export default function PasswordHistory() {
 
                 <tbody>
                   {passwordData?.length > 0 ? (
-                    passwordData.map((row: any, idx: number) => (
+                    passwordData.map((row: PasswordHistoryItem, idx: number) => (
                       <tr key={idx} className="odd:bg-white">
                         <td className="px-2 py-0.5 h-[23px] min-[992px]:h-auto min-[992px]:py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
                           {fmtDate(row.createdAt)}

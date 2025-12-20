@@ -20,6 +20,15 @@ interface PasswordHistoryItem {
   createdAt: string;
 }
 
+interface ActivityLogsResponse {
+  activityLogs: ActivityLogItem[];
+}
+
+
+interface PasswordHistoryResponse {
+  passwordHistoryLogs: PasswordHistoryItem[];
+}
+
 export default function ActivityLog() {
   const fmtDate = (iso?: string) => {
     if (!iso) return "";
@@ -44,15 +53,20 @@ export default function ActivityLog() {
   };
 
   const [activeTab, setActiveTab] = useState("activity");
-  const [activityData, setActivityData] = useState<any>();
-  const [passwordData, setPasswordData] = useState<any>();
+  const [activityData, setActivityData] =
+    useState<ActivityLogsResponse>({
+      activityLogs: [],
+    });
+
+  const [passwordData, setPasswordData] =
+    useState<PasswordHistoryResponse>({
+      passwordHistoryLogs: [],
+    });
+
 
   const router = useRouter();
 
-  // default load activity logs
-  useEffect(() => {
-    loadActivityLogs();
-  }, []);
+
 
   const loadActivityLogs = () => {
     fetchData({
@@ -61,6 +75,11 @@ export default function ActivityLog() {
       setFn: setActivityData,
     });
   };
+
+  // default load activity logs
+  useEffect(() => {
+    loadActivityLogs();
+  }, []);
 
   const loadPasswordHistory = () => {
     fetchData({
@@ -84,25 +103,23 @@ export default function ActivityLog() {
 
   return (
     <>
-      <div className="flex items-center gap-[6px] md:gap-2 mx-[6px] md:mx-2">
+      <div className="flex items-center gap-1.5 md:gap-2 mx-1.5 md:mx-2">
         <button
           onClick={switchTab("activity")}
-          className={`w-full mt-2 mb-[7px] md:my-[9px] py-1 px-2 md:px-3.5 md:py-2.5 rounded-[30px] text-black text-[16px] font-semibold border cursor-pointer border-black ${
-            activeTab === "activity"
-              ? "bg-linear-to-b from-[#f4b501] to-[#f68700]"
-              : ""
-          }`}
+          className={`w-full mt-2 mb-[7px] md:my-[9px] py-1 px-2 md:px-3.5 md:py-2.5 rounded-[30px] text-black text-[16px] font-semibold border cursor-pointer border-black ${activeTab === "activity"
+            ? "bg-linear-to-b from-[#f4b501] to-[#f68700]"
+            : ""
+            }`}
         >
           Activity Log
         </button>
 
         <button
           onClick={switchTab("password")}
-          className={`w-full mt-2 mb-[7px] md:my-[9px] py-1 px-2 md:px-3.5 md:py-2.5 border rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black ${
-            activeTab === "password"
-              ? "bg-linear-to-b from-[#f4b501] to-[#f68700]"
-              : ""
-          }`}
+          className={`w-full mt-2 mb-[7px] md:my-[9px] py-1 px-2 md:px-3.5 md:py-2.5 border rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black ${activeTab === "password"
+            ? "bg-linear-to-b from-[#f4b501] to-[#f68700]"
+            : ""
+            }`}
         >
           Password History
         </button>
@@ -111,7 +128,7 @@ export default function ActivityLog() {
       <div className="md:mx-1 md:my-1">
         <div className="border border-gray-200 md:rounded-md text-white">
           {/* Header */}
-          <div className="px-[6px] py-[4px] md:py-[0.218px] border-b border-[rgba(0,0,0,0.175)] md:rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] h-[34.59px] md:h-[37.8px]">
+          <div className="px-1.5 py-1 md:py-[0.218px] border-b border-[rgba(0,0,0,0.175)] md:rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] h-[34.59px] md:h-[37.8px]">
             <span className="text-[18px] md:text-[24px] font-semibold font-roboto ">
               {activeTab === "activity" ? "Activity Log" : "Password History"}
             </span>
@@ -158,7 +175,7 @@ export default function ActivityLog() {
                 <tbody>
                   {/* ACTIVITY LOG TABLE */}
                   {activeTab === "activity" &&
-                  activityData?.activityLogs?.length > 0 ? (
+                    activityData?.activityLogs?.length > 0 ? (
                     activityData.activityLogs.map(
                       (row: ActivityLogItem, idx: number) => (
                         <tr key={idx} className="odd:bg-white">
@@ -207,7 +224,7 @@ export default function ActivityLog() {
 
                   {/* PASSWORD HISTORY TABLE */}
                   {activeTab === "password" &&
-                  passwordData?.passwordHistoryLogs?.length > 0 ? (
+                    passwordData?.passwordHistoryLogs?.length > 0 ? (
                     passwordData.passwordHistoryLogs.map(
                       (row: PasswordHistoryItem, idx: number) => (
                         <tr key={idx} className="odd:bg-white">

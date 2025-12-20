@@ -54,7 +54,7 @@ const MMenuTabs = () => {
             style={{ display: "table-cell" }}
           >
             <a
-              className={`px-[11.5px] mb-[3px] ml-0.5 relative block tracking-[-0.1px] text-white font-bold whitespace-nowrap no-underline cursor-pointer text-[12px] pt-0 pb-0 ${
+              className={`px-[11.5px] mb-[3px] ml-0.5 relative block tracking-[-0.1px] text-white min-[992px]:font-bold whitespace-nowrap no-underline cursor-pointer text-[12px] pt-0 pb-0 ${
                 index < exchangeTypeList.length - 1 ? "border-r border-white" : ""
               }`}
               onClick={() => navigateById(tab.exchangeId)}

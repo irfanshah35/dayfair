@@ -5,7 +5,6 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { CryptoService } from "../../../lib/crypto-service";
 import { BASE_URL, CONFIG } from "../../../lib/config";
 import { useRouter } from "next/navigation";
-import { fetchData } from "@/lib/functions";
 import { useToast } from "@/components/common/toast/toast-context";
 
 /* ---------------------- PASSWORD RULES ---------------------- */
@@ -35,7 +34,7 @@ export default function ChangePassword() {
   });
 
   /* ---------------------- HANDLE INPUT CHANGE ---------------------- */
-  const handleInput = (e: any) => {
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -129,7 +128,7 @@ export default function ChangePassword() {
       if (res?.meta?.message) {
         parts = res.meta.message
           .split(/',\s*'/)
-          .map((p: any) => p?.replace(/^'+|'+$/g, "").trim());
+          .map((p: string | undefined) => p?.replace(/^'+|'+$/g, "").trim() || "");
       }
 
       const msg = {

@@ -566,7 +566,7 @@ const Header = () => {
         {isLoggedIn && (
           <button
             onClick={goToLogin}
-            className="cursor-pointer text-black border border-white text-[10px] min-[345px]:text-sm min-[992px]:text-base hover:opacity-90 transition-opacity rounded-[3.875px] absolute right-px top-[-1px] min-[345px]:-top-1 w-[49.94px] h-[27px] min-[345px]:h-[31px] min-[345px]:w-[67.92px]"
+            className="cursor-pointer text-black border border-white text-[10px] min-[345px]:text-sm min-[992px]:text-base hover:opacity-90 transition-opacity rounded-[3.875px] absolute right-px -top-px min-[345px]:-top-1 w-[49.94px] h-[27px] min-[345px]:h-[31px] min-[345px]:w-[67.92px]"
             style={{
               background: "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
             }}
