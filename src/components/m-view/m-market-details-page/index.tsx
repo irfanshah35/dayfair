@@ -14,7 +14,6 @@ import { useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { webSocketService } from "@/lib/websocket.service";
 
-
 const RulesModal = dynamic(() => import("../../modals/rules-modal"), {
   loading: () => <></>,
   ssr: false,
@@ -29,7 +28,6 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
 
   // INLINE (mobile) slip open or not
   const [isSlipOpen, setIsSlipOpen] = useState(false);
-  const [isbetlimits, setIsBetLimits] = useState(false);
   const [selectedMarketRules, setSelectedMarketRules] = useState<string | null>(
     null
   );
@@ -43,10 +41,9 @@ export default function MMarketDetailsPage({ apiData }: { apiData: any }) {
   >({});
   const [slipPreview, setSlipPreview] = useState({ stake: 0, price: 0 });
   const socketCleanupRef = useRef<(() => void) | null>(null);
-// Add these with your other state declarations
-const [allMarkets, setAllMarkets] = useState<Market[]>([]);
-const activeSocketIdsRef = useRef<string[]>([]);
-const initialFilterAppliedRef = useRef(false);
+  // Add these with your other state declarations
+  const activeSocketIdsRef = useRef<string[]>([]);
+  const initialFilterAppliedRef = useRef(false);
   const params = useParams();
   const eventId = (params as any)?.eventId || "";
   const sportId = (params as any)?.sportId || "";
@@ -60,256 +57,249 @@ const initialFilterAppliedRef = useRef(false);
 
   //socket code  starts
 
-
   useEffect(() => {
     return () => {
       socketCleanupRef.current?.();
     };
   }, []);
 
-const areIdsSame = (a: string[], b: string[]) => {
-  if (a.length !== b.length) return false;
-  const setA = new Set(a);
-  for (const id of b) {
-    if (!setA.has(id)) return false;
-  }
-  return true;
-};
-
-// 🔹 Helper: Subscribe to markets
-const subscribeForMarkets = (marketIds: string[]) => {
-  // Normalize and deduplicate
-  const cleaned = Array.from(
-    new Set(
-      (marketIds || [])
-        .filter((id) => !!id)
-        .map((id) => String(id))
-    )
-  );
-
-  // ⚠️ If same IDs, skip re-subscribe
-  if (areIdsSame(cleaned, activeSocketIdsRef.current)) {
-    return;
-  }
-
-  // UNSUBSCRIBE old subscriptions
-  if (activeSocketIdsRef.current.length > 0) {
-    webSocketService.unsubscribeMarket(activeSocketIdsRef.current);
-  }
-
-  // SAVE + SUBSCRIBE new
-  activeSocketIdsRef.current = cleaned;
-  if (cleaned.length > 0) {
-    webSocketService.subscribeMarket(cleaned, "market-details");
-  }
-};
-
-    const mergeSide = (prevSide: any[], incoming: any): any[] => {
-              const base: any[] = Array.isArray(prevSide) ? [...prevSide] : [];
-
-              const write = (idx: number, val: any) => {
-                base[idx] = {
-                  price: val?.price ?? 0,
-                  size: val?.size ?? 0,
-                };
-              };
-
-              if (Array.isArray(incoming)) {
-                incoming.forEach((val, idx) => {
-                  if (val) write(idx, val);
-                });
-              } else if (incoming && typeof incoming === "object") {
-                Object.keys(incoming).forEach((k) => {
-                  const idx = Number(k);
-                  if (Number.isNaN(idx)) return;
-                  write(idx, incoming[k]);
-                });
-              }
-
-              for (let i = 0; i < 3; i++) {
-                if (!base[i]) base[i] = { price: 0, size: 0 };
-              }
-              return base;
-            };
-
-
-
-const [matchOddsData, setMatchOddsData] = useState<any[]>([]);
-
-
-useEffect(() => {
-  if (apiData?.matchOddsData?.length > 0) {
-    console.log("🔄 Initializing matchOddsData from apiData");
-    setMatchOddsData(apiData.matchOddsData);
-  }
-}, [apiData?.matchOddsData]);
-
-useEffect(() => {
-  if (!matchOddsData || matchOddsData.length === 0) {
-    return;
-  }
-
-  try {
-    const marketIds: string[] = matchOddsData
-      .map((m: any) => m?.exMarketId || m?.marketId)
-      .filter(
-        (id: any): id is string =>
-          typeof id === "string" && id.length > 0
-      );
-
-    if (marketIds.length === 0) return;
-
-    // 1) Connect
-    webSocketService.connect();
-
-    // 2) Subscribe
-    webSocketService.subscribeMarket(marketIds, "market-details");
-
-    // 3) Listen for updates
-    const offOdds = webSocketService.onEvent<any>("odds", (raw) => {
-      try {
-        let payload: any = raw;
-        if (typeof raw === "string") {
-          payload = JSON.parse(raw);
-        } else if (Array.isArray(raw) && raw.length >= 2) {
-          const maybe = raw[1];
-          payload = typeof maybe === "string" ? JSON.parse(maybe) : maybe;
-        }
-
-        const marketId = payload?.marketId;
-        if (!marketId) return;
-
-        const exMap: Record<string, any> = payload.ex || {};
-
-        console.log("📊 Socket update for market:", marketId);
-
-        // 🔥 UPDATE matchOddsData
-        setMatchOddsData((prev: any[]) => {
-          return prev.map((m) => {
-            const id = m.exMarketId || m.marketId;
-            if (String(id) !== String(marketId)) return m;
-
-            const runners = (m.runners || []).map((r: any) => {
-              const key = String(r.selectionId);
-              let exEntry = exMap[key] ?? exMap[r.selectionId];
-
-              if (!exEntry) {
-                for (const k in exMap) {
-                  const val = exMap[k];
-                  if (val && String(val.selectionId) === key) {
-                    exEntry = val;
-                    break;
-                  }
-                }
-              }
-
-              if (!exEntry) return r;
-
-              const prevEx = r.ex || {};
-              const newEx = {
-                ...prevEx,
-                availableToBack: mergeSide(
-                  prevEx.availableToBack,
-                  exEntry.availableToBack
-                ),
-                availableToLay: mergeSide(
-                  prevEx.availableToLay,
-                  exEntry.availableToLay
-                ),
-              };
-
-              return { 
-                ...r, 
-                ex: newEx,
-                _updateKey: Date.now()
-              };
-            });
-
-            return { 
-              ...m, 
-              runners,
-              _updateKey: Date.now()
-            };
-          });
-        });
-      } catch (e) {
-        console.error("❌ Socket update failed:", e);
-      }
-    });
-
-    // 4) Cleanup
-    socketCleanupRef.current = () => {
-      webSocketService.unsubscribeMarket(marketIds);
-      offOdds();
-    };
-
-    return () => {
-      socketCleanupRef.current?.();
-    };
-  } catch (e) {
-    console.warn("Socket setup failed:", e);
-  }
-}, [matchOddsData]); 
-
-
-const setMarketType = (type: string, ...args: any[]) => {
-  const marketid: string = String(args[3] ?? args[args.length - 1] ?? "");
-
-  const isDesktop =
-    typeof window !== "undefined" && (window.innerWidth ?? 0) >= 1024;
-
-  if (isDesktop) {
-    type = "ALL";
-  }
-
-  setActiveCategory(type);
-
-  let filtered: any[] = [];
-
-  if (type === "Popular") {
-    filtered = (matchOddsData || []) // ✅ Use matchOddsData
-      .filter((m: any) => m.popular && m.status !== "CLOSED")
-      .sort((a: any, b: any) => a.sequence - b.sequence);
-
-    const ids = filtered.map((m) => m.exMarketId || m.marketId);
-
-    if (!isDesktop) {
-      subscribeForMarkets(ids);
+  const areIdsSame = (a: string[], b: string[]) => {
+    if (a.length !== b.length) return false;
+    const setA = new Set(a);
+    for (const id of b) {
+      if (!setA.has(id)) return false;
     }
-  } else if (type === "ALL" || type === "All Market") {
-    filtered = [...(matchOddsData || [])].sort( // ✅ Use matchOddsData
-      (a: any, b: any) => a.sequence - b.sequence
+    return true;
+  };
+
+  // 🔹 Helper: Subscribe to markets
+  const subscribeForMarkets = (marketIds: string[]) => {
+    // Normalize and deduplicate
+    const cleaned = Array.from(
+      new Set(
+        (marketIds || [])
+          .filter((id) => !!id)
+          .map((id) => String(id))
+      )
     );
 
-    const ids = filtered.map((m) => m.exMarketId || m.marketId);
-
-    if (!isDesktop) {
-      subscribeForMarkets(ids);
+    // ⚠️ If same IDs, skip re-subscribe
+    if (areIdsSame(cleaned, activeSocketIdsRef.current)) {
+      return;
     }
-  } else {
-    filtered = (matchOddsData || []) // ✅ Use matchOddsData
-      .filter(
-        (market: any) =>
-          market.marketId === marketid && market.status !== "CLOSED"
-      )
-      .sort((a: any, b: any) => a.sequence - b.sequence);
 
-    const ids = filtered.map((m) => m.exMarketId || m.marketId);
-
-    if (!isDesktop) {
-      subscribeForMarkets(ids);
+    // UNSUBSCRIBE old subscriptions
+    if (activeSocketIdsRef.current.length > 0) {
+      webSocketService.unsubscribeMarket(activeSocketIdsRef.current);
     }
-  }
 
-  setFilteredMarketData(filtered);
-};
+    // SAVE + SUBSCRIBE new
+    activeSocketIdsRef.current = cleaned;
+    if (cleaned.length > 0) {
+      webSocketService.subscribeMarket(cleaned, "market-details");
+    }
+  };
 
-useEffect(() => {
-  if (matchOddsData?.length > 0 && !initialFilterAppliedRef.current) {
-    initialFilterAppliedRef.current = true;
-    setMarketType("Popular", "", "Popular", 1, "");
-  }
-}, [matchOddsData]); 
+  const mergeSide = (prevSide: any[], incoming: any): any[] => {
+    const base: any[] = Array.isArray(prevSide) ? [...prevSide] : [];
+
+    const write = (idx: number, val: any) => {
+      base[idx] = {
+        price: val?.price ?? 0,
+        size: val?.size ?? 0,
+      };
+    };
+
+    if (Array.isArray(incoming)) {
+      incoming.forEach((val, idx) => {
+        if (val) write(idx, val);
+      });
+    } else if (incoming && typeof incoming === "object") {
+      Object.keys(incoming).forEach((k) => {
+        const idx = Number(k);
+        if (Number.isNaN(idx)) return;
+        write(idx, incoming[k]);
+      });
+    }
+
+    for (let i = 0; i < 3; i++) {
+      if (!base[i]) base[i] = { price: 0, size: 0 };
+    }
+    return base;
+  };
+
+  const [matchOddsData, setMatchOddsData] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (apiData?.matchOddsData?.length > 0) {
+      console.log("🔄 Initializing matchOddsData from apiData");
+      setMatchOddsData(apiData.matchOddsData);
+    }
+  }, [apiData?.matchOddsData]);
+
+  useEffect(() => {
+    if (!matchOddsData || matchOddsData.length === 0) {
+      return;
+    }
+
+    try {
+      const marketIds: string[] = matchOddsData
+        .map((m: any) => m?.exMarketId || m?.marketId)
+        .filter((id: any): id is string => typeof id === "string" && id.length > 0);
+
+      if (marketIds.length === 0) return;
+
+      // 1) Connect
+      webSocketService.connect();
+
+      // 2) Subscribe
+      webSocketService.subscribeMarket(marketIds, "market-details");
+
+      // 3) Listen for updates
+      const offOdds = webSocketService.onEvent<any>("odds", (raw) => {
+        try {
+          let payload: any = raw;
+          if (typeof raw === "string") {
+            payload = JSON.parse(raw);
+          } else if (Array.isArray(raw) && raw.length >= 2) {
+            const maybe = raw[1];
+            payload = typeof maybe === "string" ? JSON.parse(maybe) : maybe;
+          }
+
+          const marketId = payload?.marketId;
+          if (!marketId) return;
+
+          const exMap: Record<string, any> = payload.ex || {};
+
+          console.log("📊 Socket update for market:", marketId);
+
+          // 🔥 UPDATE matchOddsData
+          setMatchOddsData((prev: any[]) => {
+            return prev.map((m) => {
+              const id = m.exMarketId || m.marketId;
+              if (String(id) !== String(marketId)) return m;
+
+              const runners = (m.runners || []).map((r: any) => {
+                const key = String(r.selectionId);
+                let exEntry = exMap[key] ?? exMap[r.selectionId];
+
+                if (!exEntry) {
+                  for (const k in exMap) {
+                    const val = exMap[k];
+                    if (val && String(val.selectionId) === key) {
+                      exEntry = val;
+                      break;
+                    }
+                  }
+                }
+
+                if (!exEntry) return r;
+
+                const prevEx = r.ex || {};
+                const newEx = {
+                  ...prevEx,
+                  availableToBack: mergeSide(
+                    prevEx.availableToBack,
+                    exEntry.availableToBack
+                  ),
+                  availableToLay: mergeSide(
+                    prevEx.availableToLay,
+                    exEntry.availableToLay
+                  ),
+                };
+
+                return {
+                  ...r,
+                  ex: newEx,
+                  _updateKey: Date.now(),
+                };
+              });
+
+              return {
+                ...m,
+                runners,
+                _updateKey: Date.now(),
+              };
+            });
+          });
+        } catch (e) {
+          console.error("❌ Socket update failed:", e);
+        }
+      });
+
+      // 4) Cleanup
+      socketCleanupRef.current = () => {
+        webSocketService.unsubscribeMarket(marketIds);
+        offOdds();
+      };
+
+      return () => {
+        socketCleanupRef.current?.();
+      };
+    } catch (e) {
+      console.warn("Socket setup failed:", e);
+    }
+  }, [matchOddsData]);
+
+  const setMarketType = useCallback((type: string, ...args: any[]) => {
+    const marketid: string = String(args[3] ?? args[args.length - 1] ?? "");
+
+    const isDesktop =
+      typeof window !== "undefined" && (window.innerWidth ?? 0) >= 1024;
+
+    if (isDesktop) {
+      type = "ALL";
+    }
+
+    setActiveCategory(type);
+
+    let filtered: any[] = [];
+
+    if (type === "Popular") {
+      filtered = (matchOddsData || []) // ✅ Use matchOddsData
+        .filter((m: any) => m.popular && m.status !== "CLOSED")
+        .sort((a: any, b: any) => a.sequence - b.sequence);
+
+      const ids = filtered.map((m) => m.exMarketId || m.marketId);
+
+      if (!isDesktop) {
+        subscribeForMarkets(ids);
+      }
+    } else if (type === "ALL" || type === "All Market") {
+      filtered = [...(matchOddsData || [])].sort( // ✅ Use matchOddsData
+        (a: any, b: any) => a.sequence - b.sequence
+      );
+
+      const ids = filtered.map((m) => m.exMarketId || m.marketId);
+
+      if (!isDesktop) {
+        subscribeForMarkets(ids);
+      }
+    } else {
+      filtered = (matchOddsData || []) // ✅ Use matchOddsData
+        .filter(
+          (market: any) =>
+            market.marketId === marketid && market.status !== "CLOSED"
+        )
+        .sort((a: any, b: any) => a.sequence - b.sequence);
+
+      const ids = filtered.map((m) => m.exMarketId || m.marketId);
+
+      if (!isDesktop) {
+        subscribeForMarkets(ids);
+      }
+    }
+
+    setFilteredMarketData(filtered);
+  }, [matchOddsData]);
+
+  useEffect(() => {
+    if (matchOddsData?.length > 0 && !initialFilterAppliedRef.current) {
+      initialFilterAppliedRef.current = true;
+      setMarketType("Popular", "", "Popular", 1, "");
+    }
+  }, [matchOddsData, setMarketType]);
+
   const [isMobile, setIsMobile] = useState(false);
   const [isvolume, setIsVolume] = useState(false);
   const [iswatchlive, setIsWatchLive] = useState(false);
@@ -366,12 +356,13 @@ useEffect(() => {
           console.log("Balance refreshed:", res);
           // Update global store so Header shows new balance immediately
           setUserBalance(res);
-        }
+        },
       });
     } catch (error) {
       console.error("Balance refresh error:", error);
     }
   };
+
   // 👇 Fetch Bets API
   const fetchBets = async () => {
     if (!eventId || !sportId) return;
@@ -391,8 +382,6 @@ useEffect(() => {
       },
     });
   };
-
-
 
   // 👇 Fetch Profit/Loss API
   const fetchMarketPL = useCallback(async () => {
@@ -426,12 +415,11 @@ useEffect(() => {
   }, [eventId, sportId, fetchMarketPL]);
 
   // Helper function to get PL for a specific runner
-  // Helper function to get PL for a specific runner
   const getRunnerPL = (marketId: string, selectionId: number) => {
     if (!marketPL || Object.keys(marketPL).length === 0) return null;
 
     // 🔹 STRICT: Only exact string match
-    const marketData = marketPL[String(marketId)];
+const marketData = marketPL[String(marketId)] as Record<string, number>;
 
     if (!marketData) return null;
 
@@ -486,6 +474,7 @@ useEffect(() => {
       }, 100);
     }
   }, [isSlipOpen, openSlip]);
+
   // 🔹 NEW: Cashout code start here
 
   // --- CASHOUT STATES ---
@@ -501,7 +490,7 @@ useEffect(() => {
     {}
   );
 
-  const cashoutIntervalRef = useRef<Record<string, any>>({});
+  const cashoutIntervalRef = useRef<Record<string, NodeJS.Timeout>>({});
 
   const omit = (obj: any, key: any) => {
     const copy = { ...obj };
@@ -523,6 +512,7 @@ useEffect(() => {
 
     return Object.values(plData).some((v: any) => Math.abs(Number(v)) > 0);
   };
+
   const startCashout = (market: any) => {
     const marketId = market.marketId;
 
@@ -536,6 +526,7 @@ useEffect(() => {
       calculateCashOut(market);
     }, 1000);
   };
+
   const calculateCashOut = (market: any) => {
     const marketId = market.marketId;
 
@@ -555,7 +546,7 @@ useEffect(() => {
       layOdds: r?.ex?.availableToLay?.[0]?.price || 0,
     }));
 
-    const fav = oddsArr.reduce((min, curr) =>
+    const fav = oddsArr.reduce((min:any, curr:any) =>
       curr.backOdds < min.backOdds ? curr : min
     );
 
@@ -578,7 +569,7 @@ useEffect(() => {
       const otherSel = Number(keys(other)[0]);
       const diff = Math.abs(
         Number(userProfitLoss[fav.selectionId]) -
-        Number(userProfitLoss[otherSel])
+          Number(userProfitLoss[otherSel])
       );
 
       if (favPL > userProfitLoss[otherSel]) {
@@ -629,6 +620,7 @@ useEffect(() => {
       matchMe: false,
     });
   };
+
   const stopCashout = (marketId: string) => {
     if (cashoutIntervalRef.current[marketId]) {
       clearInterval(cashoutIntervalRef.current[marketId]);
@@ -638,7 +630,8 @@ useEffect(() => {
     setShowCashoutValue((p) => ({ ...p, [marketId]: false }));
     setCashoutValues((p) => ({ ...p, [marketId]: "Cash Out" }));
   };
-  const onCashOutConfirm = async () => {
+
+  const onCashOutConfirm = async (marketId: string) => {
     if (!cashOutAPIData?.stake) {
       return;
     }
@@ -646,14 +639,17 @@ useEffect(() => {
     try {
       setCashoutLoader(true);
 
-      const res = await fetchData({
-        url: CONFIG.placeBetURL,
-        payload: cashOutAPIData,
-      });
+      
+    const res = (await fetchData({
+  url: CONFIG.placeBetURL,
+  payload: cashOutAPIData,
+})) as any;
 
-      if (res?.meta?.status === false) {
-        throw new Error(res?.meta?.message || "Cashout Failed");
-      }
+if (res?.meta?.status === false) {
+  throw new Error(res?.meta?.message || "Cashout Failed");
+}
+
+     
 
       // Clear cashout states
       setCashoutValues({});
@@ -666,15 +662,23 @@ useEffect(() => {
       refreshUserBalance();
 
       // Show success toast
-      showToast("success", "Cashout Successful", "Your bet has been cashed out successfully");
-
+      showToast(
+        "success",
+        "Cashout Successful",
+        "Your bet has been cashed out successfully"
+      );
     } catch (err: any) {
       // Show error toast
-      showToast("error", "Cashout Failed", err?.message || "Failed to process cashout. Please try again");
+      showToast(
+        "error",
+        "Cashout Failed",
+        err?.message || "Failed to process cashout. Please try again"
+      );
     } finally {
       setCashoutLoader(false);
     }
   };
+
   useEffect(() => {
     return () => {
       Object.values(cashoutIntervalRef.current).forEach((i) =>
@@ -696,7 +700,7 @@ useEffect(() => {
 
     // 🔹 IF confirm true → API CALL
     if (confirmCashout[marketId]) {
-      onCashOutConfirm();
+      onCashOutConfirm(marketId);
       setConfirmCashout((p) => ({ ...p, [marketId]: false }));
       return;
     }
@@ -768,8 +772,6 @@ useEffect(() => {
     setOpenSlip({ marketId, selectionId, side: column });
   };
 
-
-
   // Close inline slip (mobile only)
   const closeInlineSlip = () => {
     setIsSlipOpen(false);
@@ -787,72 +789,79 @@ useEffect(() => {
     );
   };
 
-  // 🎯 Track previous odds values for comparison
-const previousOddsRef = useRef<Record<string, any>>({});
+  const previousOddsRef = useRef<Record<string, any>>({});
 
-// 🎯 Highlight changed odds
-useEffect(() => {
-  const marketsToCheck = isMobile ? filteredMarketData : matchOddsData;
-  
-  if (!marketsToCheck || marketsToCheck.length === 0) return;
+  useEffect(() => {
+    const marketsToCheck = isMobile ? filteredMarketData : matchOddsData;
 
-  marketsToCheck.forEach((market: any) => {
-    market?.runners?.forEach((runner: any) => {
-      const key = `${market.marketId}-${runner.selectionId}`;
-      const prevOdds = previousOddsRef.current[key];
+    if (!marketsToCheck || marketsToCheck.length === 0) return;
 
-      // Back odds (0, 1, 2)
-      for (let i = 0; i < 3; i++) {
-        const currentBackPrice = runner?.ex?.availableToBack?.[i]?.price;
-        const prevBackPrice = prevOdds?.back?.[i];
+    marketsToCheck.forEach((market: any) => {
+      market?.runners?.forEach((runner: any) => {
+        const key = `${market.marketId}-${runner.selectionId}`;
+        const prevOdds = previousOddsRef.current[key];
 
-        if (prevBackPrice !== undefined && currentBackPrice !== prevBackPrice) {
-          triggerFlash(market.marketId, runner.selectionId, 'BACK', i);
+        // Back odds (0, 1, 2)
+        for (let i = 0; i < 3; i++) {
+          const currentBackPrice = runner?.ex?.availableToBack?.[i]?.price;
+          const prevBackPrice = prevOdds?.back?.[i];
+
+          if (
+            prevBackPrice !== undefined &&
+            currentBackPrice !== prevBackPrice
+          ) {
+            triggerFlash(market.marketId, runner.selectionId, "BACK", i);
+          }
         }
-      }
 
-      // Lay odds (0, 1, 2)
-      for (let i = 0; i < 3; i++) {
-        const currentLayPrice = runner?.ex?.availableToLay?.[i]?.price;
-        const prevLayPrice = prevOdds?.lay?.[i];
+        // Lay odds (0, 1, 2)
+        for (let i = 0; i < 3; i++) {
+          const currentLayPrice = runner?.ex?.availableToLay?.[i]?.price;
+          const prevLayPrice = prevOdds?.lay?.[i];
 
-        if (prevLayPrice !== undefined && currentLayPrice !== prevLayPrice) {
-          triggerFlash(market.marketId, runner.selectionId, 'LAY', i);
+          if (prevLayPrice !== undefined && currentLayPrice !== prevLayPrice) {
+            triggerFlash(market.marketId, runner.selectionId, "LAY", i);
+          }
         }
-      }
 
-      // Store current odds for next comparison
-      previousOddsRef.current[key] = {
-        back: [
-          runner?.ex?.availableToBack?.[0]?.price,
-          runner?.ex?.availableToBack?.[1]?.price,
-          runner?.ex?.availableToBack?.[2]?.price,
-        ],
-        lay: [
-          runner?.ex?.availableToLay?.[0]?.price,
-          runner?.ex?.availableToLay?.[1]?.price,
-          runner?.ex?.availableToLay?.[2]?.price,
-        ],
-      };
+        // Store current odds for next comparison
+        previousOddsRef.current[key] = {
+          back: [
+            runner?.ex?.availableToBack?.[0]?.price,
+            runner?.ex?.availableToBack?.[1]?.price,
+            runner?.ex?.availableToBack?.[2]?.price,
+          ],
+          lay: [
+            runner?.ex?.availableToLay?.[0]?.price,
+            runner?.ex?.availableToLay?.[1]?.price,
+            runner?.ex?.availableToLay?.[2]?.price,
+          ],
+        };
+      });
     });
-  });
-}, [matchOddsData, filteredMarketData, isMobile]);
+  }, [matchOddsData, filteredMarketData, isMobile]);
 
-// 🎯 Flash animation trigger function
-const triggerFlash = (marketId: string, selectionId: number, side: 'BACK' | 'LAY', level: number) => {
-  const selector = `[data-market="${marketId}"][data-selection="${selectionId}"][data-side="${side}"][data-level="${level}"]`;
-  const element = document.querySelector(selector);
-  
-  if (element) {
-    element.classList.remove('rate-changed');
-    void element.offsetWidth; // Force reflow
-    element.classList.add('rate-changed');
-    
-    setTimeout(() => {
-      element.classList.remove('rate-changed');
-    }, 600);
-  }
-};
+  // 🎯 Flash animation trigger function
+  const triggerFlash = (
+    marketId: string,
+    selectionId: number,
+    side: "BACK" | "LAY",
+    level: number
+  ) => {
+    const selector = `[data-market="${marketId}"][data-selection="${selectionId}"][data-side="${side}"][data-level="${level}"]`;
+const element = document.querySelector(".rate-changed") as HTMLElement | null;
+
+    if (element) {
+      
+      element.classList.remove("rate-changed");
+      void element.offsetWidth; 
+      element.classList.add("rate-changed");
+
+      setTimeout(() => {
+        element.classList.remove("rate-changed");
+      }, 600);
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 992);
@@ -861,24 +870,24 @@ const triggerFlash = (marketId: string, selectionId: number, side: 'BACK' | 'LAY
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-useEffect(() => {
-  if (!apiData?.matchOddsData || filteredMarketData.length > 0) return;
-  
-  const allMarkets = apiData.matchOddsData || [];
-  let filterdData = [];
-  
-  if (activeCategory === "Popular") {
-    filterdData = allMarkets.filter((market: any) => market?.popular);
-  } else if (activeCategory === "All Market") {
-    filterdData = allMarkets;
-  } else {
-    filterdData = allMarkets.filter(
-      (market: any) => market?.marketName === activeCategory
-    );
-  }
-  
-  setFilteredMarketData(filterdData);
-}, [apiData?.matchOddsData]); // ✅ Only depend on initial data load
+  useEffect(() => {
+    if (!apiData?.matchOddsData || filteredMarketData.length > 0) return;
+
+    const allMarkets = apiData.matchOddsData || [];
+    let filterdData = [];
+
+    if (activeCategory === "Popular") {
+      filterdData = allMarkets.filter((market: any) => market?.popular);
+    } else if (activeCategory === "All Market") {
+      filterdData = allMarkets;
+    } else {
+      filterdData = allMarkets.filter(
+        (market: any) => market?.marketName === activeCategory
+      );
+    }
+
+    setFilteredMarketData(filterdData);
+  }, [apiData?.matchOddsData, activeCategory, filteredMarketData.length]);
 
   // Format PL value with + or -
   const formatPLValue = (value: number | null) => {
@@ -927,6 +936,7 @@ useEffect(() => {
 
     return actualPL;
   };
+
 
   return (
     <div className="lg:m-[5px] lg:mt-1.5">
@@ -1104,8 +1114,8 @@ useEffect(() => {
       ) : (
         <div className="flex w-full mb-[45px]">
           <div className="left-part overflow-y-auto w-full lg:w-[70%]">
-            <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-[4px] px-[8px] min-[992px]:py-[3.5px] min-[992px]:px-2.5 lg:mb-[3px] h-8 text-white">
-              <span className="text-sm lg:text-[15px] lg:uppercase font-medium lg:leading-normal relative top-[1px] min-[992px]:top-[0px]">
+            <div className=" flex justify-between items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] py-1 px-2 min-[992px]:py-[3.5px] min-[992px]:px-2.5 lg:mb-[3px] h-8 text-white">
+              <span className="text-sm lg:text-[15px] lg:uppercase font-medium lg:leading-normal relative top-px min-[992px]:top-0">
                 {apiData?.matchOddsData[0]?.event?.name || "Team A vs Team B"}
               </span>
               {apiData?.matchOddsData[0]?.inplay ? (
@@ -1176,7 +1186,6 @@ useEffect(() => {
 {(isMobile ? filteredMarketData : matchOddsData)?.map(  
   (market: any) => {
     const hasPL = hasProfitAndLoss(market.marketId);
-    const isActive = hasPL && showCashoutValue[market.marketId];
 
     return (
       <div
@@ -1196,7 +1205,7 @@ ${hasPL ? "h-9 py-1 lg:py-[3px]" : "h-[27.56px] min-[992px]:h-[26px] py-1"}
             {/* 🔹 NEW: Cashout Toggle */}
             {/* 🔹 CASHOUT TOGGLE WITH CONFIRM */}
             {market?.runners?.length < 3 && (
-              <div className="ml-1 h-[26px] relative top-[-2px]">
+              <div className="ml-1 h-[26px] relative -top-0.5">
                 <div
                   onClick={() => {
                     if (hasPL) {
@@ -1210,13 +1219,13 @@ ${hasPL ? "h-9 py-1 lg:py-[3px]" : "h-[27.56px] min-[992px]:h-[26px] py-1"}
                     }
                   }}
                   className={`
-rounded-[4px] py-[3px] px-[10px] my-[2px] leading-[18px]
+rounded-sm py-[3px] px-2.5 my-0.5 leading-[18px]
 inline-flex items-center gap-1 select-none
 ${hasPL ? "bg-[#ccc] cursor-pointer" : "cursor-default"}
 `}
                 >
                   {/* Icon */}
-                  <span className="w-[18px] h-[18px] rounded-[2px] border-2 border-[#ffb900] flex items-center justify-center bg-[#ffb900]">
+                  <span className="w-[18px] h-[18px] rounded-xs border-2 border-[#ffb900] flex items-center justify-center bg-[#ffb900]">
                     {showCashoutValue[market.marketId] && (
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -1312,15 +1321,15 @@ ${hasPL ? "bg-[#ccc] cursor-pointer" : "cursor-default"}
               </b>
             </div>
 
-            <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%]"></div>
-            <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%]"></div>
-            <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%] cursor-pointer bg-[#72bbef] text-center text-[#212529] h-[22px] flex items-center justify-center min-[992px]:h-auto">
+            <div className="leading-[15px] py-0.5 min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%]"></div>
+            <div className="leading-[15px] py-0.5 min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%]"></div>
+            <div className="leading-[15px] py-0.5 min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%] cursor-pointer bg-[#72bbef] text-center text-[#212529] h-[22px] flex items-center justify-center min-[992px]:h-auto">
               <b className="md:font-normal">BACK</b>
             </div>
-            <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%] cursor-pointer bg-[#faa9ba] text-center text-[#212529] md:border-l md:border-white h-[22px] flex items-center justify-center min-[992px]:h-auto">
+            <div className="leading-[15px] py-0.5 min-[992px]:py-[5px] text-[12px] min-[992px]:text-[16px] w-[10%] cursor-pointer bg-[#faa9ba] text-center text-[#212529] md:border-l md:border-white h-[22px] flex items-center justify-center min-[992px]:h-auto">
               <b className="md:font-normal">LAY</b>
             </div>
-            <div className="leading-[15px] py-[2px] min-[992px]:py-[5px] pr-[5px] text-[#212529] text-center font-bold text-[12px] min-[992px]:text-[14px] border-r border-white w-[20%] md:font-normal h-[22px] flex items-center justify-center min-[992px]:h-auto">
+            <div className="leading-[15px] py-0.5 min-[992px]:py-[5px] pr-[5px] text-[#212529] text-center font-bold text-[12px] min-[992px]:text-[14px] border-r border-white w-[20%] md:font-normal h-[22px] flex items-center justify-center min-[992px]:h-auto">
               Matched:&nbsp;
               {market?.totalMatched >= 1000
                 ? `${(market?.totalMatched / 1000).toFixed(2)}K`
