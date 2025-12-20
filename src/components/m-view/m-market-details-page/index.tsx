@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-:qa"use client";
+"use client";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import MBetSlip from "../m-betslip";
 import DBetSlip from "@/components/d-view/d-betslip";
-// import RulesModal from "@/components/modals/rules-modal";
 import { formatDateStamp } from "@/lib/functions";
 import { formatDateDetail } from "@/lib/functions";
 import { FaChevronDown } from "react-icons/fa";
