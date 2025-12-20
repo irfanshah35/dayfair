@@ -58,96 +58,6 @@ const initialFilterAppliedRef = useRef(false);
     side: "BACK" | "LAY";
   } | null>(null);
 
-
-
-useEffect(() => {
-  if (matchOddsData?.length > 0 && !initialFilterAppliedRef.current) {
-    initialFilterAppliedRef.current = true;
-    setMarketType("Popular", "", "Popular", 1, "");
-  }
-}, [matchOddsData]); 
-  const [isMobile, setIsMobile] = useState(false);
-  const [isvolume, setIsVolume] = useState(false);
-  const [iswatchlive, setIsWatchLive] = useState(false);
-  const [betSlipData, setBetSlipData] = useState<{
-    marketId: string;
-    selectionId: number;
-    runnerName: string;
-    odds: number;
-    slipCls: "slip-back" | "slip-lay";
-    slipBgClass: string;
-    min: number;
-    max: number;
-    side: "BACK" | "LAY";
-  } | null>(null);
-
-  const [isrulesopen, setRulesOpen] = useState(false);
-
-  const dynamicCategories = [
-    ...new Set(apiData?.matchOddsData?.map((item: any) => item.marketName)),
-  ];
-
-  const categories = ["Popular", ...dynamicCategories, "All Market"];
-
-  // 👇 Accordion toggle state
-  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
-
-  const toggleRow = (id: any) => {
-    setExpandedRows((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
-  // 👇 Format date helper
-  const formatDateTime = (dateStr?: string) => {
-    if (!dateStr) return "";
-    const d = new Date(dateStr);
-    return d.toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-  };
-
-  const refreshUserBalance = async () => {
-    try {
-      await fetchData({
-        url: CONFIG.getUserBalance,
-        payload: { key: CONFIG.siteKey },
-        setFn: (res: any) => {
-          console.log("Balance refreshed:", res);
-          // Update global store so Header shows new balance immediately
-          setUserBalance(res);
-        }
-      });
-    } catch (error) {
-      console.error("Balance refresh error:", error);
-    }
-  };
-  // 👇 Fetch Bets API
-  const fetchBets = async () => {
-    if (!eventId || !sportId) return;
-
-    await fetchData({
-      url: CONFIG.unmatchedBets,
-      payload: {
-        eventId: String(eventId),
-        sportId: String(sportId),
-      },
-      setFn: (res: any) => {
-        console.log("Bets response:", res);
-        const matched = res?.matchedBets || [];
-        const unmatched = res?.unmatchedBets || [];
-        setMatchedBets(matched);
-        setUnmatchedBets(unmatched);
-      },
-    });
-  };
-
   //socket code  starts
 
 
@@ -393,6 +303,96 @@ const setMarketType = (type: string, ...args: any[]) => {
 
   setFilteredMarketData(filtered);
 };
+
+useEffect(() => {
+  if (matchOddsData?.length > 0 && !initialFilterAppliedRef.current) {
+    initialFilterAppliedRef.current = true;
+    setMarketType("Popular", "", "Popular", 1, "");
+  }
+}, [matchOddsData]); 
+  const [isMobile, setIsMobile] = useState(false);
+  const [isvolume, setIsVolume] = useState(false);
+  const [iswatchlive, setIsWatchLive] = useState(false);
+  const [betSlipData, setBetSlipData] = useState<{
+    marketId: string;
+    selectionId: number;
+    runnerName: string;
+    odds: number;
+    slipCls: "slip-back" | "slip-lay";
+    slipBgClass: string;
+    min: number;
+    max: number;
+    side: "BACK" | "LAY";
+  } | null>(null);
+
+  const [isrulesopen, setRulesOpen] = useState(false);
+
+  const dynamicCategories = [
+    ...new Set(apiData?.matchOddsData?.map((item: any) => item.marketName)),
+  ];
+
+  const categories = ["Popular", ...dynamicCategories, "All Market"];
+
+  // 👇 Accordion toggle state
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+
+  const toggleRow = (id: any) => {
+    setExpandedRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  // 👇 Format date helper
+  const formatDateTime = (dateStr?: string) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    return d.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+
+  const refreshUserBalance = async () => {
+    try {
+      await fetchData({
+        url: CONFIG.getUserBalance,
+        payload: { key: CONFIG.siteKey },
+        setFn: (res: any) => {
+          console.log("Balance refreshed:", res);
+          // Update global store so Header shows new balance immediately
+          setUserBalance(res);
+        }
+      });
+    } catch (error) {
+      console.error("Balance refresh error:", error);
+    }
+  };
+  // 👇 Fetch Bets API
+  const fetchBets = async () => {
+    if (!eventId || !sportId) return;
+
+    await fetchData({
+      url: CONFIG.unmatchedBets,
+      payload: {
+        eventId: String(eventId),
+        sportId: String(sportId),
+      },
+      setFn: (res: any) => {
+        console.log("Bets response:", res);
+        const matched = res?.matchedBets || [];
+        const unmatched = res?.unmatchedBets || [];
+        setMatchedBets(matched);
+        setUnmatchedBets(unmatched);
+      },
+    });
+  };
+
+
 
   // 👇 Fetch Profit/Loss API
   const fetchMarketPL = useCallback(async () => {
@@ -786,6 +786,73 @@ const setMarketType = (type: string, ...args: any[]) => {
       openSlip.selectionId === selectionId
     );
   };
+
+  // 🎯 Track previous odds values for comparison
+const previousOddsRef = useRef<Record<string, any>>({});
+
+// 🎯 Highlight changed odds
+useEffect(() => {
+  const marketsToCheck = isMobile ? filteredMarketData : matchOddsData;
+  
+  if (!marketsToCheck || marketsToCheck.length === 0) return;
+
+  marketsToCheck.forEach((market: any) => {
+    market?.runners?.forEach((runner: any) => {
+      const key = `${market.marketId}-${runner.selectionId}`;
+      const prevOdds = previousOddsRef.current[key];
+
+      // Back odds (0, 1, 2)
+      for (let i = 0; i < 3; i++) {
+        const currentBackPrice = runner?.ex?.availableToBack?.[i]?.price;
+        const prevBackPrice = prevOdds?.back?.[i];
+
+        if (prevBackPrice !== undefined && currentBackPrice !== prevBackPrice) {
+          triggerFlash(market.marketId, runner.selectionId, 'BACK', i);
+        }
+      }
+
+      // Lay odds (0, 1, 2)
+      for (let i = 0; i < 3; i++) {
+        const currentLayPrice = runner?.ex?.availableToLay?.[i]?.price;
+        const prevLayPrice = prevOdds?.lay?.[i];
+
+        if (prevLayPrice !== undefined && currentLayPrice !== prevLayPrice) {
+          triggerFlash(market.marketId, runner.selectionId, 'LAY', i);
+        }
+      }
+
+      // Store current odds for next comparison
+      previousOddsRef.current[key] = {
+        back: [
+          runner?.ex?.availableToBack?.[0]?.price,
+          runner?.ex?.availableToBack?.[1]?.price,
+          runner?.ex?.availableToBack?.[2]?.price,
+        ],
+        lay: [
+          runner?.ex?.availableToLay?.[0]?.price,
+          runner?.ex?.availableToLay?.[1]?.price,
+          runner?.ex?.availableToLay?.[2]?.price,
+        ],
+      };
+    });
+  });
+}, [matchOddsData, filteredMarketData, isMobile]);
+
+// 🎯 Flash animation trigger function
+const triggerFlash = (marketId: string, selectionId: number, side: 'BACK' | 'LAY', level: number) => {
+  const selector = `[data-market="${marketId}"][data-selection="${selectionId}"][data-side="${side}"][data-level="${level}"]`;
+  const element = document.querySelector(selector);
+  
+  if (element) {
+    element.classList.remove('rate-changed');
+    void element.offsetWidth; // Force reflow
+    element.classList.add('rate-changed');
+    
+    setTimeout(() => {
+      element.classList.remove('rate-changed');
+    }, 600);
+  }
+};
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 992);
@@ -1316,6 +1383,11 @@ ${isSuspended || isClosed
                   >
                     {/* ========== MOBILE BACK (Shows [0] only) ========== */}
                     <div
+                      data-app-rate-highlighter
+                      data-market={market?.marketId}
+                      data-selection={runner?.selectionId}
+                      data-side="BACK"
+                      data-level="0"
                       className={`text-center flex-col md:hidden text-[#212529] justify-center items-center w-[50%] bg-[#72bbef] flex ${!(isSuspended || isClosed)
                           ? "cursor-pointer"
                           : "cursor-not-allowed"
@@ -1349,6 +1421,11 @@ ${isSuspended || isClosed
 
                     {/* ========== DESKTOP BACK 3 (Weakest - Shows [2]) ========== */}
                     <div
+                      data-app-rate-highlighter
+                      data-market={market?.marketId}
+                      data-selection={runner?.selectionId}
+                      data-side="BACK"
+                      data-level="2"
                       className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%]  bg-[#72bbef] ${!(isSuspended || isClosed)
                           ? "cursor-pointer"
                           : "cursor-not-allowed"
@@ -1382,6 +1459,11 @@ ${isSuspended || isClosed
 
                     {/* ========== DESKTOP BACK 2 (Medium - Shows [1]) ========== */}
                     <div
+                      data-app-rate-highlighter
+                      data-market={market?.marketId}
+                      data-selection={runner?.selectionId}
+                      data-side="BACK"
+                      data-level="1"
                       className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!(isSuspended || isClosed)
                           ? "cursor-pointer"
                           : "cursor-not-allowed"
@@ -1415,6 +1497,11 @@ ${isSuspended || isClosed
 
                     {/* ========== DESKTOP BACK 1 (Strongest - Shows [0]) ========== */}
                     <div
+                      data-app-rate-highlighter
+                      data-market={market?.marketId}
+                      data-selection={runner?.selectionId}
+                      data-side="BACK"
+                      data-level="0"
                       className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#72bbef] ${!(isSuspended || isClosed)
                           ? "cursor-pointer"
                           : "cursor-not-allowed"
@@ -1448,6 +1535,11 @@ ${isSuspended || isClosed
 
                     {/* ========== DESKTOP LAY 1 (Strongest - Shows [0]) ========== */}
                     <div
+                      data-app-rate-highlighter
+                      data-market={market?.marketId}
+                      data-selection={runner?.selectionId}
+                      data-side="LAY"
+                      data-level="0"
                       className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center  text-[#212529] w-[50%] bg-[#faa9ba] ${!(isSuspended || isClosed)
                           ? "cursor-pointer"
                           : "cursor-not-allowed"
@@ -1481,6 +1573,11 @@ ${isSuspended || isClosed
 
                     {/* ========== MOBILE LAY (Shows [2]) ========== */}
                     <div
+                      data-app-rate-highlighter
+                      data-market={market?.marketId}
+                      data-selection={runner?.selectionId}
+                      data-side="LAY"
+                      data-level="2"
                       className={`text-center flex-col md:hidden justify-center items-center w-[50%] bg-[#faa9ba]  text-[#212529] flex ${!(isSuspended || isClosed)
                           ? "cursor-pointer"
                           : "cursor-not-allowed"
@@ -1514,6 +1611,11 @@ ${isSuspended || isClosed
 
                     {/* ========== DESKTOP LAY 2 (Medium - Shows [1]) ========== */}
                     <div
+                      data-app-rate-highlighter
+                      data-market={market?.marketId}
+                      data-selection={runner?.selectionId}
+                      data-side="LAY"
+                      data-level="1"
                       className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!(isSuspended || isClosed)
                           ? "cursor-pointer"
                           : "cursor-not-allowed"
@@ -1547,6 +1649,11 @@ ${isSuspended || isClosed
 
                     {/* ========== DESKTOP LAY 3 (Weakest - Shows [2]) ========== */}
                     <div
+                      data-app-rate-highlighter
+                      data-market={market?.marketId}
+                      data-selection={runner?.selectionId}
+                      data-side="LAY"
+                      data-level="2"
                       className={`text-center md:border-l md:border-white hidden md:flex flex-col justify-center items-center w-[50%] bg-[#faa9ba] ${!(isSuspended || isClosed)
                           ? "cursor-pointer"
                           : "cursor-not-allowed"
@@ -1692,6 +1799,27 @@ ${isSuspended || isClosed
           animation: zoomInZoomOut 1s ease infinite;
           display: inline-block;
         }
+  @keyframes flash-yellow {
+  0% {
+    background-color: #ffff99; /* lighter yellow */
+  }
+  50% {
+    background-color: #ffff99; /* medium yellow */
+  }
+  100% {
+    background-color: #ffff66; /* darker yellow */
+  }
+}
+
+
+[data-app-rate-highlighter].rate-changed {
+  animation: flash-yellow 0.2s ease-in-out;
+}
+
+.back[data-app-rate-highlighter].rate-changed,
+.lay[data-app-rate-highlighter].rate-changed {
+  animation: flash-yellow 0.2s ease-in-out !important;
+}
       `}</style>
     </div>
   );
