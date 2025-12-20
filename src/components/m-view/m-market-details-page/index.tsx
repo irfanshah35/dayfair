@@ -58,7 +58,97 @@ const initialFilterAppliedRef = useRef(false);
     side: "BACK" | "LAY";
   } | null>(null);
 
-//socket code  starts
+
+
+useEffect(() => {
+  if (matchOddsData?.length > 0 && !initialFilterAppliedRef.current) {
+    initialFilterAppliedRef.current = true;
+    setMarketType("Popular", "", "Popular", 1, "");
+  }
+}, [matchOddsData]); 
+  const [isMobile, setIsMobile] = useState(false);
+  const [isvolume, setIsVolume] = useState(false);
+  const [iswatchlive, setIsWatchLive] = useState(false);
+  const [betSlipData, setBetSlipData] = useState<{
+    marketId: string;
+    selectionId: number;
+    runnerName: string;
+    odds: number;
+    slipCls: "slip-back" | "slip-lay";
+    slipBgClass: string;
+    min: number;
+    max: number;
+    side: "BACK" | "LAY";
+  } | null>(null);
+
+  const [isrulesopen, setRulesOpen] = useState(false);
+
+  const dynamicCategories = [
+    ...new Set(apiData?.matchOddsData?.map((item: any) => item.marketName)),
+  ];
+
+  const categories = ["Popular", ...dynamicCategories, "All Market"];
+
+  // 👇 Accordion toggle state
+  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+
+  const toggleRow = (id: any) => {
+    setExpandedRows((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+  };
+
+  // 👇 Format date helper
+  const formatDateTime = (dateStr?: string) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    return d.toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  };
+
+  const refreshUserBalance = async () => {
+    try {
+      await fetchData({
+        url: CONFIG.getUserBalance,
+        payload: { key: CONFIG.siteKey },
+        setFn: (res: any) => {
+          console.log("Balance refreshed:", res);
+          // Update global store so Header shows new balance immediately
+          setUserBalance(res);
+        }
+      });
+    } catch (error) {
+      console.error("Balance refresh error:", error);
+    }
+  };
+  // 👇 Fetch Bets API
+  const fetchBets = async () => {
+    if (!eventId || !sportId) return;
+
+    await fetchData({
+      url: CONFIG.unmatchedBets,
+      payload: {
+        eventId: String(eventId),
+        sportId: String(sportId),
+      },
+      setFn: (res: any) => {
+        console.log("Bets response:", res);
+        const matched = res?.matchedBets || [];
+        const unmatched = res?.unmatchedBets || [];
+        setMatchedBets(matched);
+        setUnmatchedBets(unmatched);
+      },
+    });
+  };
+
+  //socket code  starts
 
 
   useEffect(() => {
@@ -249,11 +339,9 @@ useEffect(() => {
   } catch (e) {
     console.warn("Socket setup failed:", e);
   }
-}, [matchOddsData]); // ✅ Dependency on matchOddsData
+}, [matchOddsData]); 
 
-// ========================================
-// 4️⃣ UPDATE setMarketType TO USE matchOddsData
-// ========================================
+
 const setMarketType = (type: string, ...args: any[]) => {
   const marketid: string = String(args[3] ?? args[args.length - 1] ?? "");
 
@@ -305,99 +393,6 @@ const setMarketType = (type: string, ...args: any[]) => {
 
   setFilteredMarketData(filtered);
 };
-
-// ========================================
-// 5️⃣ UPDATE YOUR INITIAL FILTER EFFECT
-// ========================================
-useEffect(() => {
-  if (matchOddsData?.length > 0 && !initialFilterAppliedRef.current) {
-    initialFilterAppliedRef.current = true;
-    setMarketType("Popular", "", "Popular", 1, "");
-  }
-}, [matchOddsData]); // ✅ Changed from apiData.matchOddsData
-//socket code end
-  // Shared betslip data (used by both mobile + desktop)
-  const [isMobile, setIsMobile] = useState(false);
-  const [isvolume, setIsVolume] = useState(false);
-  const [iswatchlive, setIsWatchLive] = useState(false);
-  const [betSlipData, setBetSlipData] = useState<{
-    marketId: string;
-    selectionId: number;
-    runnerName: string;
-    odds: number;
-    slipCls: "slip-back" | "slip-lay";
-    slipBgClass: string;
-    min: number;
-    max: number;
-    side: "BACK" | "LAY";
-  } | null>(null);
-
-  const [isrulesopen, setRulesOpen] = useState(false);
-
-  const dynamicCategories = [
-    ...new Set(apiData?.matchOddsData?.map((item: any) => item.marketName)),
-  ];
-
-  const categories = ["Popular", ...dynamicCategories, "All Market"];
-
-  // 👇 Accordion toggle state
-  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
-
-  const toggleRow = (id: any) => {
-    setExpandedRows((prev) => ({
-      ...prev,
-      [id]: !prev[id],
-    }));
-  };
-
-  // 👇 Format date helper
-  const formatDateTime = (dateStr?: string) => {
-    if (!dateStr) return "";
-    const d = new Date(dateStr);
-    return d.toLocaleString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-  };
-
-  const refreshUserBalance = async () => {
-    try {
-      await fetchData({
-        url: CONFIG.getUserBalance,
-        payload: { key: CONFIG.siteKey },
-        setFn: (res: any) => {
-          console.log("Balance refreshed:", res);
-          // Update global store so Header shows new balance immediately
-          setUserBalance(res);
-        }
-      });
-    } catch (error) {
-      console.error("Balance refresh error:", error);
-    }
-  };
-  // 👇 Fetch Bets API
-  const fetchBets = async () => {
-    if (!eventId || !sportId) return;
-
-    await fetchData({
-      url: CONFIG.unmatchedBets,
-      payload: {
-        eventId: String(eventId),
-        sportId: String(sportId),
-      },
-      setFn: (res: any) => {
-        console.log("Bets response:", res);
-        const matched = res?.matchedBets || [];
-        const unmatched = res?.unmatchedBets || [];
-        setMatchedBets(matched);
-        setUnmatchedBets(unmatched);
-      },
-    });
-  };
 
   // 👇 Fetch Profit/Loss API
   const fetchMarketPL = useCallback(async () => {
