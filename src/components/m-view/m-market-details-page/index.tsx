@@ -841,27 +841,27 @@ if (res?.meta?.status === false) {
     });
   }, [matchOddsData, filteredMarketData, isMobile]);
 
-  // 🎯 Flash animation trigger function
-  const triggerFlash = (
-    marketId: string,
-    selectionId: number,
-    side: "BACK" | "LAY",
-    level: number
-  ) => {
-    const selector = `[data-market="${marketId}"][data-selection="${selectionId}"][data-side="${side}"][data-level="${level}"]`;
-const element = document.querySelector(".rate-changed") as HTMLElement | null;
+// 🎯 Flash animation trigger function
+const triggerFlash = (
+  marketId: string,
+  selectionId: number,
+  side: "BACK" | "LAY",
+  level: number
+) => {
+  const selector = `[data-market="${marketId}"][data-selection="${selectionId}"][data-side="${side}"][data-level="${level}"]`;
+  
+  const element = document.querySelector(selector) as HTMLElement | null;
 
-    if (element) {
-      
+  if (element) {
+    element.classList.remove("rate-changed");
+    void element.offsetWidth; // Force reflow
+    element.classList.add("rate-changed");
+
+    setTimeout(() => {
       element.classList.remove("rate-changed");
-      void element.offsetWidth; 
-      element.classList.add("rate-changed");
-
-      setTimeout(() => {
-        element.classList.remove("rate-changed");
-      }, 600);
-    }
-  };
+    }, 600);
+  }
+};
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 992);
