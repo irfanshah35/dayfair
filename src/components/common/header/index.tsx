@@ -311,11 +311,11 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="relative min-h-[65px] min-[992px]:min-h-20 overflow-x-clip bg-black text-white px-[5px]">
+    <header className="relative min-h-16.25 min-[992px]:min-h-20 overflow-x-clip bg-black text-white px-1.25">
       {/* Top Row */}
       <div className="flex min-[345px]:items-center flex-col flex-wrap min-[345px]:flex-nowrap min-[345px]:flex-row">
         {/* Logo Section */}
-        <div className="flex items-center min-[992px]:h-[66px] flex-1 pl-1.5 min-[992px]:flex-[0_0_auto] min-[992px]:w-1/4">
+        <div className="flex items-center min-[992px]:h-16.5 flex-1 pl-1.5 min-[992px]:flex-[0_0_auto] min-[992px]:w-1/4">
           <Link href={"/"} className="flex items-center gap-1.5 min-[992px]:mt-0.5">
             <FaHome
               className="text-white relative bottom-px cursor-pointer mt-0.5 min-[992px]:hidden"
@@ -327,19 +327,19 @@ const Header = () => {
               alt="Logo"
               width={100}
               height={65}
-              className="h-[65px] w-[90px] min-[345px]:w-[100px] min-[992px]:h-20 min-[992px]:w-40 min-[992px]:pt-2"
+              className="h-16.25 w-22.5 min-[345px]:w-25 min-[992px]:h-20 min-[992px]:w-40 min-[992px]:pt-2"
               tabIndex={0}
             />
           </Link>
         </div>
 
         {/* Login Button */}
-        <div className="flex flex-col min-[992px]:flex-row justify-end w-full min-[992px]:h-[66px] flex-1">
-          <div className="hidden min-[345px]:flex min-[992px]:ml-[17px] p-1 items-center justify-end flex-[0_0_auto] w-[83.33333333%] max-w-full">
+        <div className="flex flex-col min-[992px]:flex-row justify-end w-full min-[992px]:h-16.5 flex-1">
+          <div className="hidden min-[345px]:flex min-[992px]:ml-4.25 p-1 items-center justify-end flex-[0_0_auto] w-[83.33333333%] max-w-full">
             <ul className="hidden min-[992px]:flex list-none mt-2.5 mb-3 items-center pl-8">
               <li
                 ref={wrapperRef}
-                className="mr-[21px] relative float-left flex items-start"
+                className="mr-5.25 relative float-left flex items-start"
               >
                 <input
                   type="text"
@@ -348,28 +348,28 @@ const Header = () => {
                   onChange={handleInputChange}
                   ref={inputRef}
                   className={`
-          h-[38px] relative left-2 top-px border-0 p-0 outline-0 placeholder:text-black
+          h-9.5 relative left-2 top-px border-0 p-0 outline-0 placeholder:text-black
           bg-[linear-gradient(180deg,#fff_0%,#fff_100%)] text-black
           transition-[width] duration-400 ease-linear
-          ${open ? "w-[300px] px-2.5" : "w-0 px-0"}
+          ${open ? "w-75 px-2.5" : "w-0 px-0"}
         `}
                 />
 
                 <FaSearchPlus
-                  className="text-white ml-[17px] mt-1.5 cursor-pointer relative left-px"
+                  className="text-white ml-4.25 mt-1.5 cursor-pointer relative left-px"
                   size={24}
                   onClick={() => setOpen(!open)}
                 />
 
                 {/* Dropdown */}
                 {open && query && (
-                  <ul className="absolute top-8.5 text-black left-2 right-0 bg-white border border-gray-300  mt-1  overflow-y-auto z-10 shadow-[1px_0_10px_#000] w-[500px] max-h-[450px] px-2.5 py-2.5">
+                  <ul className="absolute top-8.5 text-black left-2 right-0 bg-white border border-gray-300  mt-1  overflow-y-auto z-10 shadow-[1px_0_10px_#000] w-125 max-h-112.5 px-2.5 py-2.5">
                     {results?.length > 0 ? (
                       results?.map((match, index) => (
                         <li
                           key={index}
                           onClick={() => handleSelect(match)}
-                          className=" hover:bg-gray-100 text-black cursor-pointer border-b border-[#ccc] py-[5px] mb-[5px]"
+                          className=" hover:bg-gray-100 text-black cursor-pointer border-b border-[#ccc] py-1.25 mb-1.25"
                         >
                           <div className="flex flex-col leading-3.5">
                             <div className="flex">
@@ -385,14 +385,14 @@ const Header = () => {
                         </li>
                       ))
                     ) : (
-                      <li className="text-black cursor-pointer py-[5px] mb-[5px]">
+                      <li className="text-black cursor-pointer py-1.25 mb-1.25">
                         No real-time records found
                       </li>
                     )}
                   </ul>
                 )}
               </li >
-              <li className="mr-3.5 ml-[15px] float-left cursor-pointer hover:underline font-light">
+              <li className="mr-[13.5px] ml-3.75 float-left cursor-pointer hover:underline font-light">
                 <b className="text-[14px]" onClick={() => setRulesOpen(true)}>
                   Rules
                 </b>
@@ -402,7 +402,7 @@ const Header = () => {
 
           {isLoggedIn && (
             <>
-              <div className=" relative min-[345px]:absolute mb-[18px] ml-8.5 min-[345px]:mb-0 top-[9px] right-[3px] flex gap-[3px] min-[992px]:gap-0. min-[345px]:justify-end min-[992px]:hidden text-[13px] tracking-[-0.15px]">
+              <div className=" relative min-[345px]:absolute mb-4.5 ml-8.5 min-[345px]:mb-0 top-2.25 right-0.75 flex gap-0.75 min-[992px]:gap-0. min-[345px]:justify-end min-[992px]:hidden text-[13px] tracking-[-0.15px]">
                 {/* BALANCE */}
                 <div className="">
                   <span className="text-white font-bold min-[992px]:font-normal">
@@ -431,18 +431,18 @@ const Header = () => {
                 </div>
               </div>
 
-              <div className="float-left text-[16px] mr-3 hidden min-[992px]:flex flex-col justify-center font-light">
-                <div className="text-start leading-[23px]">
+              <div className="float-left text-[16px] mr-4 hidden min-[992px]:flex flex-col justify-center font-light">
+                <div className="text-start leading-5.75">
                   <span>
                     <b>BALANCE&nbsp;:&nbsp;</b>
                   </span>
                   <b>
-                    <span className="userTotalBalance relative left-[3px]">
+                    <span className="userTotalBalance relative left-0.75">
                       {((userBalance?.bankBalance || 0) - (userBalance?.exposure || 0)).toFixed(2)}
                     </span>
                   </b>
                 </div>
-                <div className="text-start leading-[23px]">
+                <div className="text-start leading-5.75">
                   <button
                     onClick={() => setExposureOpen(!isexposureopen)}
                     type="button"
@@ -464,9 +464,9 @@ const Header = () => {
           <div className="w-[110%] gap-1 flex items-center min-[992px]:flex">
             <div className="flex-1 min-[992px]:hidden"></div>
             <div
-              className={`min-[992px]:pe-3 min-[992px]:p-[3px] min-[992px]:flex-[0_0_auto]
+              className={`min-[992px]:pe-3 min-[992px]:p-0.75 min-[992px]:flex-[0_0_auto]
               ${!isLoggedIn
-                  ? "flex min-[992px]:flex absolute right-[5px] min-[992px]:relative min-[992px]:right-0"
+                  ? "flex min-[992px]:flex absolute right-1.25 min-[992px]:relative min-[992px]:right-0"
                   : "hidden min-[992px]:flex"
                 }`}
             >
@@ -486,15 +486,15 @@ const Header = () => {
         </div>
       </div>
 
-      <div className="relative flex min-h-[35px] ml-1 pb-2 min-[992px]:hidden">
+      <div className="relative flex min-h-8.75 ml-1 pb-2 min-[992px]:hidden">
         {/* LEFT SIDE (50%) */}
         <div className="relative" ref={mobileSearchRef}>
-          <div className="absolute left-0 top-[5px] z-10 w-[184px]">
+          <div className="absolute left-0 top-1.25 z-10 w-46">
             <div
               className={`
           bg-white rounded-full flex items-center 
           transition-all duration-500 ease-linear
-          ${searchActive ? "w-full" : "w-[25px]"}
+          ${searchActive ? "w-full" : "w-6.25"}
         `}
             >
               {/* SEARCH INPUT */}
@@ -506,7 +506,7 @@ const Header = () => {
                 value={mobileQuery}
                 onChange={handleMobileInputChange}
                 className={`
-            bg-transparent text-black border-0 outline-0 h-[25px]
+            bg-transparent text-black border-0 outline-0 h-6.25
             transition-all duration-500 ease-linear text-[12px]  
             ${searchActive
                     ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
@@ -518,7 +518,7 @@ const Header = () => {
               {/* SEARCH / CROSS ICON (INSIDE!) */}
               <button
                 onClick={() => setSearchActive(!searchActive)}
-                className="flex items-center justify-center h-[25px] w-[25px] shrink-0"
+                className="flex items-center justify-center h-6.25 w-6.25 shrink-0"
               >
                 {searchActive ? (
                   <FaTimes className="text-black ml-0.5" size={13} />
@@ -530,7 +530,7 @@ const Header = () => {
 
             {/* Mobile Dropdown */}
             {searchActive && mobileQuery && (
-              <ul className="absolute top-[30px] max-h-[190px] left-0 w-[150%] bg-white border border-gray-300 mt-1  overflow-y-auto z-9999 shadow-[1px_0_10px_#000]">
+              <ul className="absolute top-7.5 max-h-47.5 left-0 w-[150%] bg-white border border-gray-300 mt-1  overflow-y-auto z-9999 shadow-[1px_0_10px_#000]">
                 {mobileResults?.length > 0 ? (
                   mobileResults?.map((match, index) => (
                     <li
@@ -566,7 +566,7 @@ const Header = () => {
         {isLoggedIn && (
           <button
             onClick={goToLogin}
-            className="cursor-pointer text-black border border-white text-[10px] min-[345px]:text-sm min-[992px]:text-base hover:opacity-90 transition-opacity rounded-[3.875px] absolute right-px -top-px min-[345px]:-top-1 w-[49.94px] h-[27px] min-[345px]:h-[31px] min-[345px]:w-[67.92px]"
+            className="cursor-pointer text-black border border-white text-[10px] min-[345px]:text-sm min-[992px]:text-base hover:opacity-90 transition-opacity rounded-[3.875px] absolute right-px -top-px min-[345px]:-top-1 w-[49.94px] h-6.75 min-[345px]:h-7.75 min-[345px]:w-[67.92px]"
             style={{
               background: "linear-gradient(-180deg, #f4b501 0%, #f68700 100%)",
             }}
@@ -651,13 +651,13 @@ const AccountDropDown = ({ closeDropdown }: any) => {
     <>
       <ul
         id="collapseForAccount"
-        className="absolute top-{100px} min-[992px]:top-[82px] w-[172px] min-[992px]:w-[170px] z-99999 text-[16px] min-[992px]:text-[14px] right-0 overflow-hidden transition-all duration-300 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] rounded-sm"
+        className="absolute top-{100px} min-[992px]:top-20.5 w-43 min-[992px]:w-42.5 z-99999 text-[16px] min-[992px]:text-[14px] right-0 overflow-hidden transition-all duration-300 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] rounded-sm"
       >
-        <li className="min-[992px]:hidden py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-[25px] ">
+        <li className="min-[992px]:hidden py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-6.25 ">
           <Link
             href="/"
             onClick={closeDropdown}
-            className="px-3 h-[25px] flex items-center hover:bg-gray-800 transition-colors"
+            className="px-3 h-6.25 flex items-center hover:bg-gray-800 transition-colors"
           >
             Home
           </Link>
@@ -668,7 +668,7 @@ const AccountDropDown = ({ closeDropdown }: any) => {
             <Link
               href={item.href}
               onClick={closeDropdown}
-              className="block px-3 py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-[25px] items-center hover:bg-gray-800 transition-colors"
+              className="block px-3 py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-6.25 items-center hover:bg-gray-800 transition-colors"
             >
               {item.label}
             </Link>
@@ -676,7 +676,7 @@ const AccountDropDown = ({ closeDropdown }: any) => {
         ))}
 
         {/* Balance Switch */}
-        <li className="flex items-center py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-[25px]  justify-between pl-3 pr-1 min-[992px]:pr-[18px] cursor-pointer">
+        <li className="flex items-center py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-6.25  justify-between pl-3 pr-1 min-[992px]:pr-4.5 cursor-pointer">
           <label htmlFor="checkBalance" className="cursor-pointer">
             Balance
           </label>
@@ -684,12 +684,12 @@ const AccountDropDown = ({ closeDropdown }: any) => {
           <input
             id="checkBalance"
             type="checkbox"
-            className="h-[13px] w-[13px] accent-[#4D4E4F] cursor-pointer bg-[#4D4E4F] relative -top-0.5"
+            className="h-3.25 w-3.25 accent-[#4D4E4F] cursor-pointer bg-[#4D4E4F] relative -top-0.5"
           />
         </li>
 
         {/* Exposure Switch */}
-        <li className="flex items-center justify-between pl-3 pr-1 min-[992px]:pr-[18px] py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-[25px] cursor-pointer">
+        <li className="flex items-center justify-between pl-3 pr-1 min-[992px]:pr-4.5 py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-6.25 cursor-pointer">
           <label htmlFor="checkExposure" className="cursor-pointer">
             Exposure
           </label>
@@ -697,13 +697,13 @@ const AccountDropDown = ({ closeDropdown }: any) => {
           <input
             id="checkExposure"
             type="checkbox"
-            className="h-[13px] w-[13px] accent-[#4D4E4F] cursor-pointer bg-[#4D4E4F] relative -top-0.5"
+            className="h-3.25 w-3.25 accent-[#4D4E4F] cursor-pointer bg-[#4D4E4F] relative -top-0.5"
           />
         </li>
         <li className="min-[992px]:hidden">
           <Link
             href="/"
-            className="px-3 py-1.5 min-[992px]:py-0 min-[992px]:h-[25px]  h-[25px] flex items-center hover:bg-gray-800 transition-colors"
+            className="px-3 py-1.5 min-[992px]:py-0 min-[992px]:h-6.25  h-6.25 flex items-center hover:bg-gray-800 transition-colors"
           >
             Rules
           </Link>

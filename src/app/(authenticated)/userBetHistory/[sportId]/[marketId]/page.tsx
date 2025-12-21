@@ -166,51 +166,51 @@ export default function UserBetHistory() {
     }
 
     return (
-        <div className="md:mx-[5px] md:my-[6px]">
+        <div className="md:mx-1.25 md:my-1.5">
             <div className="relative flex flex-col min-w-0 wrap-break-word bg-white md:border border-black/12.5 rounded">
                 {/* Card Header */}
-                <div className="px-4 py-1 md:py-0 h-[37.8px] md:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5 flex items-center bg-gray-600">
+                <div className="px-4 py-1 md:py-0 h-[37.8px] md:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5 flex items-center">
                     <h4 className="mb-0 text-[16.5px] md:text-[24px] text-white font-bold">
                         Profit Loss Markets
                     </h4>
                 </div>
 
                 {/* Card Body */}
-                <div className="px-[8px] py-[10px] pb-2.5 md:py-[16px] text-base">
+                <div className="px-2 py-2.5 pb-2.5 md:py-4 text-base">
 
                     {/* Top Buttons (Back, Lay, Void) */}
-                    <div className="flex justify-end gap-[3px]">
-                        <button className="bg-[#A7DAFD] border text-black p-[5px] transition-colors shadow-sm h-[36px] w-[47.14px] cursor-pointer">
+                    <div className="flex justify-end gap-0.75">
+                        <button className="bg-[#A7DAFD] border text-black p-1.25 transition-colors shadow-sm h-9 w-[47.14px] cursor-pointer">
                             Back
                         </button>
-                        <button className="bg-[#F9C9D4] border text-black p-[5px] transition-colors shadow-sm h-[36px] w-[36.78px] cursor-pointer">
+                        <button className="bg-[#F9C9D4] border text-black p-1.25 transition-colors shadow-sm h-9 w-[36.78px] cursor-pointer">
                             Lay
                         </button>
-                        <button className="bg-white border text-black p-[5px] transition-colors shadow-sm h-[36px] w-[43.88px] cursor-pointer">
+                        <button className="bg-white border text-black p-1.25 transition-colors shadow-sm h-9 w-[43.88px] cursor-pointer">
                             Void
                         </button>
                     </div>
 
                     {/* Cards Container */}
-                    <div className="flex flex-wrap -mx-[5px] mt-3">
+                    <div className="flex flex-wrap -mx-1.25 mt-3">
                         {betData.map((bet, index) => {
                             // Logic for Background Color inside map
                             const cardBg = bet.bidType === "BACK" ? "bg-[#A3D9FC]" : "bg-[#FBC0CB]";
                             const plCalc = calculatePL(bet);
 
                             return (
-                                <div key={index} className="w-full md:w-1/2 px-[8px] mb-3 ">
-                                    <div className={`${cardBg} p-3 rounded-[12px] text-[14px] leading-[21px] font-sans h-full shadow-[0_0_12px_-2px_#696969]`}>
+                                <div key={index} className="w-full md:w-1/2 px-2 mb-3 ">
+                                    <div className={`${cardBg} p-3 rounded-xl text-[14px] leading-5.25 font-sans h-full shadow-[0_0_12px_-2px_#696969]`}>
 
                                         {/* Top Row: Event Name vs Stats */}
                                         <div className="grid grid-cols-12 mb-2">
                                             {/* Event Name */}
-                                            <div className="col-span-6 pr-[9px]">
-                                                <div className="font-bold text-gray-900 w-full  leading-tight w-full text-[]">
+                                            <div className="col-span-6 pr-2.25">
+                                                <div className="font-bold text-gray-900 w-full  leading-tight text-[]">
                                                     {bet.eventType?.name} - {bet.event?.name}
                                                 </div>
 
-                                                <div className="flex flex-col gap-[2px]  text-gray-900">
+                                                <div className="flex flex-col gap-0.5  text-gray-900">
                                                     <div className="">
                                                         <strong>Market Name:</strong> {'  '} {bet.marketId}
                                                     </div>

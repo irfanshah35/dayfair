@@ -9,14 +9,12 @@ import dynamic from "next/dynamic";
 // ================= Lazy Loading Added =================
 const MSportsTab = dynamic(() => import("../m-sports-tab"), {
   ssr: false,
-  loading: () => <>Loading...</>,    
 });
 
 const DSportNav = dynamic(
   () => import("@/components/d-view/d-sports-nav"),
   {
     ssr: false,
-    loading: () => <>Loading...</>,   
   }
 );
 // ======================================================
@@ -56,8 +54,8 @@ const MSingleMarket = () => {
       )}
 
       {/* =================== UI SAME NO CHANGE =================== */}
-      <div className="lg:px-[9px]">
-        <div className="lg:hidden overflow-y-auto no-scrollbar max-h-[265px]">
+      <div className="lg:px-2.25">
+        <div className="lg:hidden overflow-y-auto no-scrollbar max-h-66.25">
           {filteredEvents.length > 0 ? (
             filteredEvents?.map((item, idx) => (
               <div
@@ -69,19 +67,19 @@ const MSingleMarket = () => {
                 }
                 className="text-black block no-underline cursor-pointer hover:bg-[#e5eef3]"
               >
-                <div className="bg-[#f1f5f8] border-b border-[#d6d8d7] px-3 pt-[5px] pb-[3px]">
+                <div className="bg-[#f1f5f8] border-b border-[#d6d8d7] px-3 pt-1.25 pb-0.75">
                   <div className="flex md:items-center">
                     <div className="w-2/3 flex flex-col">
-                      <p className="mb-0 text-[13px] font-bold leading-tight">
+                      <p className="mb-0 text-[13px] leading-tight">
                         {item?.event?.name}
                       </p>
                       <p className="mb-0 text-[12px] leading-tight mt-[2.5px]">
                         {formatDateStamp(item?.marketStartTime)}
                       </p>
                     </div>
-                    <div className="w-1/3 text-right relative -top-1 md:top-[-9px] right-[5px]">
+                    <div className="w-1/3 text-right relative -top-1 md:-top-2.25 right-1.25">
                       {item?.inplay && (
-                        <span className="inline-block font-bold text-[12px] animate-pulse">
+                        <span className="inline-block text-[12px] animate-pulse">
                           INPLAY
                         </span>
                       )}
@@ -97,10 +95,10 @@ const MSingleMarket = () => {
                   <div className="flex">
                     {odds?.map((o) => (
                       <div key={o} className="w-1/3 flex justify-center">
-                        <button className="w-1/2 bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
+                        <button className="w-1/2 bg-[#72bbef] text-[#273a47] text-[14px] h-6 border-0 cursor-pointer">
                           {item?.runners[o]?.ex?.availableToBack[0]?.price || "-"}
                         </button>
-                        <button className="w-1/2 bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-6 border-0 cursor-pointer">
+                        <button className="w-1/2 bg-[#faa9ba] text-[#273a47] text-[14px]h-6 border-0 cursor-pointer">
                           {item?.runners[o]?.ex?.availableToLay[0]?.price || "-"}
                         </button>
                       </div>
@@ -110,7 +108,7 @@ const MSingleMarket = () => {
               </div>
             ))
           ) : (
-            <div className="text-center bg-[#ccc] pt-2 pb-[9px] px-[15px] mb-[25px] text-[12px] text-[#21252a]">
+            <div className="text-center bg-[#ccc] pt-2 pb-2.25 px-3.75 mb-6.25 text-[12px] text-[#21252a]">
               No Real time record is available
             </div>
           )}
@@ -118,16 +116,16 @@ const MSingleMarket = () => {
 
         {/* =================== DESKTOP TABLE (NO CHANGE) =================== */}
         <div className="hidden lg:block w-full">
-          <div className="bg-white px-[9px]">
+          <div className="bg-white px-2.25">
             <table className="w-full coupon-table">
               <thead>
                 <tr className="bg-white border-b-2 border-[#dee2e6]">
-                  <th className="w-[63%] text-left pt-1 pb-[5px] px-[15px] text-[12px] text-[#303030]">
+                  <th className="w-[63%] text-left pt-1 pb-1.25 px-3.75 text-[12px] text-[#303030]">
                     Game
                   </th>
-                  <th colSpan={2} className="text-center pt-1 pb-[5px] px-[15px] text-[12px] font-bold text-[#303030]">1</th>
-                  <th colSpan={2} className="text-center pt-1 pb-[5px] px-[15px] text-[12px] font-bold text-[#303030]">X</th>
-                  <th colSpan={2} className="text-center pt-1 pb-[5px] px-[15px] text-[12px] font-bold text-[#303030]">2</th>
+                  <th colSpan={2} className="text-center pt-1 pb-1.25 px-3.75 text-[12px] font-bold text-[#303030]">1</th>
+                  <th colSpan={2} className="text-center pt-1 pb-1.25 px-3.75 text-[12px] font-bold text-[#303030]">X</th>
+                  <th colSpan={2} className="text-center pt-1 pb-1.25 px-3.75 text-[12px] font-bold text-[#303030]">2</th>
                 </tr>
               </thead>
               <tbody>
@@ -142,9 +140,9 @@ const MSingleMarket = () => {
                       }
                       className="cursor-pointer border-b border-[#d6d8d7]"
                     >
-                      <td className="px-[15px] align-middle">
+                      <td className="px-3.75 align-middle">
                         <div className="flex justify-between items-center">
-                          <div className="game-name float-left text-left relative bottom-[3px]">
+                          <div className="game-name float-left text-left relative bottom-0.75">
                             <a className="text-[#212529] hover:underline cursor-pointer text-[14px]">
                               {item?.event?.name}
                               {item?.marketStartTime && (
@@ -154,11 +152,11 @@ const MSingleMarket = () => {
                           </div>
                           <div className="game-icons float-right w-auto flex items-center space-x-1 -mt-px">
                             {item?.inplay ? (
-                              <span className="game-icon w-[25px] flex justify-center items-center">
+                              <span className="game-icon w-6.25 flex justify-center items-center">
                                 <span className="w-3 h-3 bg-[#28a745] rounded-full inline-block"></span>
                               </span>
                             ) : (
-                              <span className="game-icon w-[25px] flex justify-center items-center">
+                              <span className="game-icon w-6.25 flex justify-center items-center">
                                 <i className="fas fa-clock text-sm" style={{ color: "green" }}></i>
                               </span>
                             )}
@@ -170,12 +168,12 @@ const MSingleMarket = () => {
                       {odds.map((o) => (
                         <React.Fragment key={o}>
                           <td>
-                            <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
+                            <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-6.25 border-0 cursor-pointer min-w-10">
                               {item?.runners[o]?.ex?.availableToBack[0]?.price || "-"}
                             </button>
                           </td>
                           <td>
-                            <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-[25px] border-0 cursor-pointer min-w-10">
+                            <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-6.25 border-0 cursor-pointer min-w-10">
                               {item?.runners[o]?.ex?.availableToLay[0]?.price || "-"}
                             </button>
                           </td>

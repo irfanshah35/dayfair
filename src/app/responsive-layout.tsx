@@ -171,7 +171,7 @@ export default function ResponsiveLayout({ children }: { children: React.ReactNo
 
           <div className="h-[118]"></div>
           <div className="flex h-full">
-            <div className="fixed top-[119px] left-0 h-[calc(100vh-150px)] overflow-y-auto no-scrollbar w-[15%] bg-[#C3BDBD]">
+            <div className="fixed top-29.75 left-0 h-[calc(100vh-150px)] overflow-y-auto no-scrollbar w-[15%] bg-[#C3BDBD]">
               <Sidebar />
             </div>
 

@@ -79,19 +79,19 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-[992px]:mx-[5px] min-[992px]:my-1.5">
+    <div className="min-[992px]:mx-1.25 min-[992px]:my-1.5">
       <div className="bg-white shadow rounded">
         <div
           className="bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]
-                     text-white h-[33px] flex items-center px-3.5 min-[992px]:rounded-t"
+                     text-white h-8.25 flex items-center px-3.5 min-[992px]:rounded-t"
         >
           <h4 className="text-[18px] min-[992px]:text-[20px] font-bold font-roboto bottom-0.5">
             Update Stake
           </h4>
         </div>
 
-        <div className="pl-1 pr-1.5 md:px-1 py-[5px]">
-          <div className="mb-[9px] pl-1">
+        <div className="pl-1 pr-1.5 md:px-1 py-1.25">
+          <div className="mb-2.25 pl-1">
             <p className="text-[14px] -ml-0.5">
               <b className="md:text-[16px]">Stake Amount</b>
             </p>
@@ -108,7 +108,7 @@ export default function Settings() {
                   onChange={(e) => handleChange(i, e.target.value)}
                   placeholder="0"
                   maxLength={9}
-                  className="border border-[#f4b501] shadow-[0_0_2px] md:shadow-none md:border-[#dee2e6] rounded-0.5 md:rounded text-[black] text-center h-[34px] md:h-[38px] text-[16px]"
+                  className="border border-[#f4b501] shadow-[0_0_2px] md:shadow-none md:border-[#dee2e6] rounded-0.5 md:rounded text-[black] text-center h-8.5 md:h-9.5 text-[16px]"
                 />
               ))
             ) : (
@@ -121,7 +121,7 @@ export default function Settings() {
           <div className="mt-3 pl-0.5 md:pl-1">
             <button
               onClick={handleUpdateClick}
-              className="w-full md:w-[221.5px] md:w-1/4 h-[38px] text-[16px] 
+              className="w-full md:w-1/4 h-9.5 text-[16px] 
                          bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]
                          text-black rounded-[1px]"
             >
