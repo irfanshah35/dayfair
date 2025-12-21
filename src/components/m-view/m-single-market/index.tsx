@@ -168,12 +168,12 @@ const MSingleMarket = () => {
                       {odds.map((o) => (
                         <React.Fragment key={o}>
                           <td>
-                            <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] font-bold h-6.25 border-0 cursor-pointer min-w-10">
+                            <button className="w-full bg-[#72bbef] text-[#273a47] text-[14px] h-6.25 border-0 cursor-pointer min-w-10">
                               {item?.runners[o]?.ex?.availableToBack[0]?.price || "-"}
                             </button>
                           </td>
                           <td>
-                            <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] font-bold h-6.25 border-0 cursor-pointer min-w-10">
+                            <button className="w-full bg-[#faa9ba] text-[#273a47] text-[14px] h-6.25 border-0 cursor-pointer min-w-10">
                               {item?.runners[o]?.ex?.availableToLay[0]?.price || "-"}
                             </button>
                           </td>
