@@ -126,7 +126,7 @@ export default function ExposureModal({ open, onClose }: ExposureModalProps) {
                   <tr>
                     <td
                       colSpan={4}
-                      className="px-2 py-[2px] min-[992px]:py-1.5 md:px-3 min-[992px]:py-[7px] h-[23px] min-[992px]:h-10 text-center border text-black border-black/12.5 bg-transparent text-xs min-[992px]:text-base"
+                      className="px-2 py-0.5 md:px-3 min-[992px]:py-[7px] h-[23px] min-[992px]:h-10 text-center border text-black border-black/12.5 bg-transparent text-xs min-[992px]:text-base"
                     >
                       No real-time records found
                     </td>

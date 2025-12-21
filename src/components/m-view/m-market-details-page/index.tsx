@@ -942,7 +942,7 @@ const element = document.querySelector(".rate-changed") as HTMLElement | null;
     <div className="lg:m-[5px] lg:mt-1.5">
       {/* MOBILE TOP TAB BAR */}
       <div className="relative flex lg:hidden justify-between items-center bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]">
-        <div className="flex items-center text-black font-semibold">
+        <div className="flex items-center text-black min-[992px]:font-semibold">
           <div className="flex pt-[13px] pb-3">
             <a
               onClick={() => setActiveTab("odds")}
@@ -1313,7 +1313,7 @@ ${hasPL ? "bg-[#ccc] cursor-pointer" : "cursor-default"}
         {/* DESKTOP HEADER */}
         <div className="hidden md:block text-[12px] border-b border-[#aaa] md:border-none bg-white">
           <div className="border-b border-white flex">
-            <div className="ps-1.5 pe-[5px] py-[2px] min-[992px]:py-[5px] leading-[15px] w-[40%] h-[22px] min-[992px]:h-auto">
+            <div className="ps-1.5 pe-[5px] py-0.5 min-[992px]:py-[5px] leading-[15px] w-[40%] h-[22px] min-[992px]:h-auto">
               <b className="text-[12px] min-[992px]:text-[14px] text-[#0dcaf0] md:font-normal">
                 <span>
                   Min: {market?.min} Max: {market?.max}

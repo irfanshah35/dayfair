@@ -37,7 +37,6 @@ interface ApiResponse {
 
 export default function ProfitLoss() {
   const router = useRouter();
-  const [statementList, setStatementList] = useState<StatementItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize] = useState(25);
   const [totalRecords, setTotalRecords] = useState(0);
@@ -50,12 +49,9 @@ export default function ProfitLoss() {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [mounted, setMounted] = useState(false);
-  const [profitLossData, setProfitLossData] = useState<any>();
+  const [profitLossData, setProfitLossData] = useState<StatementItem[]>([]);
 
-  useEffect(() => {
-    fetchProfitLoss();
-    setMounted(true);
-  }, [mounted]);
+
 
   useEffect(() => {
     const today = new Date();
@@ -83,12 +79,21 @@ export default function ProfitLoss() {
       await fetchData({
         url: CONFIG.profitLoss,
         payload: payload,
-        setFn: setProfitLossData,
+        // setFn: setProfitLossData,
+        setFn: (res) => {
+          console.log("🔥 Profit & Loss API Response:", res);
+          setProfitLossData(res);
+        },
       });
     } catch (error) {
       console.error("Error fetching profit loss:", error);
     }
   };
+
+  useEffect(() => {
+    fetchProfitLoss();
+    setMounted(true);
+  }, [mounted]);
 
   const submitData = () => {
     setCurrentPage(1);
@@ -155,7 +160,7 @@ export default function ProfitLoss() {
 
     const formattedStartDate = new Date(startDate);
     formattedStartDate.setHours(0, 0, 0, 0);
-    
+
     const formattedEndDate = new Date(endDate);
     formattedEndDate.setHours(23, 59, 0, 0);
 
@@ -178,7 +183,7 @@ export default function ProfitLoss() {
           {/* Filter Row */}
           <div className="flex flex-wrap items-end mt-[7px] -mx-[5px]">
             {/* Start Date */}
-            <div className="w-full md:w-1/6 px-[6px]  md:pr-[9px] mb-2 md:mb-0">
+            <div className="w-full md:w-1/6 px-1.5  md:pr-[9px] mb-2 md:mb-0">
               <CustomCalendar
                 selected={startDate}
                 onChange={setStartDate}
@@ -188,7 +193,7 @@ export default function ProfitLoss() {
             </div>
 
             {/* End Date */}
-            <div className="w-full md:w-1/6 px-[6px] md:px-[9px] mb-[6px]  md:mb-0">
+            <div className="w-full md:w-1/6 px-1.5 md:px-[9px] mb-1.5  md:mb-0">
               <CustomCalendar
                 selected={endDate}
                 onChange={setEndDate}
@@ -202,7 +207,7 @@ export default function ProfitLoss() {
             {/* Submit Button */}
             <div className="w-full md:w-1/6 px-[9px]">
               <button
-                className=" w-full md:w-[76px] h-[38px] px-[6px] md:px-[9px] py-1.5 text-base font-normal text-black heading-clr  border border-black rounded cursor-pointer hover:opacity-90 bg-[#F4A500]"
+                className=" w-full md:w-[76px] h-[38px] px-1.5 md:px-[9px] py-1.5 text-base font-normal text-black heading-clr  border border-black rounded cursor-pointer hover:opacity-90 bg-[#F4A500]"
                 onClick={submitData}
               >
                 Submit
@@ -232,9 +237,9 @@ export default function ProfitLoss() {
 
                 <tbody>
                   {profitLossData?.length > 0 ? (
-                    profitLossData?.map((statement: any, index: number) => (
+                    profitLossData?.map((statement: StatementItem, index: number) => (
                       <tr key={index} className="flex w-full max-h-[43px]">
-                        <td 
+                        <td
                           className="w-[309.03px] cursor-pointer px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r border-black/12.5 text-xs md:text-base text-[rgb(13,110,253)] hover:text-[rgb(10,88,202)] hover:underline"
                           onClick={() => handleSportClick(statement.eventType.id)}
                         >
