@@ -154,7 +154,7 @@ export default function AccountStatement() {
           {/* Filter Row */}
           <div className="flex flex-wrap items-center mt-[7px] -mx-[5px]">
             {/* Start Date */}
-            <div className="w-full md:w-1/6 px-[5px] md:pl-[5px] md:pr-[9px] mb-[6px] md:mb-0">
+            <div className="w-full md:w-1/6 px-[5px] md:pl-[5px] md:pr-[9px] mb-1.5 md:mb-0">
               <CustomCalendar
                 selected={startDate}
                 onChange={setStartDate}
@@ -239,7 +239,7 @@ export default function AccountStatement() {
                     <tr>
                       <td
                         colSpan={5}
-                        className="p-[2px] min-[992px]:px-3 min-[992px]:py-[9px] text-center border text-black border-black/12.5 bg-transparent min-[992px]:text-base"
+                        className="p-0.5 min-[992px]:px-3 min-[992px]:py-[9px] text-center border text-black border-black/12.5 bg-transparent min-[992px]:text-base"
                       >
                         No data available in table
                       </td>
@@ -251,7 +251,7 @@ export default function AccountStatement() {
           </div>
 
           {/* Mobile Pagination */}
-          <div className="flex md:hidden justify-between items-center gap-2 mt-[6px] md:mt-2">
+          <div className="flex md:hidden justify-between items-center gap-2 mt-1.5 md:mt-2">
             <button
               className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${
                 currentPage === 1

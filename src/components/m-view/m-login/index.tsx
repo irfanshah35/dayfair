@@ -1,6 +1,7 @@
 "use client";
 import { useToast } from "@/components/common/toast/toast-context";
 import { useAuthStore } from "@/lib/store/authStore";
+import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { IoClose } from "react-icons/io5";
@@ -126,7 +127,7 @@ export default function MLoginPage() {
                 {/* Android App Box */}
                 <div className="bg-white rounded-lg px-4 pt-1 pb-1">
                   <div className="logoApplication flex items-center">
-                    <img
+                    <Image
                       src="/login/androidblack.png"
                       className="w-[50px] h-[55px] relative top-[-3px]"
                       alt="Android App"

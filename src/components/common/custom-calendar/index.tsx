@@ -1,7 +1,8 @@
 "use client";
 
+import Image from "next/image";
 import React, { useState, useEffect, useRef } from "react";
-import { FaCalendarAlt, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import { FaRegCalendarDays } from "react-icons/fa6";
 
 const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -31,7 +32,29 @@ const normalize = (d?: Date | null): Date | null => {
 
 const monthIndex = (y: number, m: number) => y * 12 + m;
 
-const CustomCalendar = ({
+
+interface CustomCalendarProps {
+  selected?: Date | null;
+  onChange: (date: Date | null) => void;
+  startDate?: Date;
+  endDate?: Date;
+  selectsEnd?: boolean;
+  minDate?: Date;
+  maxDate?: Date;
+  placeholderText?: string;
+  dateFormat?: string;
+  isClearable?: boolean;
+  readOnly?: boolean;
+  autoComplete?: string;
+}
+
+interface CalendarDay {
+  day: number;
+  isCurrentMonth: boolean;
+  isOtherMonth: boolean;
+  disabled: boolean;
+}
+const CustomCalendar: React.FC<CustomCalendarProps> = ({
   selected,
   onChange,
   startDate,
@@ -44,7 +67,7 @@ const CustomCalendar = ({
   isClearable = true,
   readOnly = true,
   autoComplete = "off",
-}: any) => {
+}) => {
   const [selectedDate, setSelectedDate] = useState<Date | null>(selected || null);
   const [currentMonth, setCurrentMonth] = useState<number>((selected || new Date()).getMonth());
   const [currentYear, setCurrentYear] = useState<number>((selected || new Date()).getFullYear());
@@ -194,8 +217,8 @@ const CustomCalendar = ({
   const getFirstDayOfMonth = (year: number, month: number): number =>
     (new Date(year, month, 1).getDay() + 6) % 7;
 
-  const getCalendarDays = (): any[] => {
-    const days: any[] = [];
+  const getCalendarDays = (): CalendarDay[] => {
+    const days: CalendarDay[] = [];
     const totalDays = getDaysInMonth(currentYear, currentMonth);
     const startDay = getFirstDayOfMonth(currentYear, currentMonth);
 
@@ -285,7 +308,7 @@ const CustomCalendar = ({
       </div>
 
       <div className="grid grid-cols-7 gap-1 mb-1">
-        {weekDays.map((day, index) => (
+        {weekDays.map((day) => (
           <div key={day} className="h-6 flex items-center justify-center text-[13px] p-1 font-medium text-gray-600">
             {day}
           </div>
@@ -333,7 +356,7 @@ const CustomCalendar = ({
           aria-label="Previous year range"
           type="button"
         >
-          <img src="/assets/account-statement/arro.svg" alt="" className="w-4 h-[22px]" />
+          <Image src="/assets/account-statement/arro.svg" alt="" className="w-4 h-[22px]" />
         </button>
 
         <div className="text-[16px] font-medium text-gray-800">
@@ -352,7 +375,7 @@ const CustomCalendar = ({
           aria-label="Next year range"
           type="button"
         >
-          <img src="/assets/account-statement/arro.svg" alt="" className="w-4 h-[22px] rotate-180" />
+          <Image src="/assets/account-statement/arro.svg" alt="" className="w-4 h-[22px] rotate-180" />
         </button>
       </div>
 
