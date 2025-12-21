@@ -369,7 +369,7 @@ const Header = () => {
                         <li
                           key={index}
                           onClick={() => handleSelect(match)}
-                          className=" hover:bg-gray-100 text-black cursor-pointer border-b border-[#ccc] py-1.25 mb-1.25"
+                          className=" hover:bg-gray-100 text-black cursor-pointer  border-[#ccc] py-1.25 mb-1.25"
                         >
                           <div className="flex flex-col leading-3.5">
                             <div className="flex">
