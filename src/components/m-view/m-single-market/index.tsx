@@ -55,7 +55,7 @@ const MSingleMarket = () => {
 
       {/* =================== UI SAME NO CHANGE =================== */}
       <div className="lg:px-2.25">
-        <div className="lg:hidden overflow-y-auto no-scrollbar max-h-66.25">
+        <div className="lg:hidden overflow-y-auto max-h-66.25">
           {filteredEvents.length > 0 ? (
             filteredEvents?.map((item, idx) => (
               <div
