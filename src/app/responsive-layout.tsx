@@ -138,6 +138,7 @@ export default function ResponsiveLayout({ children }: { children: React.ReactNo
       "/profitloss-market",
       "/settings",
       "/userBetHistory",
+      "/rules",
     ].includes(pathname || "");
 
   if (pathname === "/login") return children;

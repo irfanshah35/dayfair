@@ -83,7 +83,7 @@ export default function Settings() {
       <div className="bg-white shadow rounded">
         <div
           className="bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]
-                     text-white h-8.25 flex items-center px-3.5 min-[992px]:rounded-t"
+                     text-white h-8.25 flex items-center px-[6px] min-[992px]:px-3.5 min-[992px]:rounded-t"
         >
           <h4 className="text-[18px] min-[992px]:text-[20px] font-bold font-roboto bottom-0.5">
             Update Stake
@@ -91,9 +91,9 @@ export default function Settings() {
         </div>
 
         <div className="pl-1 pr-1.5 md:px-1 py-1.25">
-          <div className="mb-2.25 pl-1">
-            <p className="text-[14px] -ml-0.5">
-              <b className="md:text-[16px]">Stake Amount</b>
+          <div className="mb-2.25 min-[992px]:pl-1">
+            <p className="text-[14px] min-[992px]:-ml-0.5">
+              <b className="md:text-[16px] font-black">Stake Amount</b>
             </p>
           </div>
 
@@ -108,7 +108,7 @@ export default function Settings() {
                   onChange={(e) => handleChange(i, e.target.value)}
                   placeholder="0"
                   maxLength={9}
-                  className="border border-[#f4b501] shadow-[0_0_2px] md:shadow-none md:border-[#dee2e6] rounded-0.5 md:rounded text-[black] text-center h-8.5 md:h-9.5 text-[16px]"
+                  className="border border-[#f4b501] shadow-[0_0_2px] md:shadow-none md:border-[#dee2e6] rounded-0.5 md:rounded text-[black] text-center h-8.5 md:h-9.5 text-[12px] min-[992px]:text-[16px] placeholder:text-[12px] max-[992px]:tracking-[0.5px]"
                 />
               ))
             ) : (

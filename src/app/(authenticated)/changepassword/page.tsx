@@ -167,13 +167,13 @@ export default function ChangePassword() {
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]">
       <div className="bg-linear-to-b from-[#f4b501] to-[#f68700] w-full flex justify-center items-center p-[5px]">
-        <a className="font-semibold uppercase relative top-px">
+        <a className="font-bold uppercase relative top-px">
           Change Password
         </a>
       </div>
 
       <div className="w-full flex justify-center items-center mt-px min-[992px]:mt-18 min-[992px]:ml-6 mb-10 px-1.5">
-        <div className="mt-4 w-full min-[992px]:w-[323.75px] p-[22px] px-[17px]">
+        <div className="mt-4 w-full min-[992px]:w-[323.75px] p-[22px] px-[16px]">
           {/* Current Password */}
           <div className="mt-2 relative">
             <input
@@ -182,14 +182,14 @@ export default function ChangePassword() {
               value={form.currentPassword}
               onChange={handleInput}
               placeholder="Current Password"
-              className="w-full px-6 outline-none h-[51.81px] py-3 rounded-sm text-[16px] font-semibold border border-white text-white placeholder-white"
+              className="w-full text-sm min-[992px]:text-base outline-none h-[51.81px] py-3 rounded-sm text-[16px] font-bold border border-white text-white placeholder-white placeholder:text-[15px] tracking-[0.2px] px-[23px]"
             />
             <button
               type="button"
               onClick={() => setShowCurrent(!showCurrent)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-white"
+              className="absolute right-[14px] top-[25px] min-[992px]:right-4 min-[992px]:top-1/2 -translate-y-1/2 text-white"
             >
-              {showCurrent ? <FaEye /> : <FaEyeSlash />}
+              {showCurrent ? <FaEye size={20}/> : <FaEyeSlash size={20}/>}
             </button>
             <p className="text-red-300 text-sm mt-1">
               {errors.currentPassword}
@@ -204,14 +204,14 @@ export default function ChangePassword() {
               value={form.newPassword}
               onChange={handleInput}
               placeholder="New Password"
-              className="w-full px-6 outline-none py-3 h-[51.81px] rounded-sm text-[16px] font-semibold border border-white text-white placeholder-white"
+              className="w-full outline-none py-3 h-[51.81px] rounded-sm text-[16px] font-semibold border border-white text-white placeholder-white placeholder:text-[15px] tracking-[0.2px] px-[23px]"
             />
             <button
               type="button"
               onClick={() => setShowNew(!showNew)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-white"
+              className="absolute right-[14px] top-[25px] min-[992px]:right-4 min-[992px]:top-1/2 -translate-y-1/2 text-white"
             >
-              {showNew ? <FaEye /> : <FaEyeSlash />}
+              {showNew ? <FaEye size={20}/> : <FaEyeSlash size={20}/>}
             </button>
             <p className="text-red-300 text-sm mt-1">{errors.newPassword}</p>
           </div>
@@ -224,14 +224,14 @@ export default function ChangePassword() {
               value={form.confirmNewPassword}
               onChange={handleInput}
               placeholder="Confirm Password"
-              className="w-full px-6 outline-none py-3 h-[51.81px] rounded-sm text-[16px] font-semibold border border-white text-white placeholder-white"
+              className="w-full outline-none py-3 h-[51.81px] rounded-sm text-[16px] font-semibold border border-white text-white placeholder-white placeholder:text-[15px] tracking-[0.2px] px-[23px]"
             />
             <button
               type="button"
               onClick={() => setShowConfirm(!showConfirm)}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-white"
+              className="absolute right-[14px] top-[25px] min-[992px]:right-4 min-[992px]:top-1/2 -translate-y-1/2 text-white"
             >
-              {showConfirm ? <FaEye /> : <FaEyeSlash />}
+              {showConfirm ? <FaEye size={20}/> : <FaEyeSlash size={20} />}
             </button>
             <p className="text-red-300 text-sm mt-1">
               {errors.confirmNewPassword}
@@ -245,7 +245,7 @@ export default function ChangePassword() {
               type="button"
               onClick={changePassword}
               disabled={isLoading}
-              className="bg-linear-to-b from-[#f4b501] to-[#f68700] w-full block my-2 px-3.5 py-2.5 rounded-sm text-[17px] font-semibold uppercase tracking-[1px] text-black"
+              className="bg-linear-to-b from-[#f4b501] to-[#f68700] w-full block my-2 px-3.5 py-2.5 rounded-[5px] text-[17px] font-semibold uppercase tracking-[0.8px] text-black"
             >
               Change Password
             </button>
