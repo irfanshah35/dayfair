@@ -138,6 +138,7 @@ export default function ResponsiveLayout({ children }: { children: React.ReactNo
       "/profitloss-market",
       "/settings",
       "/userBetHistory",
+      "/rules",
     ].includes(pathname || "");
 
   if (pathname === "/login") return children;
@@ -175,7 +176,7 @@ export default function ResponsiveLayout({ children }: { children: React.ReactNo
               <Sidebar />
             </div>
 
-            <main className="ml-[15%] w-[85%] h-[calc(100vh-110px)] overflow-y-auto pb-2">
+            <main className="ml-[15%] w-[85%] h-[calc(100vh-110px)] overflow-y-auto pb-2 no-scrollbar">
               {children}
               <div className="h-[30]"></div>
             </main>

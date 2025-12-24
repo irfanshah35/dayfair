@@ -545,7 +545,7 @@ const Header = () => {
 
             {/* Mobile Dropdown */}
             {searchActive && mobileQuery && (
-              <ul className="absolute top-7.5 max-h-47.5 left-0 w-[150%] bg-white border border-gray-300 mt-1  overflow-y-auto z-9999 shadow-[1px_0_10px_#000]">
+              <ul className="absolute top-9 min-[992px]:top-7.5 max-h-47.5 left-0 w-[214.5%] min-[992px]:w-[150%] bg-white border border-gray-300 mt-1  overflow-y-auto z-9999 shadow-[1px_0_10px_#000]">
                 {mobileResults?.length > 0 ? (
                   mobileResults?.map((match, index) => (
                     <li
@@ -569,7 +569,7 @@ const Header = () => {
                     </li>
                   ))
                 ) : (
-                  <li className="text-black px-2 py-1.5 text-[11px]">
+                  <li className="text-black px-1 py-[7px] min-[992px]:px-2 min-[992px]:py-1.5 text-[12px]">
                     No real-time records found
                   </li>
                 )}
@@ -678,13 +678,13 @@ const AccountDropDown = ({
     <>
       <ul
         id="collapseForAccount"
-        className="absolute top-{100px} min-[992px]:top-20.5 w-43 min-[992px]:w-42.5 z-99999 text-[16px] min-[992px]:text-[14px] right-0 overflow-hidden transition-all duration-300 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] rounded-sm"
+        className="absolute top-{100px} min-[992px]:top-20.5 w-43 min-[992px]:w-42.5 z-99999 text-[16px] min-[992px]:text-[14px] right-0 overflow-hidden transition-all duration-300 bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] min-[992px]:rounded-sm"
       >
         <li className="min-[992px]:hidden py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-6.25 ">
           <Link
             href="/"
             onClick={closeDropdown}
-            className="px-3 h-6.25 flex items-center hover:bg-gray-800 transition-colors"
+            className="px-3 h-6.25 py-1.5 flex items-center hover:bg-gray-800 transition-colors relative top-[-1px]"
           >
             Home
           </Link>
@@ -729,10 +729,9 @@ const AccountDropDown = ({
             className="h-3.25 w-3.25 cursor-pointer  relative -top-0.5"
           />
         </li>
-        
-        <li className="min-[992px]:hidden">
+        <li className="min-[992px]:hidden h-[36px] flex items-center max-[992px]:mb-[5px]">
           <Link
-            href="/"
+            href="/rules"
             className="px-3 py-1.5 min-[992px]:py-0 min-[992px]:h-6.25  h-6.25 flex items-center hover:bg-gray-800 transition-colors"
           >
             Rules
@@ -747,9 +746,9 @@ const AccountDropDown = ({
         <li className="bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)] text-[16px] font-black">
           <button
             onClick={SignOut}
-            className="w-full text-left px-3 py-2 cursor-pointer text-[#ff2828] transition rounded"
+            className="w-full text-left px-3 py-1.5 cursor-pointer text-[#ff2828] transition rounded flex gap-[1px]"
           >
-            Signout <span className="opacity-80 text-white">()</span>
+            Signout<span className="opacity-80 text-white">()</span>
           </button>
         </li>
       </ul>

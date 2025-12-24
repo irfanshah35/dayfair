@@ -140,7 +140,7 @@ export default function AccountStatement() {
   };
 
   return (
-    <div className="min-[992px]:mx-[5px] min-[992px]:my-1.5">
+    <div className="min-[992px]:mx-1.25 min-[992px]:my-1.5">
       <div className="relative flex flex-col min-w-0 wrap-break-word bg-white min-[992px]:border border-black/12.5 rounded">
         {/* Card Header */}
         <div className="px-4 py-1 min-[992px]:py-0 min-[992px]:h-[37.8px] min-[992px]:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5">
@@ -150,11 +150,11 @@ export default function AccountStatement() {
         </div>
 
         {/* Card Body */}
-        <div className="p-[5px] pb-2.5 pt-2.5 text-base">
+        <div className="p-1.25 pb-2.5 pt-2.5 text-base">
           {/* Filter Row */}
-          <div className="flex flex-wrap items-center mt-[7px] -mx-[5px]">
+          <div className="flex flex-wrap items-center mt-1.75 -mx-1.25">
             {/* Start Date */}
-            <div className="w-full md:w-1/6 px-[5px] md:pl-[5px] md:pr-[9px] mb-1.5 md:mb-0">
+            <div className="w-full md:w-1/6 px-1.25 md:pl-1.25 md:pr-2.25 mb-1.5 md:mb-0">
               <CustomCalendar
                 selected={startDate}
                 onChange={setStartDate}
@@ -164,7 +164,7 @@ export default function AccountStatement() {
             </div>
 
             {/* End Date */}
-            <div className="w-full md:w-1/6 px-[5px] md:px-[9px] mb-[11px]  md:mb-0">
+            <div className="w-full md:w-1/6 px-1.25 md:px-2.25 mb-2.75  md:mb-0">
               <CustomCalendar
                 selected={endDate}
                 onChange={setEndDate}
@@ -176,9 +176,9 @@ export default function AccountStatement() {
             </div>
 
             {/* Submit Button */}
-            <div className="w-full md:w-[16.5%] px-[5px] md:px-[7px] pr-[9px] relative md:bottom-px">
+            <div className="w-full md:w-[16.5%] px-1.25 md:px-1.75  relative md:bottom-px">
               <button
-                className="w-full h-[38px] px-[9px] py-1.5 text-base font-normal text-black heading-clr  border border-black rounded cursor-pointer hover:opacity-90"
+                className="w-full h-9.5 px-2.25 py-1.5 text-base font-normal text-black heading-clr  border border-black rounded cursor-pointer hover:opacity-90"
                 onClick={submitData}
               >
                 Submit
@@ -187,24 +187,24 @@ export default function AccountStatement() {
           </div>
 
           {/* Table */}
-          <div className="flex flex-wrap -mx-[5px] mt-3">
-            <div className="w-full px-[5px] overflow-x-auto">
+          <div className="flex flex-wrap -mx-1.25 mt-3">
+            <div className="w-full px-1.25 overflow-x-auto">
               <table className="w-full border-collapse border border-black/12.5">
                 <thead>
                   <tr>
-                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-[26px] min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm min-[992px]:text-base">
+                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-6.5 min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm min-[992px]:text-base">
                       Date / Time
                     </th>
-                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-[26px] min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm min-[992px]:text-base">
+                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-6.5 min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm min-[992px]:text-base">
                       Credit
                     </th>
-                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-[26px] min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm min-[992px]:text-base">
+                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-6.5 min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm min-[992px]:text-base">
                       Debit
                     </th>
-                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-[26px] min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 font-bold text-sm min-[992px]:text-base">
+                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-6.5 min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 font-bold text-sm min-[992px]:text-base">
                       Balance
                     </th>
-                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-[26px] min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm min-[992px]:text-base">
+                    <th className="p-0.5 min-[992px]:px-3 min-[992px]:py-2 text-center h-6.5 min-[992px]:h-auto text-black bg-[#e9ecef] border-x border-black/12.5 text-sm min-[992px]:text-base">
                       Remark
                     </th>
                   </tr>
@@ -214,23 +214,23 @@ export default function AccountStatement() {
                   {accountStatement?.length > 0 ? (
                     accountStatement?.map((statement:any, index:number) => (
                       <tr key={index}>
-                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
+                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-2.25 text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
                           {formatDateTime(statement.createdAt)}
                         </td>
-                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
+                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-2.25 text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
                           {statement.deposit || "0"}
                         </td>
-                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
+                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-2.25 text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
                           <span className="font-bold text-red-600">
                             {statement.withdraw || "0"}
                           </span>
                         </td>
-                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
+                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-2.25 text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
                           <span className="font-bold">
                             {statement.bankBalance}
                           </span>
                         </td>
-                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
+                        <td className="px-2 py-1.5 min-[992px]:px-3 min-[992px]:p-2.25 text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
                           {statement.remark || "NA"}
                         </td>
                       </tr>
@@ -239,7 +239,7 @@ export default function AccountStatement() {
                     <tr>
                       <td
                         colSpan={5}
-                        className="p-0.5 min-[992px]:px-3 min-[992px]:py-[9px] text-center border text-black border-black/12.5 bg-transparent min-[992px]:text-base"
+                        className="p-0.5 min-[992px]:px-3 min-[992px]:py-2.25 text-center border text-black border-black/12.5 bg-transparent min-[992px]:text-base"
                       >
                         No data available in table
                       </td>
@@ -371,7 +371,7 @@ export default function AccountStatement() {
                 Jump to page
               </span>
               <input
-                className="w-[90px] h-[38px] px-2 py-1 text-sm border border-[#dee2e6] rounded"
+                className="w-22.5 h-9.5 px-2 py-1 text-sm border border-[#dee2e6] rounded"
                 type="number"
                 min="1"
                 max={totalPages}

@@ -71,7 +71,7 @@ export default function PasswordHistory() {
 
   return (
     <>
-      <div className="flex items-center gap-2 mx-2">
+      <div className="flex items-center gap-1.5 mx-1.5 min-[992px]:gap-2 min-[992px]:mx-2">
         <button
           onClick={switchTab("activity")}
           className={`w-full my-2 min-[992px]:my-[9px] py-1 px-2 min-[992px]:px-3.5 min-[992px]:py-2.5 border rounded-[30px] text-black text-[16px] font-semibold cursor-pointer border-black ${activeTab === "activity"
@@ -96,24 +96,24 @@ export default function PasswordHistory() {
       </div>
 
       <div className="min-[992px]:mx-1 min-[992px]:my-1">
-        <div className="border border-gray-200 min-[992px]:rounded-min-[992px]: text-white">
+        <div className="min-[992px]:border border-gray-200 min-[992px]:rounded-min-[992px]: text-white">
           {/* Header */}
-          <div className="px-4 py-1 min-[992px]:py-[0.218px] border-b border-[rgba(0,0,0,0.175)] min-[992px]:rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] min-[992px]:h-[37.8px] flex items-center">
-            <span className="mb-0 text-base text-white! min-[992px]:text-[24px]">
+          <div className="px-4 py-[3px] h-[32.89px] min-[992px]:py-[0.218px] min-[992px]:border-b border-[rgba(0,0,0,0.175)] min-[992px]:rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] min-[992px]:h-[37.8px] flex items-center">
+            <span className="mb-0 text-[16.575px] text-white! min-[992px]:text-[24px] relative top-[-1px] min-[992px]:top-0">
               Password History
             </span>
           </div>
 
           {/* Table Wrapper */}
-          <div className="py-3 min-[992px]:py-4 px-2 min-[992px]:px-[5px]">
+          <div className="py-4 px-[5px] min-[992px]:px-[5px]">
             <div className="overflow-x-auto md:mt-1 min-[992px]:mt-0">
               <table className="w-full border border-[#C8CED3]">
                 <thead>
                   <tr>
-                    <th className="p-0.5 h-[26px] min-[992px]:h-auto w-[36.4%] min-[992px]:px-3 min-[992px]:py-[9px] text-center text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm min-[992px]:text-base">
+                    <th className="p-0.5 max-[992px]:leading-[21px] h-[26px] min-[992px]:h-auto w-[36.4%] min-[992px]:px-3 min-[992px]:py-[9px] text-center text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm min-[992px]:text-base">
                       Date
                     </th>
-                    <th className="p-0.5 h-[26px] min-[992px]:h-auto min-[992px]:px-3 min-[992px]:py-[9px] text-center text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm min-[992px]:text-base">
+                    <th className="p-0.5 max-[992px]:leading-[21px] h-[26px] min-[992px]:h-auto min-[992px]:px-3 min-[992px]:py-[9px] text-center text-black bg-[#e9ecef] border border-black/12.5 font-bold text-sm min-[992px]:text-base">
                       Remarks
                     </th>
                   </tr>
