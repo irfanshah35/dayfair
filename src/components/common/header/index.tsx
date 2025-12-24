@@ -106,6 +106,10 @@ const Header = () => {
   const { allEventsList } = useAppStore();
   const [results, setResults] = useState<any[]>([]);
   const [mobileResults, setMobileResults] = useState<any[]>([]);
+  
+  // New state for checkbox toggles - default true
+  const [showBalance, setShowBalance] = useState(true);
+  const [showExposure, setShowExposure] = useState(true);
 
   const goToLogin = () => {
     if (!isLoggedIn) {
@@ -403,61 +407,72 @@ const Header = () => {
           {isLoggedIn && (
             <>
               <div className=" relative min-[345px]:absolute mb-4.5 ml-8.5 min-[345px]:mb-0 top-2.25 right-0.75 flex gap-0.75 min-[992px]:gap-0. min-[345px]:justify-end min-[992px]:hidden text-[13px] tracking-[-0.15px]">
-                {/* BALANCE */}
-                <div className="">
-                  <span className="text-white font-bold min-[992px]:font-normal">
-                    (BAL :{" "}
-                    <b className="userTotalBalance">
-                      {((userBalance?.bankBalance || 0) - (userBalance?.exposure || 0)).toFixed(2)}
-                    </b>
-                    )
-                  </span>
-                </div>
-
-                {/* EXPOSURE */}
-                <div
-                  className=""
-                  onClick={() => setExposureOpen(!isexposureopen)}
-                >
-                  <span className="text-white">
-                    <button className="underline-offset-2 font-bold min-[992px]:font-normal">
-                      (EXP :{" "}
-                      <b className="userTotalExposure">
-                        {userBalance?.exposure?.toFixed(2) || "0.00"}
+                {/* BALANCE - Mobile */}
+                {showBalance && (
+                  <div className="">
+                    <span className="text-white font-bold min-[992px]:font-normal">
+                      (BAL :{" "}
+                      <b className="userTotalBalance">
+                        {((userBalance?.bankBalance || 0) - (userBalance?.exposure || 0)).toFixed(2)}
                       </b>
                       )
-                    </button>
-                  </span>
-                </div>
+                    </span>
+                  </div>
+                )}
+
+                {/* EXPOSURE - Mobile */}
+                {showExposure && (
+                  <div
+                    className=""
+                    onClick={() => setExposureOpen(!isexposureopen)}
+                  >
+                    <span className="text-white">
+                      <button className="underline-offset-2 font-bold min-[992px]:font-normal">
+                        (EXP :{" "}
+                        <b className="userTotalExposure">
+                          {userBalance?.exposure?.toFixed(2) || "0.00"}
+                        </b>
+                        )
+                      </button>
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="float-left text-[16px] mr-4 hidden min-[992px]:flex flex-col justify-center font-light">
-                <div className="text-start leading-5.75">
-                  <span>
-                    <b>BALANCE&nbsp;:&nbsp;</b>
-                  </span>
-                  <b>
-                    <span className="userTotalBalance relative left-0.75">
-                      {((userBalance?.bankBalance || 0) - (userBalance?.exposure || 0)).toFixed(2)}
-                    </span>
-                  </b>
-                </div>
-                <div className="text-start leading-5.75">
-                  <button
-                    onClick={() => setExposureOpen(!isexposureopen)}
-                    type="button"
-                    className="cursor-pointer"
-                  >
+                {/* BALANCE - Desktop */}
+                {showBalance && (
+                  <div className="text-start leading-5.75">
                     <span>
-                      <b>EXPOSURE&nbsp;:&nbsp;</b>
+                      <b>BALANCE&nbsp;:&nbsp;</b>
                     </span>
                     <b>
-                      <span className="">
-                        {userBalance?.exposure?.toFixed(2) || "0.00"}
+                      <span className="userTotalBalance relative left-0.75">
+                        {((userBalance?.bankBalance || 0) - (userBalance?.exposure || 0)).toFixed(2)}
                       </span>
                     </b>
-                  </button>
-                </div>
+                  </div>
+                )}
+                
+                {/* EXPOSURE - Desktop */}
+                {showExposure && (
+                  <div className="text-start leading-5.75">
+                    <button
+                      onClick={() => setExposureOpen(!isexposureopen)}
+                      type="button"
+                      className="cursor-pointer"
+                    >
+                      <span>
+                        <b>EXPOSURE&nbsp;:&nbsp;</b>
+                      </span>
+                      <b>
+                        <span className="">
+                          {userBalance?.exposure?.toFixed(2) || "0.00"}
+                        </span>
+                      </b>
+                    </button>
+                  </div>
+                )}
               </div>
             </>
           )}
@@ -577,7 +592,13 @@ const Header = () => {
       </div>
       {isaccountopen && (
         <div ref={dropdownRef}>
-          <AccountDropDown closeDropdown={closeAccountDropdown} />
+          <AccountDropDown 
+            closeDropdown={closeAccountDropdown}
+            showBalance={showBalance}
+            setShowBalance={setShowBalance}
+            showExposure={showExposure}
+            setShowExposure={setShowExposure}
+          />
         </div>
       )}
       <RulesModal open={isrulesopen} onClose={() => setRulesOpen(false)} />
@@ -603,7 +624,13 @@ const Header = () => {
 
 export default Header;
 
-const AccountDropDown = ({ closeDropdown }: any) => {
+const AccountDropDown = ({ 
+  closeDropdown, 
+  showBalance, 
+  setShowBalance, 
+  showExposure, 
+  setShowExposure 
+}: any) => {
   const router = useRouter();
   const accountMenuItems = [
     {
@@ -676,15 +703,16 @@ const AccountDropDown = ({ closeDropdown }: any) => {
         ))}
 
         {/* Balance Switch */}
-        <li className="flex items-center py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-6.25  justify-between pl-3 pr-1 min-[992px]:pr-4.5 cursor-pointer">
+        <li className="flex items-center py-1.5 min-[992px]:py-0 h-9 min-[992px]:h-6.25 justify-between pl-3 pr-1 min-[992px]:pr-4.5 cursor-pointer">
           <label htmlFor="checkBalance" className="cursor-pointer">
             Balance
           </label>
-
           <input
             id="checkBalance"
             type="checkbox"
-            className="h-3.25 w-3.25 accent-[#4D4E4F] cursor-pointer bg-[#4D4E4F] relative -top-0.5"
+            checked={showBalance}
+            onChange={(e) => setShowBalance(e.target.checked)}
+            className="h-3.25 w-3.25 cursor-pointer relative -top-0.5"
           />
         </li>
 
@@ -693,13 +721,15 @@ const AccountDropDown = ({ closeDropdown }: any) => {
           <label htmlFor="checkExposure" className="cursor-pointer">
             Exposure
           </label>
-
           <input
             id="checkExposure"
             type="checkbox"
-            className="h-3.25 w-3.25 accent-[#4D4E4F] cursor-pointer bg-[#4D4E4F] relative -top-0.5"
+            checked={showExposure}
+            onChange={(e) => setShowExposure(e.target.checked)}
+            className="h-3.25 w-3.25 cursor-pointer  relative -top-0.5"
           />
         </li>
+        
         <li className="min-[992px]:hidden">
           <Link
             href="/"
