@@ -98,8 +98,8 @@ export default function PasswordHistory() {
       <div className="min-[992px]:mx-1 min-[992px]:my-1">
         <div className="min-[992px]:border border-gray-200 min-[992px]:rounded-min-[992px]: text-white">
           {/* Header */}
-          <div className="px-4 py-[3px] h-[32.89px] min-[992px]:py-[0.218px] min-[992px]:border-b border-[rgba(0,0,0,0.175)] min-[992px]:rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] min-[992px]:h-[37.8px] flex items-center">
-            <span className="mb-0 text-[16.575px] text-white! min-[992px]:text-[24px] relative top-[-1px] min-[992px]:top-0">
+          <div className="px-4 py-[4px] min-[400px]:py-[3.5px] min-[992px]:py-[0.218px] border-b border-[rgba(0,0,0,0.175)] min-[992px]:rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] min-[992px]:h-[37.8px] flex items-center">
+            <span className="mb-0 text-[16.26px] min-[400px]:text-[16.575px] text-white! min-[992px]:text-[24px] relative min-[400px]:top-[-1px] min-[992px]:top-0">
               Password History
             </span>
           </div>
@@ -123,10 +123,10 @@ export default function PasswordHistory() {
                   {passwordData?.length > 0 ? (
                     passwordData.map((row: PasswordHistoryItem, idx: number) => (
                       <tr key={idx} className="odd:bg-white">
-                        <td className="px-2 py-0.5 h-[23px] min-[992px]:h-auto min-[992px]:py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
+                        <td className="px-0.5 py-0.5 h-[23px] min-[992px]:h-auto min-[992px]:py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
                           {fmtDate(row.createdAt)}
                         </td>
-                        <td className="px-2 py-0.5 h-[23px] min-[992px]:h-auto min-[992px]:py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
+                        <td className="px-0.5 py-0.5 h-[23px] min-[992px]:h-auto min-[992px]:py-1.5 min-[992px]:px-3 min-[992px]:p-[9px] text-center border text-black border-black/12.5 text-xs min-[992px]:text-base">
                           {row.remark}
                         </td>
                       </tr>

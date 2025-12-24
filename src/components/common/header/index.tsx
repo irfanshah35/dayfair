@@ -106,7 +106,7 @@ const Header = () => {
   const { allEventsList } = useAppStore();
   const [results, setResults] = useState<any[]>([]);
   const [mobileResults, setMobileResults] = useState<any[]>([]);
-  
+
   // New state for checkbox toggles - default true
   const [showBalance, setShowBalance] = useState(true);
   const [showExposure, setShowExposure] = useState(true);
@@ -406,7 +406,7 @@ const Header = () => {
 
           {isLoggedIn && (
             <>
-              <div className=" relative min-[345px]:absolute mb-4.5 ml-8.5 min-[345px]:mb-0 top-2.25 right-0.75 flex gap-0.75 min-[992px]:gap-0. min-[345px]:justify-end min-[992px]:hidden text-[13px] tracking-[-0.15px]">
+              <div className=" relative min-[345px]:absolute mb-4.5 ml-[41px] min-[345px]:mb-0 top-2.25 right-0.75 flex gap-0.75 min-[992px]:gap-0. min-[345px]:justify-end min-[992px]:hidden text-[13px] tracking-[-0.15px]">
                 {/* BALANCE - Mobile */}
                 {showBalance && (
                   <div className="">
@@ -453,7 +453,7 @@ const Header = () => {
                     </b>
                   </div>
                 )}
-                
+
                 {/* EXPOSURE - Desktop */}
                 {showExposure && (
                   <div className="text-start leading-5.75">
@@ -507,7 +507,7 @@ const Header = () => {
           <div className="absolute left-0 top-1.25 z-10 w-46">
             <div
               className={`
-          bg-white rounded-full flex items-center 
+          bg-white rounded-full max-[323px]:w-[134px] w-auto flex items-center 
           transition-all duration-500 ease-linear
           ${searchActive ? "w-full" : "w-6.25"}
         `}
@@ -524,7 +524,7 @@ const Header = () => {
             bg-transparent text-black border-0 outline-0 h-6.25
             transition-all duration-500 ease-linear text-[12px]  
             ${searchActive
-                    ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100"
+                    ? "w-[calc(100%-25px)] pl-2.5 pr-2 opacity-100 max-[768px]:pb-[1px]"
                     : "w-0 opacity-0 pl-0 pr-0"
                   }
           `}
@@ -544,8 +544,8 @@ const Header = () => {
             </div>
 
             {/* Mobile Dropdown */}
-            {searchActive && mobileQuery && (
-              <ul className="absolute top-9 min-[992px]:top-7.5 max-h-47.5 left-0 w-[214.5%] min-[992px]:w-[150%] bg-white border border-gray-300 mt-1  overflow-y-auto z-9999 shadow-[1px_0_10px_#000]">
+            {/* {searchActive && mobileQuery && (
+              <ul className="absolute top-9 min-[992px]:top-7.5 max-h-47.5 left-0 w-[150%] bg-white border border-gray-300 mt-1  overflow-y-auto z-9999 shadow-[1px_0_10px_#000]">
                 {mobileResults?.length > 0 ? (
                   mobileResults?.map((match, index) => (
                     <li
@@ -574,9 +574,44 @@ const Header = () => {
                   </li>
                 )}
               </ul>
-            )}
+            )} */}
           </div>
           <div className="flex-[0_0_50%] max-w-[50%] text-left"></div>
+        </div>
+
+        <div className="pr-[63px] min-[323px]:pr-[13px] min-[400px]:pr-4 md:pr-[37px] w-full absolute top-[41px] min-[992px]:top-7.5 max-h-47.5 left-0 overflow-y-auto z-9999">
+          {searchActive && mobileQuery && (
+            <ul className=" bg-white border border-gray-300 w-full mt-1 shadow-[1px_0_10px_#000]">
+              {mobileResults?.length > 0 ? (
+                mobileResults?.map((match, index) => (
+                  <li
+                    key={index}
+                    onClick={() => handleMobileSelect(match)}
+                    className="hover:bg-gray-100 text-black cursor-pointer border-b border-[#ccc] px-2 py-1.5"
+                  >
+                    <div className="flex flex-col text-[12px] leading-3.5">
+                      <div className="flex justify-between items-center w-full">
+                        <div className="font-bold pb-1">
+                          {match?.eventType?.name} | {match?.marketType}
+                        </div>
+
+                        <div className="text-[12px] pb-0.5">
+                          {formatDateStamp(match?.marketStartTime)}
+                        </div>
+                      </div>
+
+                      <div className="">{match?.event?.name}</div>
+                    </div>
+                  </li>
+                ))
+              ) : (
+                <li className="text-black px-1 py-[7px] min-[992px]:px-2 min-[992px]:py-1.5 text-[12px]">
+                  No real-time records found
+                </li>
+              )}
+            </ul>
+          )}
+
         </div>
         {isLoggedIn && (
           <button
@@ -592,7 +627,7 @@ const Header = () => {
       </div>
       {isaccountopen && (
         <div ref={dropdownRef}>
-          <AccountDropDown 
+          <AccountDropDown
             closeDropdown={closeAccountDropdown}
             showBalance={showBalance}
             setShowBalance={setShowBalance}
@@ -624,12 +659,12 @@ const Header = () => {
 
 export default Header;
 
-const AccountDropDown = ({ 
-  closeDropdown, 
-  showBalance, 
-  setShowBalance, 
-  showExposure, 
-  setShowExposure 
+const AccountDropDown = ({
+  closeDropdown,
+  showBalance,
+  setShowBalance,
+  showExposure,
+  setShowExposure
 }: any) => {
   const router = useRouter();
   const accountMenuItems = [

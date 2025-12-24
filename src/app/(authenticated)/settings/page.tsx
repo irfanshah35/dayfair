@@ -93,7 +93,7 @@ export default function Settings() {
         <div className="pl-1 pr-1.5 md:px-1 py-1.25">
           <div className="mb-2.25 min-[992px]:pl-1">
             <p className="text-[14px] min-[992px]:-ml-0.5">
-              <b className="md:text-[16px] text-black font-black">Stake Amount</b>
+              <b className="md:text-[16px] text-black font-black max-[768px]:tracking-[1px]">Stake Amount</b>
             </p>
           </div>
 
@@ -123,7 +123,7 @@ export default function Settings() {
               onClick={handleUpdateClick}
               className="w-full md:w-1/4 h-9.5 text-[16px] 
                          bg-[linear-gradient(-180deg,#f4b501_0%,#f68700_100%)]
-                         text-black rounded-[1px]"
+                         text-black rounded-[1px] max-[768px]:tracking-[1px]"
             >
               Update
             </button>
