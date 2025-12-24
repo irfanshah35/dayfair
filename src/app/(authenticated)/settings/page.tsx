@@ -93,7 +93,7 @@ export default function Settings() {
         <div className="pl-1 pr-1.5 md:px-1 py-1.25">
           <div className="mb-2.25 min-[992px]:pl-1">
             <p className="text-[14px] min-[992px]:-ml-0.5">
-              <b className="md:text-[16px] font-black">Stake Amount</b>
+              <b className="md:text-[16px] text-black font-black">Stake Amount</b>
             </p>
           </div>
 

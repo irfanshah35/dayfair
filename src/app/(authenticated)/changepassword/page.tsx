@@ -167,13 +167,13 @@ export default function ChangePassword() {
   return (
     <div className="w-full min-h-screen flex flex-col items-center bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)]">
       <div className="bg-linear-to-b from-[#f4b501] to-[#f68700] w-full flex justify-center items-center p-[5px]">
-        <a className="font-bold uppercase relative top-px">
+        <a className="font-bold uppercase text-black relative top-px">
           Change Password
         </a>
       </div>
 
       <div className="w-full flex justify-center items-center mt-px min-[992px]:mt-18 min-[992px]:ml-6 mb-10 px-1.5">
-        <div className="mt-4 w-full min-[992px]:w-[323.75px] p-[22px] px-[16px]">
+        <div className="mt-4 w-full min-[992px]:w-[323.75px] p-[22px] px-4">
           {/* Current Password */}
           <div className="mt-2 relative">
             <input
@@ -187,7 +187,7 @@ export default function ChangePassword() {
             <button
               type="button"
               onClick={() => setShowCurrent(!showCurrent)}
-              className="absolute right-[14px] top-[25px] min-[992px]:right-4 min-[992px]:top-1/2 -translate-y-1/2 text-white"
+              className="absolute right-3.5 top-[25px] min-[992px]:right-4 min-[992px]:top-1/2 -translate-y-1/2 text-white"
             >
               {showCurrent ? <FaEye size={20}/> : <FaEyeSlash size={20}/>}
             </button>
@@ -209,7 +209,7 @@ export default function ChangePassword() {
             <button
               type="button"
               onClick={() => setShowNew(!showNew)}
-              className="absolute right-[14px] top-[25px] min-[992px]:right-4 min-[992px]:top-1/2 -translate-y-1/2 text-white"
+              className="absolute right-3.5 top-[25px] min-[992px]:right-4 min-[992px]:top-1/2 -translate-y-1/2 text-white"
             >
               {showNew ? <FaEye size={20}/> : <FaEyeSlash size={20}/>}
             </button>
@@ -229,7 +229,7 @@ export default function ChangePassword() {
             <button
               type="button"
               onClick={() => setShowConfirm(!showConfirm)}
-              className="absolute right-[14px] top-[25px] min-[992px]:right-4 min-[992px]:top-1/2 -translate-y-1/2 text-white"
+              className="absolute right-3.5 top-[25px] min-[992px]:right-4 min-[992px]:top-1/2 -translate-y-1/2 text-white"
             >
               {showConfirm ? <FaEye size={20}/> : <FaEyeSlash size={20} />}
             </button>
