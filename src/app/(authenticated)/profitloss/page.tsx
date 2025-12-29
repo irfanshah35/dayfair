@@ -205,7 +205,7 @@ export default function ProfitLoss() {
             </div>
 
             {/* Submit Button */}
-            <div className="w-full md:w-1/6 px-[9px]">
+            <div className="w-full md:w-1/6 px-[5px] min-[992px]:px-[9px] max-[992px]:mt-[1px]">
               <button
                 className=" w-full md:w-[76px] h-[38px] px-1.5 md:px-[9px] py-1.5 text-base font-normal text-black heading-clr  border border-black rounded cursor-pointer hover:opacity-90 bg-[#F4A500]"
                 onClick={submitData}
@@ -219,17 +219,17 @@ export default function ProfitLoss() {
             <div className="w-full px-[5px] overflow-x-auto mr-4">
               <table className="w-full border-collapse border border-black/12.5">
                 <thead>
-                  <tr className="flex w-full md:h-[43px]">
-                    <th className="w-[309.03px] p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
+                  <tr className="flex w-full md:h-[43px] max-[992px]:h-[26px]">
+                    <th className="w-full min-[992px]:w-[309.03px] p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
                       Sport Name
                     </th>
-                    <th className="w-[293.76px] p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
+                    <th className="w-full min-[992px]:w-[293.76px] p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
                       Profit/Loss
                     </th>
-                    <th className="w-[321.85px] p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
+                    <th className="w-full min-[992px]:w-[321.85px] p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-r border-black/12.5 text-sm md:text-base">
                       Commission
                     </th>
-                    <th className="w-[261.36px] p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-black/12.5 text-sm md:text-base">
+                    <th className="w-full min-[992px]:w-[261.36px] p-0.5 md:px-3 md:py-[9px] text-center text-black bg-[#e9ecef] border-black/12.5 text-sm md:text-base">
                       Total P&L
                     </th>
                   </tr>
@@ -240,26 +240,25 @@ export default function ProfitLoss() {
                     profitLossData?.map((statement: StatementItem, index: number) => (
                       <tr key={index} className="flex w-full max-h-[43px]">
                         <td
-                          className="w-[309.03px] cursor-pointer px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r border-black/12.5 text-xs md:text-base text-[rgb(13,110,253)] hover:text-[rgb(10,88,202)] hover:underline"
+                          className="w-full min-[992px]:w-[309.03px] cursor-pointer px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r border-black/12.5 text-xs md:text-base text-[rgb(13,110,253)] hover:text-[rgb(10,88,202)] hover:underline"
                           onClick={() => handleSportClick(statement.eventType.id)}
                         >
                           {statement.eventType.name}
                         </td>
 
                         <td
-                          className={`
-              w-[293.76px] px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r border-black/12.5 text-xs md:text-base
+                          className={`w-full min-[992px]:w-[293.76px] px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r border-black/12.5 text-xs md:text-base
               ${statement.pl < 0 ? 'text-red-500' : 'text-green-500'}
             `}
                         >
                           {statement.pl.toFixed(2)}
                         </td>
 
-                        <td className="w-[321.85px] px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r text-black border-black/12.5 text-xs md:text-base">
+                        <td className="w-full min-[992px]:w-[321.85px] px-2 py-1.5 md:px-3 md:py-[9px] text-center border-r text-black border-black/12.5 text-xs md:text-base">
                           <span className="text-black">{statement.commission.toFixed(2)}</span>
                         </td>
 
-                        <td className="w-[261.36px] px-2 py-1.5 md:px-3 md:py-[9px] text-center border-black/12.5 text-xs md:text-base">
+                        <td className="w-full min-[992px]:w-[261.36px] px-2 py-1.5 md:px-3 md:py-[9px] text-center border-black/12.5 text-xs md:text-base">
                           <span
                             className={`font-bold ${calculateTotalPL(statement.pl, statement.commission) < 0
                               ? 'text-red-500'
@@ -287,9 +286,11 @@ export default function ProfitLoss() {
             </div>
           </div>
 
-          <div className="flex justify-center items-center gap-2 mt-3 text-[12px] text-black">
+          <div className="flex justify-between md:justify-center items-center gap-2 mt-1.5 md:text-[12px] text-black md:hidden">
             <button
-              className={`px-2.5 py-[4.5px] rounded-[14px] bg-transparent border-none cursor-pointer ${currentPage === 1 ? "opacity-65 pointer-events-none" : "hover:bg-[#f1f1f1]"
+              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === 1
+                ? "opacity-40 pointer-events-none"
+                : "hover:bg-[#f1f1f1]"
                 }`}
               onClick={goToFirst}
               disabled={currentPage === 1}
@@ -297,7 +298,9 @@ export default function ProfitLoss() {
               First
             </button>
             <button
-              className={`px-2.5 py-[4.5px] rounded-[14px] bg-transparent border-none cursor-pointer ${currentPage === 1 ? "opacity-65 pointer-events-none" : "hover:bg-[#f1f1f1]"
+              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === 1
+                ? "opacity-40 pointer-events-none"
+                : "hover:bg-[#f1f1f1]"
                 }`}
               onClick={goToPrevious}
               disabled={currentPage === 1}
@@ -305,24 +308,111 @@ export default function ProfitLoss() {
               Previous
             </button>
 
-            <span className="inline-flex items-center justify-center border py-[4.5px] px-[9px] rounded-sm h-[29px] text-black bg-linear-to-b from-[#f4b501] to-[#f68700]">
+            <span className="inline-flex items-center justify-center min-w-8 px-2.5 py-1 rounded-full font-bold text-black bg-linear-to-b from-[#f4b501] to-[#f68700]">
               {currentPage}
             </span>
 
             <button
-              className={`px-2.5 py-[4.5px] rounded-[14px] bg-transparent border-none cursor-pointer`}
+              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === totalPages
+                ? "opacity-40 pointer-events-none"
+                : "hover:bg-[#f1f1f1]"
+                }`}
               onClick={goToNext}
               disabled={currentPage === totalPages}
             >
               Next
             </button>
             <button
-              className={`px-2.5 py-[4.5px] rounded-[14px] bg-transparent border-none cursor-pointer`}
+              className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === totalPages
+                ? "opacity-40 pointer-events-none"
+                : "hover:bg-[#f1f1f1]"
+                }`}
               onClick={goToLast}
               disabled={currentPage === totalPages}
             >
               Last
             </button>
+          </div>
+
+
+          {/* Desktop Pagination */}
+          <div className="flex md:flex-row justify-between items-center mt-3 gap-2 md:gap-3 text-sm">
+            {/* Left: Showing text */}
+            <div className="text-[10px] text-black md:text-sm">
+              <span>
+                Showing 1 to 0 of 0 entries
+              </span>
+            </div>
+
+            {/* Center */}
+            <div className="hidden md:flex items-center gap-2">
+              <button
+                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === 1
+                  ? "opacity-40 pointer-events-none"
+                  : "hover:bg-[#f1f1f1]"
+                  }`}
+                onClick={goToFirst}
+                disabled={currentPage === 1}
+              >
+                First
+              </button>
+              <button
+                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === 1
+                  ? "opacity-40 pointer-events-none"
+                  : "hover:bg-[#f1f1f1]"
+                  }`}
+                onClick={goToPrevious}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+
+              <span className="inline-flex items-center justify-center min-w-8 px-2.5 py-1 rounded-2xl font-bold text-black bg-linear-to-b from-[#f4b501] to-[#f68700]">
+                {currentPage}
+              </span>
+
+              <button
+                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === totalPages
+                  ? "opacity-40 pointer-events-none"
+                  : "hover:bg-[#f1f1f1]"
+                  }`}
+                onClick={goToNext}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </button>
+              <button
+                className={`px-2.5 py-1 rounded-[14px] font-semibold text-[#999] bg-transparent border-none cursor-pointer ${currentPage === totalPages
+                  ? "opacity-40 pointer-events-none"
+                  : "hover:bg-[#f1f1f1]"
+                  }`}
+                onClick={goToLast}
+                disabled={currentPage === totalPages}
+              >
+                Last
+              </button>
+            </div>
+
+            {/* Jump to page */}
+            <div className="flex items-center gap-2 text-[10px] md:text-sm">
+              <span className="whitespace-nowrap text-black mr-1">
+                Jump to page
+              </span>
+              <input
+                className="w-22.5 h-9.5 px-2 py-1 text-sm border border-[#dee2e6] rounded"
+                type="number"
+                min="1"
+                max={totalPages}
+                value={jumptoPage}
+                onChange={(e) => setJumptoPage(e.target.value)}
+              />
+              <button
+                className="flex justify-center items-center w-[43.13px] h-7 rounded-xl font-bold text-black heading-clr border border-black  cursor-pointer hover:opacity-90"
+                onClick={jumpPage}
+              >
+                Go
+              </button>
+            </div>
           </div>
         </div>
       </div>
