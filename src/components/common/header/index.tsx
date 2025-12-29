@@ -507,9 +507,9 @@ const Header = () => {
           <div className="absolute left-0 top-1.25 z-10 w-46">
             <div
               className={`
-          bg-white rounded-full max-[323px]:w-[134px] w-auto flex items-center 
+          bg-white rounded-full flex items-center 
           transition-all duration-500 ease-linear
-          ${searchActive ? "w-full" : "w-6.25"}
+          ${searchActive ? "w-full max-[323px]:w-[134px]" : "w-6.25"}
         `}
             >
               {/* SEARCH INPUT */}

@@ -143,8 +143,8 @@ export default function AccountStatement() {
     <div className="min-[992px]:mx-1.25 min-[992px]:my-1.5">
       <div className="relative flex flex-col min-w-0 wrap-break-word bg-white min-[992px]:border border-black/12.5 rounded">
         {/* Card Header */}
-        <div className="px-4 py-1 min-[992px]:py-0 min-[992px]:h-[37.8px] min-[992px]:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5">
-          <h4 className="mb-0 text-base text-white! md:text-[17.604px] min-[992px]:text-[24px]">
+        <div className="px-4 py-1 min-[992px]:py-0 min-[992px]:h-[37.8px] min-[992px]:rounded-t-sm bg-black/3 border-b btn-clr border-black/12.5 flex items-center">
+          <h4 className="mb-0 text-base text-white md:text-[17.604px] min-[992px]:!text-[24px]">
             Account Statement
           </h4>
         </div>
@@ -154,7 +154,7 @@ export default function AccountStatement() {
           {/* Filter Row */}
           <div className="flex flex-wrap items-center mt-1.75 -mx-1.25">
             {/* Start Date */}
-            <div className="w-full md:w-1/6 px-1.25 md:pl-1.25 md:pr-2.25 mb-1.5 md:mb-0">
+            <div className="w-full md:w-1/6 px-1.5 md:pl-1.25 md:pr-2.25 mb-1.5 md:mb-0">
               <CustomCalendar
                 selected={startDate}
                 onChange={setStartDate}
@@ -164,7 +164,7 @@ export default function AccountStatement() {
             </div>
 
             {/* End Date */}
-            <div className="w-full md:w-1/6 px-1.25 md:px-2.25 mb-2.75  md:mb-0">
+            <div className="w-full md:w-1/6 px-1.5 md:px-2.25 mb-2.75  md:mb-0">
               <CustomCalendar
                 selected={endDate}
                 onChange={setEndDate}
@@ -379,7 +379,7 @@ export default function AccountStatement() {
                 onChange={(e) => setJumptoPage(e.target.value)}
               />
               <button
-                className="flex justify-center items-center w-[43.13px] h-7 rounded-xl font-bold text-black heading-clr border border-black  cursor-pointer hover:opacity-90"
+                className="flex justify-center items-center w-[43.13px] h-7 rounded-xl font-bold text-black heading-clr border text-[12px] md:text-sm border-black  cursor-pointer hover:opacity-90"
                 onClick={jumpPage}
               >
                 Go

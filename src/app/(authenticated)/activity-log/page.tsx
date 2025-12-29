@@ -48,7 +48,7 @@ export default function ActivityLog() {
         second: "2-digit",
         hour12: false,
       })
-      .replace(/^0/, "");
+      .replace(/^0/, ""); 
     return `${dd} ${time}`;
   };
 
@@ -128,7 +128,7 @@ export default function ActivityLog() {
       <div className="md:mx-1 md:my-1">
         <div className="border border-gray-200 md:rounded-md text-white">
           {/* Header */}
-          <div className="px-1.5 py-1 md:py-[0.218px] border-b border-[rgba(0,0,0,0.175)] md:rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] h-[34.59px] md:h-[37.8px]">
+          <div className="px-1.5 py-1 min-[992px]:px-4 md:py-[0.218px] border-b border-[rgba(0,0,0,0.175)] md:rounded-t bg-[linear-gradient(180deg,#030a12,#444647_42%,#58595a)] h-[34.59px] md:h-[37.8px]">
             <span className="text-[18px] md:text-[24px] font-semibold font-roboto ">
               {activeTab === "activity" ? "Activity Log" : "Password History"}
             </span>
@@ -143,19 +143,19 @@ export default function ActivityLog() {
 
                     {activeTab === "activity" ? (
                       <>
-                        <th className="max-w-48 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                        <th className="max-w-48 py-1.25 px-1.75 min-[992px]:p-[9px] text-left! text-[14px] min-[992px]:text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
                           Login Date & Time
                         </th>
-                        <th className="max-w-32 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                        <th className="max-w-32 py-1.25 px-1.75 min-[992px]:p-[9px] text-left! text-[14px] min-[992px]:text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
                           Login Status
                         </th>
-                        <th className="max-w-32 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                        <th className="max-w-32 py-1.25 px-1.75 min-[992px]:p-[9px] text-left! text-[14px] min-[992px]:text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
                           IP Address
                         </th>
-                        <th className="min-w-48 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                        <th className="min-w-48 py-1.25 px-1.75 min-[992px]:p-[9px] text-left! text-[14px] min-[992px]:text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
                           ISP
                         </th>
-                        <th className="min-w-56 p-[9px] text-left! text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
+                        <th className="min-w-56 py-1.25 px-1.75 min-[992px]:p-[9px] text-left! text-[14px] min-[992px]:text-[16px] text-white md:text-black border border-[#C8CED3] whitespace-nowrap">
                           City/State/Country
                         </th>
                       </>
@@ -179,11 +179,11 @@ export default function ActivityLog() {
                     activityData.activityLogs.map(
                       (row: ActivityLogItem, idx: number) => (
                         <tr key={idx} className="odd:bg-white">
-                          <td className="p-[9px] text-[16px] text-gray-800 border border-[#C8CED3]">
+                          <td className="py-1.25 px-1.75 min-[992px]:p-[9px] text-[12px] min-[992px]:text-[16px] text-gray-800 border border-[#C8CED3]">
                             {fmtDate(row?.createdAt)}
                           </td>
 
-                          <td className="p-[9px] text-[16px] border border-[#C8CED3] whitespace-nowrap">
+                          <td className="py-1.25 px-1.75 min-[992px]:p-[9px] text-[12px] min-[992px]:text-[16px] border border-[#C8CED3] whitespace-nowrap">
                             <span
                               className={
                                 row.logMessage === "Login Successful"
@@ -195,15 +195,15 @@ export default function ActivityLog() {
                             </span>
                           </td>
 
-                          <td className="p-[9px] text-[16px] text-gray-800 border border-[#C8CED3] whitespace-nowrap">
+                          <td className="py-1.25 px-1.75 min-[992px]:p-[9px] text-[12px] min-[992px]:text-[16px] text-gray-800 border border-[#C8CED3] whitespace-nowrap">
                             {row.ip}
                           </td>
 
-                          <td className="p-[9px] text-[16px] text-gray-800 border border-[#C8CED3] whitespace-nowrap">
+                          <td className="py-1.25 px-1.75 min-[992px]:p-[9px] text-[12px] min-[992px]:text-[16px] text-gray-800 border border-[#C8CED3] whitespace-nowrap">
                             {row.isp}
                           </td>
 
-                          <td className="p-[9px] text-[16px] text-gray-800 border border-[#C8CED3] whitespace-nowrap">
+                          <td className="py-1.25 px-1.75 min-[992px]:p-[9px] text-[12px] min-[992px]:text-[16px] text-gray-800 border border-[#C8CED3] whitespace-nowrap">
                             {[row.city, row.state, row.country]
                               .filter(Boolean)
                               .join(" / ")}
